@@ -6,20 +6,31 @@ import {
   emptyTaskDraft,
 } from '../data/boardData'
 
+const MAX_BOARDS = 3
+
 export const useBoardState = () => {
-  const [board, setBoard] = useState(null)
+  const [boards, setBoards] = useState([])
+  const [activeBoardId, setActiveBoardId] = useState(null)
+  const [isCreatingBoard, setIsCreatingBoard] = useState(false)
   const [boardName, setBoardName] = useState('')
   const [boardDescription, setBoardDescription] = useState('')
   const [newColumnName, setNewColumnName] = useState('')
-  const [taskDrafts, setTaskDrafts] = useState({})
+  const [taskDraftsByBoard, setTaskDraftsByBoard] = useState({})
+
+  const activeBoard = useMemo(
+    () => boards.find((board) => board.id === activeBoardId) ?? null,
+    [boards, activeBoardId],
+  )
+
+  const activeTaskDrafts = taskDraftsByBoard[activeBoardId] || {}
 
   const progress = useMemo(() => {
-    if (!board) return { todoCount: 0, doneCount: 0, percent: 0 }
+    if (!activeBoard) return { todoCount: 0, doneCount: 0, percent: 0 }
 
-    const todoColumn = board.columns.find(
+    const todoColumn = activeBoard.columns.find(
       (column) => column.name.toLowerCase() === 'to do',
     )
-    const doneColumn = board.columns.find(
+    const doneColumn = activeBoard.columns.find(
       (column) => column.name.toLowerCase() === 'done',
     )
     const todoCount = todoColumn?.tasks.length ?? 0
@@ -28,57 +39,101 @@ export const useBoardState = () => {
     const percent = total === 0 ? 0 : Math.round((doneCount / total) * 100)
 
     return { todoCount, doneCount, percent }
-  }, [board])
+  }, [activeBoard])
+
+  const canAddBoard = boards.length < MAX_BOARDS
+
+  const startCreateBoard = () => {
+    if (!canAddBoard) return
+    setIsCreatingBoard(true)
+    setBoardName('')
+    setBoardDescription('')
+  }
+
+  const cancelCreateBoard = () => {
+    setIsCreatingBoard(false)
+    setBoardName('')
+    setBoardDescription('')
+  }
 
   const handleCreateBoard = (event) => {
     event.preventDefault()
+    if (!canAddBoard) return
+
     const trimmedName = boardName.trim()
     if (!trimmedName) return
 
     const columns = buildDefaultColumns()
-    setBoard({
+    const newBoard = {
       id: createId(),
       name: trimmedName,
       description: boardDescription.trim(),
       columns,
-    })
-    setTaskDrafts(buildDrafts(columns))
+    }
+
+    setBoards((current) => [...current, newBoard])
+    setActiveBoardId(newBoard.id)
+    setTaskDraftsByBoard((current) => ({
+      ...current,
+      [newBoard.id]: buildDrafts(columns),
+    }))
     setBoardName('')
     setBoardDescription('')
+    setIsCreatingBoard(false)
+  }
+
+  const handleSelectBoard = (boardId) => {
+    setActiveBoardId(boardId)
+    setNewColumnName('')
+  }
+
+  const updateActiveBoard = (updater) => {
+    setBoards((current) =>
+      current.map((board) =>
+        board.id === activeBoardId ? updater(board) : board,
+      ),
+    )
   }
 
   const handleAddColumn = (event) => {
     event.preventDefault()
     const trimmedName = newColumnName.trim()
-    if (!trimmedName || !board) return
+    if (!trimmedName || !activeBoardId) return
 
     const column = { id: createId(), name: trimmedName, tasks: [] }
-    setBoard((current) => ({
-      ...current,
-      columns: [...current.columns, column],
+    updateActiveBoard((board) => ({
+      ...board,
+      columns: [...board.columns, column],
     }))
-    setTaskDrafts((current) => ({
+    setTaskDraftsByBoard((current) => ({
       ...current,
-      [column.id]: emptyTaskDraft(),
+      [activeBoardId]: {
+        ...(current[activeBoardId] || {}),
+        [column.id]: emptyTaskDraft(),
+      },
     }))
     setNewColumnName('')
   }
 
   const updateTaskDraft = (columnId, field, value) => {
-    setTaskDrafts((current) => ({
+    if (!activeBoardId) return
+    setTaskDraftsByBoard((current) => ({
       ...current,
-      [columnId]: {
-        ...current[columnId],
-        [field]: value,
+      [activeBoardId]: {
+        ...(current[activeBoardId] || {}),
+        [columnId]: {
+          ...(current[activeBoardId]?.[columnId] || {}),
+          [field]: value,
+        },
       },
     }))
   }
 
   const handleAddTask = (event, columnId) => {
     event.preventDefault()
-    if (!board) return
+    if (!activeBoard) return
 
-    const draft = taskDrafts[columnId] || emptyTaskDraft()
+    const draft = activeTaskDrafts[columnId] || emptyTaskDraft()
     if (!draft.name.trim()) return
 
     const now = new Date().toISOString()
@@ -93,27 +148,30 @@ export const useBoardState = () => {
       updatedAt: now,
     }
 
-    setBoard((current) => ({
-      ...current,
-      columns: current.columns.map((column) =>
+    updateActiveBoard((board) => ({
+      ...board,
+      columns: board.columns.map((column) =>
         column.id === columnId
           ? { ...column, tasks: [...column.tasks, task] }
           : column,
       ),
     }))
 
-    setTaskDrafts((current) => ({
+    setTaskDraftsByBoard((current) => ({
       ...current,
-      [columnId]: emptyTaskDraft(),
+      [activeBoardId]: {
+        ...(current[activeBoardId] || {}),
+        [columnId]: emptyTaskDraft(),
+      },
     }))
   }
 
   const handleMoveTask = (taskId, fromColumnId, toColumnId) => {
-    if (!board || fromColumnId === toColumnId) return
+    if (!activeBoard || fromColumnId === toColumnId) return
 
-    setBoard((current) => {
+    updateActiveBoard((board) => {
       let movingTask = null
-      const updatedColumns = current.columns.map((column) => {
+      const updatedColumns = board.columns.map((column) => {
         if (column.id !== fromColumnId) return column
         const remaining = column.tasks.filter((task) => {
           if (task.id !== taskId) return true
@@ -123,10 +181,10 @@ export const useBoardState = () => {
         return { ...column, tasks: remaining }
       })
 
-      if (!movingTask) return current
+      if (!movingTask) return board
 
       return {
-        ...current,
+        ...board,
         columns: updatedColumns.map((column) =>
           column.id === toColumnId
             ? { ...column, tasks: [...column.tasks, movingTask] }
@@ -137,24 +195,24 @@ export const useBoardState = () => {
   }
 
   const handleDeleteColumn = (columnId) => {
-    if (!board) return
+    if (!activeBoardId) return
 
-    setBoard((current) => ({
-      ...current,
-      columns: current.columns.filter((column) => column.id !== columnId),
+    updateActiveBoard((board) => ({
+      ...board,
+      columns: board.columns.filter((column) => column.id !== columnId),
     }))
-    setTaskDrafts((current) => {
-      const { [columnId]: _, ...rest } = current
-      return rest
+    setTaskDraftsByBoard((current) => {
+      const { [columnId]: _, ...rest } = current[activeBoardId] || {}
+      return { ...current, [activeBoardId]: rest }
     })
   }
 
   const handleDeleteTask = (taskId, columnId) => {
-    if (!board) return
+    if (!activeBoard) return
 
-    setBoard((current) => ({
-      ...current,
-      columns: current.columns.map((column) =>
+    updateActiveBoard((board) => ({
+      ...board,
+      columns: board.columns.map((column) =>
         column.id === columnId
           ? {
               ...column,
@@ -166,11 +224,11 @@ export const useBoardState = () => {
   }
 
   const handleUpdateTask = (taskId, columnId, updates) => {
-    if (!board) return
+    if (!activeBoard) return
 
-    setBoard((current) => ({
-      ...current,
-      columns: current.columns.map((column) =>
+    updateActiveBoard((board) => ({
+      ...board,
+      columns: board.columns.map((column) =>
         column.id === columnId
           ? {
               ...column,
@@ -190,16 +248,22 @@ export const useBoardState = () => {
   }
 
   return {
-    board,
+    boards,
+    activeBoard,
     boardName,
     boardDescription,
     newColumnName,
-    taskDrafts,
+    taskDrafts: activeTaskDrafts,
     progress,
+    canAddBoard,
+    isCreatingBoard,
     setBoardName,
     setBoardDescription,
     setNewColumnName,
+    startCreateBoard,
+    cancelCreateBoard,
     handleCreateBoard,
+    handleSelectBoard,
     handleAddColumn,
     updateTaskDraft,
     handleAddTask,

@@ -1,5 +1,6 @@
 export { default as BoardCreateForm } from './BoardCreateForm'
 export { default as BoardHeader } from './BoardHeader'
+export { default as BoardSwitcher } from './BoardSwitcher'
 export { default as ColumnForm } from './ColumnForm'
 export { default as ColumnList } from './ColumnList'
 export { default as ProgressBar } from './ProgressBar'

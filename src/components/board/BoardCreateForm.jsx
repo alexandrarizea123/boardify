@@ -4,6 +4,7 @@ function BoardCreateForm({
   onBoardNameChange,
   onBoardDescriptionChange,
   onCreateBoard,
+  onCancel,
 }) {
   return (
     <div className="min-h-screen bg-white px-6 py-16 text-slate-900">
@@ -33,12 +34,23 @@ function BoardCreateForm({
               placeholder="What does this board track?"
             />
           </label>
-          <button
-            className="border border-slate-900 px-4 py-2 text-sm font-semibold"
-            type="submit"
-          >
-            Create board
-          </button>
+          <div className="flex flex-wrap gap-3">
+            <button
+              className="border border-slate-900 px-4 py-2 text-sm font-semibold"
+              type="submit"
+            >
+              Create board
+            </button>
+            {onCancel && (
+              <button
+                className="border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-600"
+                type="button"
+                onClick={onCancel}
+              >
+                Cancel
+              </button>
+            )}
+          </div>
         </form>
       </div>
     </div>

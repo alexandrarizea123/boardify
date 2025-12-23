@@ -2,6 +2,7 @@ import { useBoardState } from './hooks/useBoardState'
 import {
   BoardCreateForm,
   BoardHeader,
+  BoardSwitcher,
   ColumnForm,
   ColumnList,
   ProgressBar,
@@ -9,16 +10,22 @@ import {
 
 function App() {
   const {
-    board,
+    boards,
+    activeBoard,
     boardName,
     boardDescription,
     newColumnName,
     taskDrafts,
     progress,
+    canAddBoard,
+    isCreatingBoard,
     setBoardName,
     setBoardDescription,
     setNewColumnName,
+    startCreateBoard,
+    cancelCreateBoard,
     handleCreateBoard,
+    handleSelectBoard,
     handleAddColumn,
     updateTaskDraft,
     handleAddTask,
@@ -28,7 +35,7 @@ function App() {
     handleUpdateTask,
   } = useBoardState()
 
-  if (!board) {
+  if (!activeBoard || isCreatingBoard) {
     return (
       <BoardCreateForm
         boardName={boardName}
@@ -36,6 +43,7 @@ function App() {
         onBoardNameChange={setBoardName}
         onBoardDescriptionChange={setBoardDescription}
         onCreateBoard={handleCreateBoard}
+        onCancel={activeBoard ? cancelCreateBoard : null}
       />
     )
   }
@@ -43,14 +51,24 @@ function App() {
   return (
     <div className="min-h-screen bg-white px-6 py-10 text-slate-900">
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-8">
-        <BoardHeader name={board.name} description={board.description} />
+        <BoardSwitcher
+          boards={boards}
+          activeBoardId={activeBoard.id}
+          onSelect={handleSelectBoard}
+          onAdd={startCreateBoard}
+          canAdd={canAddBoard}
+        />
+        <BoardHeader
+          name={activeBoard.name}
+          description={activeBoard.description}
+        />
         <ColumnForm
           value={newColumnName}
           onChange={setNewColumnName}
           onSubmit={handleAddColumn}
         />
         <ColumnList
-          columns={board.columns}
+          columns={activeBoard.columns}
           taskDrafts={taskDrafts}
           onAddTask={handleAddTask}
           onUpdateDraft={updateTaskDraft}
