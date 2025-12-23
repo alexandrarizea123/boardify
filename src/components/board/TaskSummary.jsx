@@ -32,7 +32,7 @@ function TaskSummary({ typeStats }) {
   const totalTasks = Object.values(typeStats).reduce((acc, count) => acc + count, 0)
 
   return (
-    <aside className="w-full shrink-0 space-y-4 rounded-md border border-slate-200 bg-white p-4 lg:w-64">
+    <aside className="w-full shrink-0 space-y-4 rounded-md border border-slate-200 bg-white p-4 xl:w-64">
       <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-600">
         Task Summary
       </h3>

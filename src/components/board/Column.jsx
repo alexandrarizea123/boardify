@@ -38,8 +38,8 @@ function Column({
       onDragOver={(event) => event.preventDefault()}
       onDrop={handleDrop}
     >
-      <div className="flex items-center justify-between gap-2">
-        <h2 className="min-w-0 break-words text-sm font-semibold uppercase tracking-wide text-slate-700">
+      <div className="flex flex-wrap items-center gap-2">
+        <h2 className="min-w-0 flex-1 break-words text-sm font-semibold uppercase tracking-wide text-slate-700">
           {column.name}
         </h2>
         <div className="flex shrink-0 items-center gap-2">
