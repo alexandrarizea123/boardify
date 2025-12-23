@@ -14,7 +14,7 @@ function ColumnList({
   onUpdateTask,
 }) {
   return (
-    <main className="flex gap-3 overflow-x-auto pb-3">
+    <main className="flex w-full gap-3 overflow-x-auto pb-3">
       {columns.map((column) => (
         <Column
           key={column.id}

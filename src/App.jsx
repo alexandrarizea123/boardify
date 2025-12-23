@@ -60,8 +60,8 @@ function App() {
   return (
     <div className="min-h-screen bg-slate-50 px-5 py-8 text-slate-900">
       <div className="mx-auto w-full max-w-[1400px]">
-        <div className="flex items-start gap-6">
-          <div className="flex flex-1 flex-col gap-5">
+        <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
+          <div className="flex flex-1 flex-col gap-5 min-w-0">
             <BoardSwitcher
               boards={boards}
               activeBoardId={activeBoard.id}
@@ -101,7 +101,7 @@ function App() {
               percent={progress.percent}
             />
           </div>
-          <div className="sticky top-8 pt-[52px]">
+          <div className="w-full lg:sticky lg:top-8 lg:w-auto lg:pt-[52px]">
             <TaskSummary typeStats={typeStats} />
           </div>
         </div>

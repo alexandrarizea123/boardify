@@ -280,21 +280,21 @@ function TaskCard({
       }}
     >
       <div className="flex items-start justify-between gap-2">
-        <div className="flex items-center gap-2">
+        <div className="flex min-w-0 flex-1 items-center gap-2">
           {isDone && (
             <span
-            className="inline-flex h-4 w-4 items-center justify-center rounded-md border border-green-200 bg-green-50 text-[10px] font-semibold text-green-700"
+            className="inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-md border border-green-200 bg-green-50 text-[10px] font-semibold text-green-700"
               aria-label="Done"
               title="Done"
             >
               ✓
             </span>
           )}
-          <h3 className="font-semibold text-slate-900">
+          <h3 className="break-words font-semibold text-slate-900">
             {task.name}
           </h3>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex shrink-0 items-center gap-2">
           <span
             className={`rounded-md border px-2 py-0.5 text-[10px] uppercase tracking-wide ${
               priorityStyles[task.priority] ??

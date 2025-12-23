@@ -37,11 +37,11 @@ function BoardHeader({
 
   return (
     <header className="space-y-3 rounded-md border border-slate-200 bg-white p-4">
-      <div className="flex items-start justify-between gap-4">
+      <div className="flex flex-wrap items-start justify-between gap-4">
         <p className="text-xs font-semibold uppercase tracking-wide text-slate-600">
           Task Management Board
         </p>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <select
             className="rounded-md border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-700 outline-none focus:border-slate-300"
             value={filterType}
