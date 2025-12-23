@@ -200,6 +200,8 @@ export const useBoardState = () => {
       assignee: draft.assignee,
       type: draft.type,
       priority: draft.priority,
+      difficulty: draft.difficulty,
+      estimatedTime: draft.estimatedTime,
       createdAt: now,
       updatedAt: now,
     }

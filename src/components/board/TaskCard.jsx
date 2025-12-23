@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { boardUsers, priorities } from '../../data/boardData'
+import { boardUsers, priorities, difficulties } from '../../data/boardData'
 import MentionTextarea from '../mentions/MentionTextarea'
 import { formatDate } from '../../utils/date'
 
@@ -9,6 +9,8 @@ const buildDraft = (task) => ({
   assignee: task.assignee,
   type: task.type,
   priority: task.priority,
+  difficulty: task.difficulty || difficulties[1],
+  estimatedTime: task.estimatedTime || '',
 })
 
 const priorityStyles = {
@@ -105,6 +107,8 @@ function TaskCard({
       assignee: draft.assignee,
       type: draft.type,
       priority: draft.priority,
+      difficulty: draft.difficulty,
+      estimatedTime: draft.estimatedTime,
     })
     setIsEditing(false)
   }
@@ -220,6 +224,29 @@ function TaskCard({
           </select>
         </div>
         <div className="flex gap-2">
+          <select
+            className="flex-1 rounded-md border border-slate-200 bg-white px-2 py-1 text-xs outline-none focus:border-slate-300"
+            value={draft.difficulty}
+            onChange={(event) =>
+              handleDraftChange('difficulty', event.target.value)
+            }
+          >
+            {difficulties.map((difficulty) => (
+              <option key={difficulty} value={difficulty}>
+                {difficulty}
+              </option>
+            ))}
+          </select>
+          <input
+            className="flex-1 rounded-md border border-slate-200 bg-white px-2 py-1 text-xs outline-none focus:border-slate-300"
+            value={draft.estimatedTime}
+            onChange={(event) =>
+              handleDraftChange('estimatedTime', event.target.value)
+            }
+            placeholder="Est. time"
+          />
+        </div>
+        <div className="flex gap-2">
           <button
             className="flex-1 rounded-md border border-slate-300 bg-slate-100 px-3 py-2 text-xs font-semibold uppercase tracking-wide text-slate-900"
             type="button"
@@ -310,6 +337,16 @@ function TaskCard({
         <span className="flex items-center gap-1 rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5">
           Assignee: {task.assignee}
         </span>
+        {task.difficulty && (
+          <span className="flex items-center gap-1 rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5">
+            Diff: {task.difficulty}
+          </span>
+        )}
+        {task.estimatedTime && (
+          <span className="flex items-center gap-1 rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5">
+            Est: {task.estimatedTime}
+          </span>
+        )}
       </div>
       <div className="flex flex-wrap gap-2 text-[10px] text-slate-600">
         <span>Created {formatDate(task.createdAt)}</span>

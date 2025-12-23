@@ -1,5 +1,6 @@
 export const taskTypes = ['Feature', 'Bug', 'Chore', 'Research']
 export const priorities = ['Highest', 'High', 'Medium', 'Low']
+export const difficulties = ['Easy', 'Medium', 'Hard']
 export const boardUsers = ['Me', 'Alex']
 
 export const createId = () =>
@@ -11,6 +12,8 @@ export const emptyTaskDraft = () => ({
   assignee: boardUsers[0],
   type: taskTypes[0],
   priority: priorities[2],
+  difficulty: difficulties[1],
+  estimatedTime: '1h',
 })
 
 export const buildDefaultColumns = () => [

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { boardUsers, priorities } from '../../data/boardData'
+import { boardUsers, priorities, difficulties } from '../../data/boardData'
 import MentionTextarea from '../mentions/MentionTextarea'
 
 function TaskForm({
@@ -119,6 +119,29 @@ function TaskForm({
             </option>
           ))}
         </select>
+      </div>
+      <div className="flex gap-2">
+        <select
+          className="flex-1 rounded-md border border-slate-200 bg-white px-2 py-1 text-xs outline-none focus:border-slate-300"
+          value={draft.difficulty}
+          onChange={(event) =>
+            onUpdateDraft(columnId, 'difficulty', event.target.value)
+          }
+        >
+          {difficulties.map((difficulty) => (
+            <option key={difficulty} value={difficulty}>
+              {difficulty}
+            </option>
+          ))}
+        </select>
+        <input
+          className="flex-1 rounded-md border border-slate-200 bg-white px-2 py-1 text-xs outline-none focus:border-slate-300"
+          value={draft.estimatedTime}
+          onChange={(event) =>
+            onUpdateDraft(columnId, 'estimatedTime', event.target.value)
+          }
+          placeholder="Est. time (e.g. 2h)"
+        />
       </div>
       <button
         className="rounded-md border border-slate-300 bg-slate-100 px-3 py-2 text-xs font-semibold uppercase tracking-wide text-slate-900"
