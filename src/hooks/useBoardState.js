@@ -360,6 +360,10 @@ export const useBoardState = () => {
         return { ...column, tasks }
       })
 
+      if (!movingTask) {
+        return { ...board, columns: updatedColumns }
+      }
+
       // Add to target column
       const finalColumns = columnsAfterRemove.map((column) => {
         if (column.id === targetColumnId) {
