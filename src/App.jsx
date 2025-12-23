@@ -101,7 +101,7 @@ function App() {
               percent={progress.percent}
             />
           </div>
-          <div className="w-full xl:sticky xl:top-8 xl:w-auto xl:pt-[52px]">
+          <div className="w-full lg:w-auto lg:pt-[52px]">
             <TaskSummary typeStats={typeStats} />
           </div>
         </div>
