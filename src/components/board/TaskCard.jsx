@@ -327,25 +327,40 @@ function TaskCard({
           {renderDescription(task.description)}
         </p>
       )}
-      <div className="flex flex-wrap gap-2 text-[11px] text-slate-700">
-        <span className="flex items-center gap-1.5 rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 font-medium">
+      <div className="flex flex-wrap items-center gap-3 text-[10px] text-slate-600">
+        <span className="flex items-center gap-1.5 font-medium text-slate-700" title="Task Type">
           <span
-            className={`h-1.5 w-1.5 rounded-full ${getTypeColor(task.type)}`}
+            className={`h-2 w-2 rounded-full ${getTypeColor(task.type)}`}
           />
           {task.type}
         </span>
-        <span className="flex items-center gap-1 rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5">
-          Assignee: {task.assignee}
+
+        <span className="flex items-center gap-1" title="Assignee">
+          <svg className="h-3 w-3 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+          </svg>
+          {task.assignee}
         </span>
-        {task.difficulty && (
-          <span className="flex items-center gap-1 rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5">
-            Diff: {task.difficulty}
-          </span>
-        )}
-        {task.estimatedTime && (
-          <span className="flex items-center gap-1 rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5">
-            Est: {task.estimatedTime}
-          </span>
+
+        {(task.difficulty || task.estimatedTime) && (
+          <>
+            <span className="h-3 w-px bg-slate-200" />
+            <div className="flex items-center gap-2">
+              {task.difficulty && (
+                <span className="font-medium text-slate-700" title="Difficulty">
+                  {task.difficulty}
+                </span>
+              )}
+              {task.estimatedTime && (
+                <span className="flex items-center gap-1" title="Estimated Time">
+                  <svg className="h-3 w-3 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  {task.estimatedTime}
+                </span>
+              )}
+            </div>
+          </>
         )}
       </div>
       <div className="flex flex-wrap gap-2 text-[10px] text-slate-600">
