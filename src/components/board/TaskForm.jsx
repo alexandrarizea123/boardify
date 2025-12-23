@@ -1,4 +1,5 @@
 import { boardUsers, priorities, taskTypes } from '../../data/boardData'
+import MentionTextarea from '../mentions/MentionTextarea'
 
 function TaskForm({ columnId, draft, onAddTask, onUpdateDraft }) {
   return (
@@ -15,12 +16,11 @@ function TaskForm({ columnId, draft, onAddTask, onUpdateDraft }) {
         onChange={(event) => onUpdateDraft(columnId, 'name', event.target.value)}
         placeholder="Task name"
       />
-      <textarea
+      <MentionTextarea
         className="min-h-[64px] resize-none border border-slate-200 px-2 py-1 text-xs outline-none"
         value={draft.description}
-        onChange={(event) =>
-          onUpdateDraft(columnId, 'description', event.target.value)
-        }
+        onChange={(value) => onUpdateDraft(columnId, 'description', value)}
+        users={boardUsers}
         placeholder="Short description"
       />
       <select

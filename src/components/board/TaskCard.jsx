@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { boardUsers, priorities, taskTypes } from '../../data/boardData'
+import MentionTextarea from '../mentions/MentionTextarea'
 import { formatDate } from '../../utils/date'
 
 const buildDraft = (task) => ({
@@ -48,9 +49,34 @@ function TaskCard({
     setIsEditing(false)
   }
 
-  const handleCancel = () => {
+const handleCancel = () => {
     setDraft(buildDraft(task))
     setIsEditing(false)
+  }
+
+  const renderDescription = (text) => {
+    if (!text) return null
+    const tokens = text.split(/(@\w+)/g)
+    return tokens.map((token, index) => {
+      const matchedUser = boardUsers.find(
+        (user) => token.toLowerCase() === `@${user.toLowerCase()}`,
+      )
+      if (matchedUser) {
+        return (
+          <span
+            key={`${token}-${index}`}
+            className="rounded-full border border-slate-200 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-slate-500"
+          >
+            {token}
+          </span>
+        )
+      }
+      return (
+        <span key={`${token}-${index}`} className="text-xs text-slate-500">
+          {token}
+        </span>
+      )
+    })
   }
 
   if (isEditing) {
@@ -65,12 +91,11 @@ function TaskCard({
           onChange={(event) => handleDraftChange('name', event.target.value)}
           placeholder="Task name"
         />
-        <textarea
+        <MentionTextarea
           className="min-h-[64px] resize-none border border-slate-200 px-2 py-1 text-xs outline-none"
           value={draft.description}
-          onChange={(event) =>
-            handleDraftChange('description', event.target.value)
-          }
+          onChange={(value) => handleDraftChange('description', value)}
+          users={boardUsers}
           placeholder="Short description"
         />
         <select
@@ -155,7 +180,9 @@ function TaskCard({
         </div>
       </div>
       {task.description && (
-        <p className="text-xs text-slate-500">{task.description}</p>
+        <p className="flex flex-wrap gap-1">
+          {renderDescription(task.description)}
+        </p>
       )}
       <div className="flex flex-wrap gap-2 text-[11px] text-slate-500">
         <span>Type: {task.type}</span>

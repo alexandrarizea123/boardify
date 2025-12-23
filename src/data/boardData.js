@@ -1,6 +1,6 @@
 export const taskTypes = ['Feature', 'Bug', 'Chore', 'Research']
 export const priorities = ['Highest', 'High', 'Medium', 'Low']
-export const boardUsers = ['Me']
+export const boardUsers = ['Me', 'Alex']
 
 export const createId = () =>
   globalThis.crypto?.randomUUID?.() ?? Math.random().toString(36).slice(2, 10)
