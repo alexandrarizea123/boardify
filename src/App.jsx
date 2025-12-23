@@ -51,8 +51,8 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-white px-6 py-10 text-slate-900">
-      <div className="mx-auto flex w-full max-w-6xl flex-col gap-8">
+    <div className="min-h-screen bg-[var(--color-tea-green-50)] px-5 py-8 text-[var(--color-tea-green-900)]">
+      <div className="mx-auto flex w-full max-w-6xl flex-col gap-6">
         <BoardSwitcher
           boards={boards}
           activeBoardId={activeBoard.id}

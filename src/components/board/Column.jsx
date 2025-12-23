@@ -32,18 +32,20 @@ function Column({
 
   return (
     <section
-      className="min-w-[260px] flex-1 border border-slate-200 p-4"
+      className="min-w-[260px] flex-1 rounded-2xl border border-[var(--color-tea-green-200)] bg-[var(--color-papaya-whip-50)] p-3"
       onDragOver={(event) => event.preventDefault()}
       onDrop={handleDrop}
     >
       <div className="flex items-center justify-between">
-        <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
+        <h2 className="text-sm font-semibold uppercase tracking-wide text-[var(--color-tea-green-700)]">
           {column.name}
         </h2>
         <div className="flex items-center gap-2">
-          <span className="text-xs text-slate-400">{column.tasks.length}</span>
+          <span className="text-xs text-[var(--color-tea-green-600)]">
+            {column.tasks.length}
+          </span>
           <button
-            className="rounded-full border border-red-200 px-2 py-0.5 text-[10px] uppercase tracking-wide text-red-500 hover:border-red-300 hover:bg-red-50"
+            className="rounded-full border border-[var(--color-light-bronze-200)] px-2 py-0.5 text-[10px] uppercase tracking-wide text-[var(--color-light-bronze-700)] hover:border-[var(--color-light-bronze-300)] hover:bg-[var(--color-light-bronze-50)]"
             type="button"
             onClick={() => onDeleteColumn(column.id)}
             aria-label={`Delete ${column.name} column`}
@@ -53,7 +55,7 @@ function Column({
         </div>
       </div>
 
-      <div className="mt-4 flex flex-col gap-3">
+      <div className="mt-3 flex flex-col gap-3">
         {column.tasks.map((task) => (
           <TaskCard
             key={task.id}

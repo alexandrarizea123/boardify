@@ -1,17 +1,17 @@
 function BoardSwitcher({ boards, activeBoardId, onSelect, onAdd, canAdd }) {
   return (
-    <div className="flex flex-wrap items-center gap-3 border border-slate-200 p-3">
-      <span className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+    <div className="flex flex-wrap items-center gap-3 rounded-2xl border border-[var(--color-tea-green-200)] bg-[var(--color-papaya-whip-50)] p-3">
+      <span className="text-xs font-semibold uppercase tracking-wide text-[var(--color-tea-green-600)]">
         Boards
       </span>
       <div className="flex flex-wrap gap-2">
         {boards.map((board) => (
           <button
             key={board.id}
-            className={`border px-3 py-1 text-xs font-semibold ${
+            className={`rounded-full border px-3 py-1 text-xs font-semibold ${
               board.id === activeBoardId
-                ? 'border-slate-900 text-slate-900'
-                : 'border-slate-200 text-slate-500 hover:border-slate-300'
+                ? 'border-[var(--color-tea-green-700)] bg-[var(--color-tea-green-100)] text-[var(--color-tea-green-900)]'
+                : 'border-[var(--color-tea-green-200)] text-[var(--color-tea-green-700)] hover:border-[var(--color-tea-green-300)]'
             }`}
             type="button"
             onClick={() => onSelect(board.id)}
@@ -21,7 +21,7 @@ function BoardSwitcher({ boards, activeBoardId, onSelect, onAdd, canAdd }) {
         ))}
       </div>
       <button
-        className="ml-auto inline-flex items-center gap-2 border border-slate-200 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-slate-600 hover:border-slate-300 hover:text-slate-900 disabled:cursor-not-allowed disabled:border-slate-200 disabled:text-slate-300"
+        className="ml-auto inline-flex items-center gap-2 rounded-full border border-[var(--color-tea-green-300)] bg-[var(--color-cornsilk-100)] px-3 py-1 text-xs font-semibold uppercase tracking-wide text-[var(--color-tea-green-800)] hover:border-[var(--color-tea-green-400)] disabled:cursor-not-allowed disabled:border-[var(--color-tea-green-200)] disabled:text-[var(--color-tea-green-300)]"
         type="button"
         onClick={onAdd}
         disabled={!canAdd}
