@@ -8,8 +8,8 @@ Boardify is a minimal task management board built with React + Vite and Tailwind
 - Add custom columns per board.
 - Create tasks with name, description, assignee, type, and priority.
 - Edit tasks inline.
-- Move tasks between columns.
-- Delete tasks and columns.
+- Move tasks between columns with drag-and-drop.
+- Delete tasks, columns, and boards.
 - Progress bar showing Done out of To Do.
 - Mention tagging in task descriptions using `@` with autocomplete.
 
@@ -60,7 +60,3 @@ npm run dev
 - In-memory state only (no backend).
 - Board limit is set to 3 in `useBoardState.js`.
 - Mention autocomplete filters on `@` and supports keyboard navigation.
-
-## Future Improvements
-- Drag-and-drop task movement.
-- Board rename and delete.
