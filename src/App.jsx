@@ -7,6 +7,7 @@ import {
   ColumnList,
   ProgressBar,
   TaskSummary,
+  DeveloperHoursChart,
 } from './components/board'
 
 function App() {
@@ -19,6 +20,7 @@ function App() {
     taskDrafts,
     progress,
     typeStats,
+    developerStats,
     canAddBoard,
     isCreatingBoard,
     taskTypes,
@@ -101,8 +103,9 @@ function App() {
               percent={progress.percent}
             />
           </div>
-          <div className="w-full lg:w-auto lg:pt-[52px]">
+          <div className="w-full space-y-6 lg:w-auto lg:pt-[52px]">
             <TaskSummary typeStats={typeStats} />
+            <DeveloperHoursChart developerStats={developerStats} />
           </div>
         </div>
       </div>

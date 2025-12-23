@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { parseEstimatedTime } from '../utils/date'
 import {
   buildDefaultColumns,
   buildDrafts,
@@ -63,6 +64,19 @@ export const useBoardState = () => {
     const percent = total === 0 ? 0 : Math.round((doneCount / total) * 100)
 
     return { todoCount, doneCount, percent }
+  }, [activeBoard])
+
+  const developerStats = useMemo(() => {
+    if (!activeBoard) return {}
+    const stats = {}
+    for (const column of activeBoard.columns) {
+      for (const task of column.tasks) {
+        if (!task.assignee) continue
+        const hours = parseEstimatedTime(task.estimatedTime)
+        stats[task.assignee] = (stats[task.assignee] || 0) + hours
+      }
+    }
+    return stats
   }, [activeBoard])
 
   const canAddBoard = boards.length < MAX_BOARDS
@@ -314,6 +328,7 @@ export const useBoardState = () => {
     taskDrafts: activeTaskDrafts,
     progress,
     typeStats,
+    developerStats,
     canAddBoard,
     isCreatingBoard,
     taskTypes,
