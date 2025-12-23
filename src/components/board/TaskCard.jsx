@@ -12,10 +12,10 @@ const buildDraft = (task) => ({
 })
 
 const priorityStyles = {
-  Highest: 'bg-red-900 text-white border-red-900',
-  High: 'bg-red-500 text-white border-red-500',
-  Medium: 'bg-orange-400 text-white border-orange-400',
-  Low: 'bg-blue-500 text-white border-blue-500',
+  Highest: 'bg-red-200 text-red-800 border-red-200',
+  High: 'bg-red-100 text-red-700 border-red-100',
+  Medium: 'bg-orange-100 text-orange-800 border-orange-100',
+  Low: 'bg-blue-100 text-blue-800 border-blue-100',
 }
 
 function TaskCard({
@@ -62,7 +62,7 @@ function TaskCard({
         return (
           <span
             key={`${token}-${index}`}
-            className="rounded-full border border-[var(--color-tea-green-200)] bg-[var(--color-tea-green-50)] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-[var(--color-tea-green-700)]"
+            className="rounded-md border border-slate-200 bg-slate-50 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-slate-700"
           >
             {token}
           </span>
@@ -71,7 +71,7 @@ function TaskCard({
       return (
         <span
           key={`${token}-${index}`}
-          className="text-xs text-[var(--color-tea-green-700)]"
+          className="text-xs text-slate-700"
         >
           {token}
         </span>
@@ -81,27 +81,27 @@ function TaskCard({
 
   if (isEditing) {
     return (
-      <article className="flex flex-col gap-2 rounded-xl border border-[var(--color-tea-green-200)] bg-white p-3 text-sm">
+      <article className="flex flex-col gap-2 rounded-md border border-slate-200 bg-white p-3 text-sm">
         <div className="flex items-start justify-between gap-2">
-          <h3 className="font-semibold text-[var(--color-tea-green-800)]">
+          <h3 className="font-semibold text-slate-900">
             Edit task
           </h3>
         </div>
         <input
-          className="rounded-lg border border-[var(--color-tea-green-200)] bg-white px-2 py-1 text-xs outline-none focus:border-[var(--color-tea-green-400)]"
+          className="rounded-md border border-slate-200 bg-white px-2 py-1 text-xs outline-none focus:border-slate-300"
           value={draft.name}
           onChange={(event) => handleDraftChange('name', event.target.value)}
           placeholder="Task name"
         />
         <MentionTextarea
-          className="min-h-16 resize-none rounded-lg border border-[var(--color-tea-green-200)] bg-white px-2 py-1 text-xs outline-none focus:border-[var(--color-tea-green-400)]"
+          className="min-h-16 resize-none rounded-md border border-slate-200 bg-white px-2 py-1 text-xs outline-none focus:border-slate-300"
           value={draft.description}
           onChange={(value) => handleDraftChange('description', value)}
           users={boardUsers}
           placeholder="Short description"
         />
         <select
-          className="rounded-lg border border-[var(--color-tea-green-200)] bg-white px-2 py-1 text-xs outline-none focus:border-[var(--color-tea-green-400)]"
+          className="rounded-md border border-slate-200 bg-white px-2 py-1 text-xs outline-none focus:border-slate-300"
           value={draft.assignee}
           onChange={(event) => handleDraftChange('assignee', event.target.value)}
         >
@@ -113,7 +113,7 @@ function TaskCard({
         </select>
         <div className="flex gap-2">
           <select
-            className="flex-1 rounded-lg border border-[var(--color-tea-green-200)] bg-white px-2 py-1 text-xs outline-none focus:border-[var(--color-tea-green-400)]"
+            className="flex-1 rounded-md border border-slate-200 bg-white px-2 py-1 text-xs outline-none focus:border-slate-300"
             value={draft.type}
             onChange={(event) => handleDraftChange('type', event.target.value)}
           >
@@ -124,7 +124,7 @@ function TaskCard({
             ))}
           </select>
           <select
-            className="flex-1 rounded-lg border border-[var(--color-tea-green-200)] bg-white px-2 py-1 text-xs outline-none focus:border-[var(--color-tea-green-400)]"
+            className="flex-1 rounded-md border border-slate-200 bg-white px-2 py-1 text-xs outline-none focus:border-slate-300"
             value={draft.priority}
             onChange={(event) =>
               handleDraftChange('priority', event.target.value)
@@ -139,14 +139,14 @@ function TaskCard({
         </div>
         <div className="flex gap-2">
           <button
-            className="flex-1 rounded-full border border-[var(--color-tea-green-700)] bg-[var(--color-tea-green-600)] px-3 py-2 text-xs font-semibold uppercase tracking-wide text-[var(--color-tea-green-50)]"
+            className="flex-1 rounded-md border border-slate-300 bg-slate-100 px-3 py-2 text-xs font-semibold uppercase tracking-wide text-slate-900"
             type="button"
             onClick={handleSave}
           >
             Save
           </button>
           <button
-            className="flex-1 rounded-full border border-[var(--color-tea-green-200)] px-3 py-2 text-xs font-semibold uppercase tracking-wide text-[var(--color-tea-green-700)]"
+            className="flex-1 rounded-md border border-slate-200 px-3 py-2 text-xs font-semibold uppercase tracking-wide text-slate-700"
             type="button"
             onClick={handleCancel}
           >
@@ -159,7 +159,7 @@ function TaskCard({
 
   return (
     <article
-      className="flex flex-col gap-2 rounded-xl border border-[var(--color-tea-green-200)] bg-white p-3 text-sm"
+      className="flex flex-col gap-2 rounded-md border border-slate-200 bg-white p-3 text-sm"
       draggable
       onDragStart={(event) => {
         event.dataTransfer.setData(
@@ -174,28 +174,28 @@ function TaskCard({
         <div className="flex items-center gap-2">
           {isDone && (
             <span
-              className="inline-flex h-4 w-4 items-center justify-center rounded-full border border-[var(--color-tea-green-300)] bg-[var(--color-tea-green-100)] text-[10px] font-semibold text-[var(--color-tea-green-700)]"
+            className="inline-flex h-4 w-4 items-center justify-center rounded-md border border-green-200 bg-green-50 text-[10px] font-semibold text-green-700"
               aria-label="Done"
               title="Done"
             >
               ✓
             </span>
           )}
-          <h3 className="font-semibold text-[var(--color-tea-green-900)]">
+          <h3 className="font-semibold text-slate-900">
             {task.name}
           </h3>
         </div>
         <div className="flex items-center gap-2">
           <span
-            className={`rounded-full border px-2 py-0.5 text-[10px] uppercase tracking-wide ${
+            className={`rounded-md border px-2 py-0.5 text-[10px] uppercase tracking-wide ${
               priorityStyles[task.priority] ??
-              'border-[var(--color-tea-green-200)] text-[var(--color-tea-green-600)]'
+              'border-slate-200 text-slate-700'
             }`}
           >
             {task.priority}
           </span>
           <button
-            className="text-[10px] uppercase tracking-wide text-[var(--color-tea-green-600)] hover:text-[var(--color-tea-green-800)]"
+            className="text-[10px] uppercase tracking-wide text-slate-600 hover:text-slate-900"
             type="button"
             onClick={() => {
               setDraft(buildDraft(task))
@@ -205,7 +205,7 @@ function TaskCard({
             Edit
           </button>
           <button
-            className="text-[10px] uppercase tracking-wide text-[var(--color-light-bronze-600)] hover:text-[var(--color-light-bronze-800)]"
+            className="text-[10px] uppercase tracking-wide text-slate-600 hover:text-slate-900"
             type="button"
             onClick={() => onDeleteTask(task.id, columnId)}
           >
@@ -218,18 +218,18 @@ function TaskCard({
           {renderDescription(task.description)}
         </p>
       )}
-      <div className="flex flex-wrap gap-2 text-[11px] text-[var(--color-tea-green-700)]">
+      <div className="flex flex-wrap gap-2 text-[11px] text-slate-700">
         <span>Type: {task.type}</span>
         <span>Assignee: {task.assignee}</span>
       </div>
-      <div className="flex flex-wrap gap-2 text-[10px] text-[var(--color-tea-green-600)]">
+      <div className="flex flex-wrap gap-2 text-[10px] text-slate-600">
         <span>Created {formatDate(task.createdAt)}</span>
         <span>Updated {formatDate(task.updatedAt)}</span>
       </div>
-      <label className="text-[10px] uppercase tracking-wide text-[var(--color-tea-green-600)]">
+      <label className="text-[10px] uppercase tracking-wide text-slate-600">
         Move to
         <select
-          className="mt-1 w-full rounded-lg border border-[var(--color-tea-green-200)] bg-white px-2 py-1 text-xs outline-none focus:border-[var(--color-tea-green-400)]"
+          className="mt-1 w-full rounded-md border border-slate-200 bg-white px-2 py-1 text-xs outline-none focus:border-slate-300"
           value={columnId}
           onChange={(event) =>
             onMoveTask(task.id, columnId, event.target.value)

@@ -119,8 +119,8 @@ function MentionTextarea({ value, onChange, users, placeholder, className }) {
         placeholder={placeholder}
       />
       {context && suggestions.length > 0 && (
-        <div className="rounded-xl border border-[var(--color-tea-green-200)] bg-white p-1 text-xs shadow-sm">
-          <div className="px-2 py-1 text-[10px] uppercase tracking-wide text-[var(--color-tea-green-600)]">
+        <div className="rounded-md border border-slate-200 bg-white p-1 text-xs shadow-sm">
+          <div className="px-2 py-1 text-[10px] uppercase tracking-wide text-slate-600">
             Tag someone
           </div>
           <div className="flex flex-col gap-1">
@@ -129,8 +129,8 @@ function MentionTextarea({ value, onChange, users, placeholder, className }) {
                 key={user}
                 className={`rounded px-2 py-1 text-left text-xs ${
                   index === safeActiveIndex
-                    ? 'bg-[var(--color-tea-green-100)] text-[var(--color-tea-green-900)]'
-                    : 'text-[var(--color-tea-green-700)] hover:bg-[var(--color-tea-green-50)]'
+                    ? 'bg-slate-50 text-slate-900'
+                    : 'text-slate-700 hover:bg-slate-50'
                 }`}
                 type="button"
                 onClick={() => applySelection(user)}
