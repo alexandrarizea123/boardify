@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { boardUsers, priorities, taskTypes } from '../../data/boardData'
 import MentionTextarea from '../mentions/MentionTextarea'
 import { formatDate } from '../../utils/date'
@@ -11,6 +11,13 @@ const buildDraft = (task) => ({
   priority: task.priority,
 })
 
+const priorityStyles = {
+  Highest: 'bg-red-900 text-white border-red-900',
+  High: 'bg-red-500 text-white border-red-500',
+  Medium: 'bg-orange-400 text-white border-orange-400',
+  Low: 'bg-blue-500 text-white border-blue-500',
+}
+
 function TaskCard({
   task,
   columnId,
@@ -18,20 +25,10 @@ function TaskCard({
   onMoveTask,
   onDeleteTask,
   onUpdateTask,
+  isDone,
 }) {
   const [isEditing, setIsEditing] = useState(false)
   const [draft, setDraft] = useState(() => buildDraft(task))
-
-  useEffect(() => {
-    setDraft(buildDraft(task))
-  }, [
-    task.id,
-    task.name,
-    task.description,
-    task.assignee,
-    task.type,
-    task.priority,
-  ])
 
   const handleDraftChange = (field, value) => {
     setDraft((current) => ({ ...current, [field]: value }))
@@ -49,7 +46,7 @@ function TaskCard({
     setIsEditing(false)
   }
 
-const handleCancel = () => {
+  const handleCancel = () => {
     setDraft(buildDraft(task))
     setIsEditing(false)
   }
@@ -92,7 +89,7 @@ const handleCancel = () => {
           placeholder="Task name"
         />
         <MentionTextarea
-          className="min-h-[64px] resize-none border border-slate-200 px-2 py-1 text-xs outline-none"
+          className="min-h-16 resize-none border border-slate-200 px-2 py-1 text-xs outline-none"
           value={draft.description}
           onChange={(value) => handleDraftChange('description', value)}
           users={boardUsers}
@@ -158,15 +155,32 @@ const handleCancel = () => {
   return (
     <article className="flex flex-col gap-2 border border-slate-200 p-3 text-sm">
       <div className="flex items-start justify-between gap-2">
-        <h3 className="font-semibold">{task.name}</h3>
         <div className="flex items-center gap-2">
-          <span className="text-[10px] uppercase tracking-wide text-slate-400">
+          {isDone && (
+            <span
+              className="inline-flex h-4 w-4 items-center justify-center rounded-full border border-emerald-200 bg-emerald-50 text-[10px] font-semibold text-emerald-700"
+              aria-label="Done"
+              title="Done"
+            >
+              ✓
+            </span>
+          )}
+          <h3 className="font-semibold">{task.name}</h3>
+        </div>
+        <div className="flex items-center gap-2">
+          <span
+            className={`rounded-full border px-2 py-0.5 text-[10px] uppercase tracking-wide ${priorityStyles[task.priority] ?? 'border-slate-200 text-slate-400'
+              }`}
+          >
             {task.priority}
           </span>
           <button
             className="text-[10px] uppercase tracking-wide text-slate-400 hover:text-slate-700"
             type="button"
-            onClick={() => setIsEditing(true)}
+            onClick={() => {
+              setDraft(buildDraft(task))
+              setIsEditing(true)
+            }}
           >
             Edit
           </button>

@@ -41,6 +41,7 @@ function Column({
             onMoveTask={onMoveTask}
             onDeleteTask={onDeleteTask}
             onUpdateTask={onUpdateTask}
+            isDone={column.name.toLowerCase() === 'done'}
           />
         ))}
       </div>
