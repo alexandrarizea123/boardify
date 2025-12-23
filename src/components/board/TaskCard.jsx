@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { boardUsers, priorities, difficulties } from '../../data/boardData'
+import { boardUsers, priorities, difficulties, createId } from '../../data/boardData'
 import MentionTextarea from '../mentions/MentionTextarea'
 import { formatDate, getDueDateStatus } from '../../utils/date'
 
@@ -12,6 +12,7 @@ const buildDraft = (task) => ({
   difficulty: task.difficulty || difficulties[1],
   estimatedTime: task.estimatedTime || '',
   dueDate: task.dueDate || '',
+  subtasks: task.subtasks ? [...task.subtasks] : [],
 })
 
 const priorityStyles = {
@@ -76,9 +77,44 @@ function TaskCard({
   const [draft, setDraft] = useState(() => buildDraft(task))
   const [isAddingType, setIsAddingType] = useState(false)
   const [newTypeValue, setNewTypeValue] = useState('')
+  const [newSubtaskName, setNewSubtaskName] = useState('')
 
   const handleDraftChange = (field, value) => {
     setDraft((current) => ({ ...current, [field]: value }))
+  }
+
+  const handleToggleSubtask = (subtaskId) => {
+    const updatedSubtasks = (task.subtasks || []).map((t) =>
+      t.id === subtaskId ? { ...t, isCompleted: !t.isCompleted } : t,
+    )
+    onUpdateTask(task.id, columnId, { subtasks: updatedSubtasks })
+  }
+
+  const handleAddSubtask = () => {
+    const trimmed = newSubtaskName.trim()
+    if (!trimmed) return
+    const newSubtask = { id: createId(), title: trimmed, isCompleted: false }
+    setDraft((current) => ({
+      ...current,
+      subtasks: [...current.subtasks, newSubtask],
+    }))
+    setNewSubtaskName('')
+  }
+
+  const handleRemoveSubtask = (subtaskId) => {
+    setDraft((current) => ({
+      ...current,
+      subtasks: current.subtasks.filter((t) => t.id !== subtaskId),
+    }))
+  }
+
+  const handleSubtaskNameChange = (subtaskId, newName) => {
+    setDraft((current) => ({
+      ...current,
+      subtasks: current.subtasks.map((t) =>
+        t.id === subtaskId ? { ...t, title: newName } : t,
+      ),
+    }))
   }
 
   const handleTypeChange = (event) => {
@@ -122,6 +158,7 @@ function TaskCard({
       difficulty: draft.difficulty,
       estimatedTime: draft.estimatedTime,
       dueDate: draft.dueDate,
+      subtasks: draft.subtasks,
     })
     setIsEditing(false)
   }
@@ -184,6 +221,49 @@ function TaskCard({
           users={boardUsers}
           placeholder="Short description"
         />
+
+        <div className="space-y-2">
+          {draft.subtasks.map((subtask) => (
+            <div key={subtask.id} className="flex gap-2">
+              <input
+                className="flex-1 rounded-md border border-slate-200 bg-white px-2 py-1 text-xs outline-none focus:border-slate-300"
+                value={subtask.title}
+                onChange={(e) =>
+                  handleSubtaskNameChange(subtask.id, e.target.value)
+                }
+                placeholder="Subtask name"
+              />
+              <button
+                type="button"
+                className="text-slate-400 hover:text-red-500"
+                onClick={() => handleRemoveSubtask(subtask.id)}
+              >
+                ✕
+              </button>
+            </div>
+          ))}
+          <div className="flex gap-2">
+            <input
+              className="flex-1 rounded-md border border-slate-200 bg-white px-2 py-1 text-xs outline-none focus:border-slate-300"
+              value={newSubtaskName}
+              onChange={(e) => setNewSubtaskName(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault()
+                  handleAddSubtask()
+                }
+              }}
+              placeholder="+ Add subtask"
+            />
+            <button
+              type="button"
+              className="rounded-md border border-slate-200 px-2 py-1 text-xs font-semibold text-slate-600 hover:border-slate-300 hover:text-slate-900"
+              onClick={handleAddSubtask}
+            >
+              Add
+            </button>
+          </div>
+        </div>
         
         <div className="grid grid-cols-2 gap-2">
           <select
@@ -363,6 +443,48 @@ function TaskCard({
           {renderDescription(task.description)}
         </p>
       )}
+
+      {task.subtasks && task.subtasks.length > 0 && (
+        <div className="ml-3.5 mt-2 space-y-2">
+          <div className="flex items-center gap-2">
+            <div className="h-1.5 flex-1 rounded-full bg-slate-100">
+              <div
+                className="h-full rounded-full bg-blue-500 transition-all duration-300"
+                style={{
+                  width: `${
+                    (task.subtasks.filter((t) => t.isCompleted).length /
+                      task.subtasks.length) *
+                    100
+                  }%`,
+                }}
+              />
+            </div>
+            <span className="text-[10px] font-medium text-slate-500">
+              {task.subtasks.filter((t) => t.isCompleted).length}/
+              {task.subtasks.length}
+            </span>
+          </div>
+          <div className="space-y-1">
+            {task.subtasks.map((subtask) => (
+              <label
+                key={subtask.id}
+                className="flex items-start gap-2 text-xs text-slate-700 hover:text-slate-900 cursor-pointer group"
+              >
+                <input
+                  type="checkbox"
+                  className="mt-0.5 rounded border-slate-300 text-blue-500 focus:ring-blue-500"
+                  checked={subtask.isCompleted}
+                  onChange={() => handleToggleSubtask(subtask.id)}
+                />
+                <span className={subtask.isCompleted ? 'text-slate-400 line-through' : ''}>
+                  {subtask.title}
+                </span>
+              </label>
+            ))}
+          </div>
+        </div>
+      )}
+
       <div className="ml-3.5 flex flex-wrap items-center gap-2 text-[10px] text-slate-500">
         <span className="flex items-center gap-1" title="Assignee">
           <svg className="h-3 w-3 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">

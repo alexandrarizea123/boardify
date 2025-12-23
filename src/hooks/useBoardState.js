@@ -217,6 +217,7 @@ export const useBoardState = () => {
       difficulty: draft.difficulty,
       estimatedTime: draft.estimatedTime,
       dueDate: draft.dueDate,
+      subtasks: draft.subtasks || [],
       createdAt: now,
       updatedAt: now,
     }
@@ -299,9 +300,24 @@ export const useBoardState = () => {
   const handleUpdateTask = (taskId, columnId, updates) => {
     if (!activeBoard) return
 
-    updateActiveBoard((board) => ({
-      ...board,
-      columns: board.columns.map((column) =>
+    updateActiveBoard((board) => {
+      // Find Done column
+      const doneColumn = board.columns.find((c) => c.name.toLowerCase() === 'done')
+      const doneColumnId = doneColumn?.id
+
+      let shouldMoveToDone = false
+      
+      // Calculate if we should move based on updates
+      if (updates.subtasks && doneColumnId && columnId !== doneColumnId) {
+        // If we are updating subtasks, check if ALL are now completed
+        const allCompleted = updates.subtasks.length > 0 && updates.subtasks.every((st) => st.isCompleted)
+        if (allCompleted) {
+          shouldMoveToDone = true
+        }
+      }
+
+      // First apply updates
+      const updatedColumns = board.columns.map((column) =>
         column.id === columnId
           ? {
               ...column,
@@ -316,8 +332,37 @@ export const useBoardState = () => {
               ),
             }
           : column,
-      ),
-    }))
+      )
+
+      if (!shouldMoveToDone) {
+        return { ...board, columns: updatedColumns }
+      }
+
+      // If we need to move to Done, do it now
+      // Remove from original column
+      let movingTask = null
+      const columnsAfterRemove = updatedColumns.map((column) => {
+        if (column.id !== columnId) return column
+        const tasks = column.tasks.filter((task) => {
+          if (task.id === taskId) {
+            movingTask = task
+            return false
+          }
+          return true
+        })
+        return { ...column, tasks }
+      })
+
+      // Add to Done column
+      const finalColumns = columnsAfterRemove.map((column) => {
+        if (column.id === doneColumnId) {
+          return { ...column, tasks: [...column.tasks, movingTask] }
+        }
+        return column
+      })
+
+      return { ...board, columns: finalColumns }
+    })
   }
 
   return {
