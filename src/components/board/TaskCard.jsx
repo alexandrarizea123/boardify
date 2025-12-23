@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { boardUsers, priorities, difficulties } from '../../data/boardData'
 import MentionTextarea from '../mentions/MentionTextarea'
-import { formatDate } from '../../utils/date'
+import { formatDate, getDueDateStatus } from '../../utils/date'
 
 const buildDraft = (task) => ({
   name: task.name,
@@ -11,6 +11,7 @@ const buildDraft = (task) => ({
   priority: task.priority,
   difficulty: task.difficulty || difficulties[1],
   estimatedTime: task.estimatedTime || '',
+  dueDate: task.dueDate || '',
 })
 
 const priorityStyles = {
@@ -47,6 +48,17 @@ const getTypeColor = (type) => {
   
   const index = Math.abs(hash) % defaultTypeColors.length
   return defaultTypeColors[index]
+}
+
+const getDueDateBadgeColor = (status) => {
+  switch (status) {
+    case 'overdue':
+      return 'text-red-600 bg-red-50 border-red-100'
+    case 'due-soon':
+      return 'text-amber-600 bg-amber-50 border-amber-100'
+    default:
+      return 'text-slate-500 bg-slate-50 border-slate-200'
+  }
 }
 
 function TaskCard({
@@ -109,6 +121,7 @@ function TaskCard({
       priority: draft.priority,
       difficulty: draft.difficulty,
       estimatedTime: draft.estimatedTime,
+      dueDate: draft.dueDate,
     })
     setIsEditing(false)
   }
@@ -147,6 +160,8 @@ function TaskCard({
       )
     })
   }
+  
+  const dueDateStatus = getDueDateStatus(task.dueDate)
 
   if (isEditing) {
     return (
@@ -239,14 +254,22 @@ function TaskCard({
           </select>
         </div>
         
-        <input
-          className="w-full rounded-md border border-slate-200 bg-white px-2 py-1 text-xs outline-none focus:border-slate-300"
-          value={draft.estimatedTime}
-          onChange={(event) =>
-            handleDraftChange('estimatedTime', event.target.value)
-          }
-          placeholder="Est. time"
-        />
+        <div className="flex gap-2">
+          <input
+            className="flex-1 rounded-md border border-slate-200 bg-white px-2 py-1 text-xs outline-none focus:border-slate-300"
+            value={draft.estimatedTime}
+            onChange={(event) =>
+              handleDraftChange('estimatedTime', event.target.value)
+            }
+            placeholder="Est. time"
+          />
+          <input
+            type="date"
+            className="flex-1 rounded-md border border-slate-200 bg-white px-2 py-1 text-xs outline-none focus:border-slate-300"
+            value={draft.dueDate}
+            onChange={(event) => handleDraftChange('dueDate', event.target.value)}
+          />
+        </div>
 
         <div className="flex gap-2">
           <button
@@ -292,6 +315,16 @@ function TaskCard({
           </h3>
         </div>
         <div className="flex shrink-0 items-center gap-1">
+          {dueDateStatus && (
+            <span
+              className={`rounded-md border px-1.5 py-0.5 text-[9px] font-medium uppercase tracking-wide ${getDueDateBadgeColor(
+                dueDateStatus.status,
+              )}`}
+              title={formatDate(task.dueDate)}
+            >
+              {dueDateStatus.text}
+            </span>
+          )}
           <span
             className={`rounded-md border px-1 py-0 text-[9px] uppercase tracking-wide ${
               priorityStyles[task.priority] ??

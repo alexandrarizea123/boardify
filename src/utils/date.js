@@ -25,3 +25,22 @@ export const parseEstimatedTime = (timeStr) => {
       return value
   }
 }
+
+export const getDueDateStatus = (dateStr) => {
+  if (!dateStr) return null
+
+  const due = new Date(dateStr)
+  due.setHours(0, 0, 0, 0)
+  
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  
+  const diffTime = due - today
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+
+  if (diffDays < 0) return { text: `${Math.abs(diffDays)}d overdue`, status: 'overdue' }
+  if (diffDays === 0) return { text: 'Due today', status: 'due-soon' }
+  if (diffDays <= 3) return { text: `${diffDays}d left`, status: 'due-soon' }
+  
+  return { text: formatDate(dateStr), status: 'normal' }
+}

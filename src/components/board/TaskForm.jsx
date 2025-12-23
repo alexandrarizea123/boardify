@@ -142,6 +142,14 @@ function TaskForm({
           }
           placeholder="Est. time (e.g. 2h)"
         />
+        <input
+          type="date"
+          className="min-w-[120px] flex-1 rounded-md border border-slate-200 bg-white px-2 py-1 text-xs outline-none focus:border-slate-300"
+          value={draft.dueDate}
+          onChange={(event) =>
+            onUpdateDraft(columnId, 'dueDate', event.target.value)
+          }
+        />
       </div>
       <button
         className="w-fit self-end rounded-md border border-slate-300 bg-slate-100 px-4 py-1.5 text-xs font-semibold uppercase tracking-wide text-slate-900"

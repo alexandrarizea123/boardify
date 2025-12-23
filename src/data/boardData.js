@@ -14,6 +14,7 @@ export const emptyTaskDraft = () => ({
   priority: priorities[2],
   difficulty: difficulties[1],
   estimatedTime: '1h',
+  dueDate: '',
 })
 
 export const buildDefaultColumns = () => [
