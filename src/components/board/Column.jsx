@@ -10,6 +10,7 @@ function Column({
   onMoveTask,
   onAddTask,
   onUpdateDraft,
+  onUpdateTask,
 }) {
   return (
     <section className="min-w-[260px] flex-1 border border-slate-200 p-4">
@@ -39,6 +40,7 @@ function Column({
             columns={columns}
             onMoveTask={onMoveTask}
             onDeleteTask={onDeleteTask}
+            onUpdateTask={onUpdateTask}
           />
         ))}
       </div>

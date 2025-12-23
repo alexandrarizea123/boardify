@@ -9,6 +9,7 @@ function ColumnList({
   onDeleteColumn,
   onDeleteTask,
   onMoveTask,
+  onUpdateTask,
 }) {
   return (
     <main className="flex gap-4 overflow-x-auto pb-4">
@@ -23,6 +24,7 @@ function ColumnList({
           onDeleteColumn={onDeleteColumn}
           onDeleteTask={onDeleteTask}
           onMoveTask={onMoveTask}
+          onUpdateTask={onUpdateTask}
         />
       ))}
     </main>

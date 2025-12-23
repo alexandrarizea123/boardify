@@ -165,6 +165,30 @@ export const useBoardState = () => {
     }))
   }
 
+  const handleUpdateTask = (taskId, columnId, updates) => {
+    if (!board) return
+
+    setBoard((current) => ({
+      ...current,
+      columns: current.columns.map((column) =>
+        column.id === columnId
+          ? {
+              ...column,
+              tasks: column.tasks.map((task) =>
+                task.id === taskId
+                  ? {
+                      ...task,
+                      ...updates,
+                      updatedAt: new Date().toISOString(),
+                    }
+                  : task,
+              ),
+            }
+          : column,
+      ),
+    }))
+  }
+
   return {
     board,
     boardName,
@@ -182,5 +206,6 @@ export const useBoardState = () => {
     handleMoveTask,
     handleDeleteColumn,
     handleDeleteTask,
+    handleUpdateTask,
   }
 }

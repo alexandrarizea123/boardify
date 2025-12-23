@@ -25,6 +25,7 @@ function App() {
     handleMoveTask,
     handleDeleteColumn,
     handleDeleteTask,
+    handleUpdateTask,
   } = useBoardState()
 
   if (!board) {
@@ -56,6 +57,7 @@ function App() {
           onDeleteColumn={handleDeleteColumn}
           onDeleteTask={handleDeleteTask}
           onMoveTask={handleMoveTask}
+          onUpdateTask={handleUpdateTask}
         />
         <ProgressBar
           doneCount={progress.doneCount}
