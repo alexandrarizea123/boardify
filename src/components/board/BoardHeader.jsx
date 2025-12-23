@@ -1,6 +1,14 @@
 import { useState } from 'react'
 
-function BoardHeader({ name, description, onUpdate, onDelete }) {
+function BoardHeader({
+  name,
+  description,
+  taskTypes = [],
+  filterType = 'All',
+  onFilterChange = () => {},
+  onUpdate,
+  onDelete,
+}) {
   const [isEditing, setIsEditing] = useState(false)
   const [draftName, setDraftName] = useState(name)
   const [draftDescription, setDraftDescription] = useState(description || '')
@@ -34,6 +42,18 @@ function BoardHeader({ name, description, onUpdate, onDelete }) {
           Task Management Board
         </p>
         <div className="flex items-center gap-2">
+          <select
+            className="rounded-md border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-700 outline-none focus:border-slate-300"
+            value={filterType}
+            onChange={(e) => onFilterChange(e.target.value)}
+          >
+            <option value="All">All Types</option>
+            {taskTypes.map((type) => (
+              <option key={type} value={type}>
+                {type}
+              </option>
+            ))}
+          </select>
           {!isEditing && (
             <button
               className="rounded-md border border-slate-200 px-3 py-1 text-xs font-semibold text-slate-700 hover:border-slate-300 hover:text-slate-900"

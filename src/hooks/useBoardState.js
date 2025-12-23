@@ -18,11 +18,22 @@ export const useBoardState = () => {
   const [newColumnName, setNewColumnName] = useState('')
   const [taskDraftsByBoard, setTaskDraftsByBoard] = useState({})
   const [taskTypes, setTaskTypes] = useState(defaultTaskTypes)
+  const [filterType, setFilterType] = useState('All')
 
   const activeBoard = useMemo(
     () => boards.find((board) => board.id === activeBoardId) ?? null,
     [boards, activeBoardId],
   )
+
+  const filteredColumns = useMemo(() => {
+    if (!activeBoard) return []
+    if (filterType === 'All') return activeBoard.columns
+
+    return activeBoard.columns.map((column) => ({
+      ...column,
+      tasks: column.tasks.filter((task) => task.type === filterType),
+    }))
+  }, [activeBoard, filterType])
 
   const activeTaskDrafts = taskDraftsByBoard[activeBoardId] || {}
 
@@ -292,6 +303,9 @@ export const useBoardState = () => {
     canAddBoard,
     isCreatingBoard,
     taskTypes,
+    filterType,
+    filteredColumns,
+    setFilterType,
     setBoardName,
     setBoardDescription,
     setNewColumnName,

@@ -20,6 +20,9 @@ function App() {
     canAddBoard,
     isCreatingBoard,
     taskTypes,
+    filterType,
+    filteredColumns,
+    setFilterType,
     setBoardName,
     setBoardDescription,
     setNewColumnName,
@@ -65,6 +68,9 @@ function App() {
         <BoardHeader
           name={activeBoard.name}
           description={activeBoard.description}
+          taskTypes={taskTypes}
+          filterType={filterType}
+          onFilterChange={setFilterType}
           onUpdate={handleUpdateBoardDetails}
           onDelete={() => handleDeleteBoard(activeBoard.id)}
         />
@@ -74,7 +80,7 @@ function App() {
           onSubmit={handleAddColumn}
         />
         <ColumnList
-          columns={activeBoard.columns}
+          columns={filteredColumns}
           taskDrafts={taskDrafts}
           taskTypes={taskTypes}
           onAddType={handleAddTaskType}
