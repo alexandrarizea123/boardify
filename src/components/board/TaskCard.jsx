@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { boardUsers, priorities, taskTypes } from '../../data/boardData'
+import { boardUsers, priorities } from '../../data/boardData'
 import MentionTextarea from '../mentions/MentionTextarea'
 import { formatDate } from '../../utils/date'
 
@@ -18,10 +18,41 @@ const priorityStyles = {
   Low: 'bg-blue-100 text-blue-800 border-blue-100',
 }
 
+const typeColors = {
+  Feature: 'bg-green-500',
+  Bug: 'bg-red-500',
+  Chore: 'bg-slate-500',
+  Research: 'bg-purple-500',
+}
+
+const defaultTypeColors = [
+  'bg-blue-500',
+  'bg-yellow-500',
+  'bg-pink-500',
+  'bg-indigo-500',
+  'bg-teal-500',
+  'bg-cyan-500',
+]
+
+const getTypeColor = (type) => {
+  if (typeColors[type]) return typeColors[type]
+  
+  // Simple hash to pick a stable color for custom types
+  let hash = 0
+  for (let i = 0; i < type.length; i++) {
+    hash = type.charCodeAt(i) + ((hash << 5) - hash)
+  }
+  
+  const index = Math.abs(hash) % defaultTypeColors.length
+  return defaultTypeColors[index]
+}
+
 function TaskCard({
   task,
   columnId,
   columns,
+  taskTypes,
+  onAddType,
   onMoveTask,
   onDeleteTask,
   onUpdateTask,
@@ -29,9 +60,41 @@ function TaskCard({
 }) {
   const [isEditing, setIsEditing] = useState(false)
   const [draft, setDraft] = useState(() => buildDraft(task))
+  const [isAddingType, setIsAddingType] = useState(false)
+  const [newTypeValue, setNewTypeValue] = useState('')
 
   const handleDraftChange = (field, value) => {
     setDraft((current) => ({ ...current, [field]: value }))
+  }
+
+  const handleTypeChange = (event) => {
+    const value = event.target.value
+    if (value === '__new__') {
+      setIsAddingType(true)
+      setNewTypeValue('')
+    } else {
+      handleDraftChange('type', value)
+    }
+  }
+
+  const handleNewTypeSubmit = () => {
+    const trimmed = newTypeValue.trim()
+    if (trimmed) {
+      onAddType(trimmed)
+      handleDraftChange('type', trimmed)
+    }
+    setIsAddingType(false)
+    setNewTypeValue('')
+  }
+
+  const handleNewTypeKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault()
+      handleNewTypeSubmit()
+    } else if (event.key === 'Escape') {
+      setIsAddingType(false)
+      setNewTypeValue('')
+    }
   }
 
   const handleSave = () => {
@@ -49,6 +112,8 @@ function TaskCard({
   const handleCancel = () => {
     setDraft(buildDraft(task))
     setIsEditing(false)
+    setIsAddingType(false)
+    setNewTypeValue('')
   }
 
   const renderDescription = (text) => {
@@ -112,17 +177,34 @@ function TaskCard({
           ))}
         </select>
         <div className="flex gap-2">
-          <select
-            className="flex-1 rounded-md border border-slate-200 bg-white px-2 py-1 text-xs outline-none focus:border-slate-300"
-            value={draft.type}
-            onChange={(event) => handleDraftChange('type', event.target.value)}
-          >
-            {taskTypes.map((type) => (
-              <option key={type} value={type}>
-                {type}
+          {isAddingType ? (
+            <div className="flex flex-1 items-center gap-1">
+              <input
+                className="w-full min-w-0 rounded-md border border-slate-200 bg-white px-2 py-1 text-xs outline-none focus:border-slate-300"
+                value={newTypeValue}
+                onChange={(e) => setNewTypeValue(e.target.value)}
+                onBlur={handleNewTypeSubmit}
+                onKeyDown={handleNewTypeKeyDown}
+                placeholder="Type name..."
+                autoFocus
+              />
+            </div>
+          ) : (
+            <select
+              className="flex-1 rounded-md border border-slate-200 bg-white px-2 py-1 text-xs outline-none focus:border-slate-300"
+              value={draft.type}
+              onChange={handleTypeChange}
+            >
+              {taskTypes.map((type) => (
+                <option key={type} value={type}>
+                  {type}
+                </option>
+              ))}
+              <option value="__new__" className="font-semibold text-slate-500">
+                + Add new type...
               </option>
-            ))}
-          </select>
+            </select>
+          )}
           <select
             className="flex-1 rounded-md border border-slate-200 bg-white px-2 py-1 text-xs outline-none focus:border-slate-300"
             value={draft.priority}
@@ -219,8 +301,15 @@ function TaskCard({
         </p>
       )}
       <div className="flex flex-wrap gap-2 text-[11px] text-slate-700">
-        <span>Type: {task.type}</span>
-        <span>Assignee: {task.assignee}</span>
+        <span className="flex items-center gap-1.5 rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 font-medium">
+          <span
+            className={`h-1.5 w-1.5 rounded-full ${getTypeColor(task.type)}`}
+          />
+          {task.type}
+        </span>
+        <span className="flex items-center gap-1 rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5">
+          Assignee: {task.assignee}
+        </span>
       </div>
       <div className="flex flex-wrap gap-2 text-[10px] text-slate-600">
         <span>Created {formatDate(task.createdAt)}</span>

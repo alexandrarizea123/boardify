@@ -19,6 +19,7 @@ function App() {
     progress,
     canAddBoard,
     isCreatingBoard,
+    taskTypes,
     setBoardName,
     setBoardDescription,
     setNewColumnName,
@@ -29,6 +30,7 @@ function App() {
     handleUpdateBoardDetails,
     handleDeleteBoard,
     handleAddColumn,
+    handleAddTaskType,
     updateTaskDraft,
     handleAddTask,
     handleMoveTask,
@@ -74,6 +76,8 @@ function App() {
         <ColumnList
           columns={activeBoard.columns}
           taskDrafts={taskDrafts}
+          taskTypes={taskTypes}
+          onAddType={handleAddTaskType}
           onAddTask={handleAddTask}
           onUpdateDraft={updateTaskDraft}
           onDeleteColumn={handleDeleteColumn}

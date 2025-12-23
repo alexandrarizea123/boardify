@@ -5,6 +5,8 @@ function Column({
   column,
   draft,
   columns,
+  taskTypes,
+  onAddType,
   onDeleteColumn,
   onDeleteTask,
   onMoveTask,
@@ -62,6 +64,8 @@ function Column({
             task={task}
             columnId={column.id}
             columns={columns}
+            taskTypes={taskTypes}
+            onAddType={onAddType}
             onMoveTask={onMoveTask}
             onDeleteTask={onDeleteTask}
             onUpdateTask={onUpdateTask}
@@ -73,6 +77,8 @@ function Column({
       <TaskForm
         columnId={column.id}
         draft={draft}
+        taskTypes={taskTypes}
+        onAddType={onAddType}
         onAddTask={onAddTask}
         onUpdateDraft={onUpdateDraft}
       />

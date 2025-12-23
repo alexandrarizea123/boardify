@@ -4,6 +4,8 @@ import Column from './Column'
 function ColumnList({
   columns,
   taskDrafts,
+  taskTypes,
+  onAddType,
   onAddTask,
   onUpdateDraft,
   onDeleteColumn,
@@ -19,6 +21,8 @@ function ColumnList({
           column={column}
           draft={taskDrafts[column.id] || emptyTaskDraft()}
           columns={columns}
+          taskTypes={taskTypes}
+          onAddType={onAddType}
           onAddTask={onAddTask}
           onUpdateDraft={onUpdateDraft}
           onDeleteColumn={onDeleteColumn}

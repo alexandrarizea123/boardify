@@ -4,6 +4,7 @@ import {
   buildDrafts,
   createId,
   emptyTaskDraft,
+  taskTypes as defaultTaskTypes,
 } from '../data/boardData'
 
 const MAX_BOARDS = 3
@@ -16,6 +17,7 @@ export const useBoardState = () => {
   const [boardDescription, setBoardDescription] = useState('')
   const [newColumnName, setNewColumnName] = useState('')
   const [taskDraftsByBoard, setTaskDraftsByBoard] = useState({})
+  const [taskTypes, setTaskTypes] = useState(defaultTaskTypes)
 
   const activeBoard = useMemo(
     () => boards.find((board) => board.id === activeBoardId) ?? null,
@@ -136,6 +138,15 @@ export const useBoardState = () => {
       },
     }))
     setNewColumnName('')
+  }
+
+  const handleAddTaskType = (newType) => {
+    const trimmed = newType.trim()
+    if (!trimmed) return
+    setTaskTypes((current) => {
+      if (current.includes(trimmed)) return current
+      return [...current, trimmed]
+    })
   }
 
   const updateTaskDraft = (columnId, field, value) => {
@@ -280,6 +291,7 @@ export const useBoardState = () => {
     progress,
     canAddBoard,
     isCreatingBoard,
+    taskTypes,
     setBoardName,
     setBoardDescription,
     setNewColumnName,
@@ -290,6 +302,7 @@ export const useBoardState = () => {
     handleUpdateBoardDetails,
     handleDeleteBoard,
     handleAddColumn,
+    handleAddTaskType,
     updateTaskDraft,
     handleAddTask,
     handleMoveTask,
