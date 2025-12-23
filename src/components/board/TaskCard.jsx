@@ -438,13 +438,13 @@ function TaskCard({
           </button>
         </div>
       </div>
-      {task.description && (
+      {task?.description && (
         <p className="ml-3.5 text-xs text-slate-600 line-clamp-2">
           {renderDescription(task.description)}
         </p>
       )}
 
-      {task.subtasks && task.subtasks.length > 0 && (
+      {task?.subtasks && task.subtasks.length > 0 && (
         <div className="ml-3.5 mt-2 space-y-2">
           <div className="flex items-center gap-2">
             <div className="h-1.5 flex-1 rounded-full bg-slate-100">
@@ -452,7 +452,7 @@ function TaskCard({
                 className="h-full rounded-full bg-blue-500 transition-all duration-300"
                 style={{
                   width: `${
-                    (task.subtasks.filter((t) => t.isCompleted).length /
+                    (task.subtasks.filter((t) => t?.isCompleted).length /
                       task.subtasks.length) *
                     100
                   }%`,
@@ -460,26 +460,28 @@ function TaskCard({
               />
             </div>
             <span className="text-[10px] font-medium text-slate-500">
-              {task.subtasks.filter((t) => t.isCompleted).length}/
+              {task.subtasks.filter((t) => t?.isCompleted).length}/
               {task.subtasks.length}
             </span>
           </div>
           <div className="space-y-1">
             {task.subtasks.map((subtask) => (
-              <label
-                key={subtask.id}
-                className="flex items-start gap-2 text-xs text-slate-700 hover:text-slate-900 cursor-pointer group"
-              >
-                <input
-                  type="checkbox"
-                  className="mt-0.5 rounded border-slate-300 text-blue-500 focus:ring-blue-500"
-                  checked={subtask.isCompleted}
-                  onChange={() => handleToggleSubtask(subtask.id)}
-                />
-                <span className={subtask.isCompleted ? 'text-slate-400 line-through' : ''}>
-                  {subtask.title}
-                </span>
-              </label>
+              subtask && (
+                <label
+                  key={subtask.id}
+                  className="flex items-start gap-2 text-xs text-slate-700 hover:text-slate-900 cursor-pointer group"
+                >
+                  <input
+                    type="checkbox"
+                    className="mt-0.5 rounded border-slate-300 text-blue-500 focus:ring-blue-500"
+                    checked={!!subtask.isCompleted}
+                    onChange={() => handleToggleSubtask(subtask.id)}
+                  />
+                  <span className={subtask.isCompleted ? 'text-slate-400 line-through' : ''}>
+                    {subtask.title}
+                  </span>
+                </label>
+              )
             ))}
           </div>
         </div>
