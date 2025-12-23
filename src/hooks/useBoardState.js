@@ -37,6 +37,17 @@ export const useBoardState = () => {
 
   const activeTaskDrafts = taskDraftsByBoard[activeBoardId] || {}
 
+  const typeStats = useMemo(() => {
+    if (!activeBoard) return {}
+    const stats = {}
+    for (const column of activeBoard.columns) {
+      for (const task of column.tasks) {
+        stats[task.type] = (stats[task.type] || 0) + 1
+      }
+    }
+    return stats
+  }, [activeBoard])
+
   const progress = useMemo(() => {
     if (!activeBoard) return { todoCount: 0, doneCount: 0, percent: 0 }
 
@@ -300,6 +311,7 @@ export const useBoardState = () => {
     newColumnName,
     taskDrafts: activeTaskDrafts,
     progress,
+    typeStats,
     canAddBoard,
     isCreatingBoard,
     taskTypes,
