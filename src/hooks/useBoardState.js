@@ -87,6 +87,29 @@ export const useBoardState = () => {
     setNewColumnName('')
   }
 
+  const handleUpdateBoardDetails = (updates) => {
+    if (!activeBoardId) return
+    updateActiveBoard((board) => ({
+      ...board,
+      ...updates,
+    }))
+  }
+
+  const handleDeleteBoard = (boardId) => {
+    setBoards((current) => {
+      const remaining = current.filter((board) => board.id !== boardId)
+      setActiveBoardId((currentId) =>
+        currentId === boardId ? remaining[0]?.id ?? null : currentId,
+      )
+      return remaining
+    })
+    setTaskDraftsByBoard((current) => {
+      const { [boardId]: _, ...rest } = current
+      return rest
+    })
+    setIsCreatingBoard(false)
+  }
+
   const updateActiveBoard = (updater) => {
     setBoards((current) =>
       current.map((board) =>
@@ -264,6 +287,8 @@ export const useBoardState = () => {
     cancelCreateBoard,
     handleCreateBoard,
     handleSelectBoard,
+    handleUpdateBoardDetails,
+    handleDeleteBoard,
     handleAddColumn,
     updateTaskDraft,
     handleAddTask,

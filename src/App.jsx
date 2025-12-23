@@ -26,6 +26,8 @@ function App() {
     cancelCreateBoard,
     handleCreateBoard,
     handleSelectBoard,
+    handleUpdateBoardDetails,
+    handleDeleteBoard,
     handleAddColumn,
     updateTaskDraft,
     handleAddTask,
@@ -61,6 +63,8 @@ function App() {
         <BoardHeader
           name={activeBoard.name}
           description={activeBoard.description}
+          onUpdate={handleUpdateBoardDetails}
+          onDelete={() => handleDeleteBoard(activeBoard.id)}
         />
         <ColumnForm
           value={newColumnName}

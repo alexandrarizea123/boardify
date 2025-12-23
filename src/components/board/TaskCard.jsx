@@ -153,7 +153,18 @@ function TaskCard({
   }
 
   return (
-    <article className="flex flex-col gap-2 border border-slate-200 p-3 text-sm">
+    <article
+      className="flex flex-col gap-2 border border-slate-200 p-3 text-sm"
+      draggable
+      onDragStart={(event) => {
+        event.dataTransfer.setData(
+          'application/json',
+          JSON.stringify({ taskId: task.id, columnId }),
+        )
+        event.dataTransfer.setData('text/plain', task.id)
+        event.dataTransfer.effectAllowed = 'move'
+      }}
+    >
       <div className="flex items-start justify-between gap-2">
         <div className="flex items-center gap-2">
           {isDone && (

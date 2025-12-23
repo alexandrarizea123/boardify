@@ -12,8 +12,30 @@ function Column({
   onUpdateDraft,
   onUpdateTask,
 }) {
+  const handleDrop = (event) => {
+    event.preventDefault()
+    const payload =
+      event.dataTransfer.getData('application/json') ||
+      event.dataTransfer.getData('text/plain')
+    if (!payload) return
+
+    try {
+      const data =
+        payload.trim().startsWith('{') ? JSON.parse(payload) : { taskId: payload }
+      if (!data.taskId || !data.columnId) return
+      if (data.columnId === column.id) return
+      onMoveTask(data.taskId, data.columnId, column.id)
+    } catch {
+      // Ignore invalid drag payloads.
+    }
+  }
+
   return (
-    <section className="min-w-[260px] flex-1 border border-slate-200 p-4">
+    <section
+      className="min-w-[260px] flex-1 border border-slate-200 p-4"
+      onDragOver={(event) => event.preventDefault()}
+      onDrop={handleDrop}
+    >
       <div className="flex items-center justify-between">
         <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
           {column.name}
