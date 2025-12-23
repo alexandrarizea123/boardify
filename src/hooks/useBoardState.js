@@ -301,22 +301,18 @@ export const useBoardState = () => {
     if (!activeBoard) return
 
     updateActiveBoard((board) => {
-      // Find In Progress column (or default to first column if not found)
-      const inProgressColumn = board.columns.find((c) => c.name.toLowerCase() === 'in progress') || board.columns[0]
-      const inProgressColumnId = inProgressColumn?.id
+      // Find Done column
+      const doneColumn = board.columns.find((c) => c.name.toLowerCase() === 'done')
+      const doneColumnId = doneColumn?.id
 
       let shouldMoveToDone = false
-      let shouldMoveToInProgress = false
       
       // Calculate if we should move based on updates
-      if (updates.subtasks && doneColumnId) {
-        const hasSubtasks = updates.subtasks.length > 0
-        const allCompleted = hasSubtasks && updates.subtasks.every((st) => st.isCompleted)
-        
-        if (columnId !== doneColumnId && allCompleted) {
+      if (updates.subtasks && doneColumnId && columnId !== doneColumnId) {
+        // If we are updating subtasks, check if ALL are now completed
+        const allCompleted = updates.subtasks.length > 0 && updates.subtasks.every((st) => st.isCompleted)
+        if (allCompleted) {
           shouldMoveToDone = true
-        } else if (columnId === doneColumnId && hasSubtasks && !allCompleted) {
-          shouldMoveToInProgress = true
         }
       }
 
@@ -338,14 +334,11 @@ export const useBoardState = () => {
           : column,
       )
 
-      if (!shouldMoveToDone && !shouldMoveToInProgress) {
+      if (!shouldMoveToDone) {
         return { ...board, columns: updatedColumns }
       }
 
-      const targetColumnId = shouldMoveToDone ? doneColumnId : inProgressColumnId
-      if (!targetColumnId) return { ...board, columns: updatedColumns } // Safety check
-
-      // If we need to move, do it now
+      // If we need to move to Done, do it now
       // Remove from original column
       let movingTask = null
       const columnsAfterRemove = updatedColumns.map((column) => {
@@ -364,9 +357,9 @@ export const useBoardState = () => {
         return { ...board, columns: updatedColumns }
       }
 
-      // Add to target column
+      // Add to Done column
       const finalColumns = columnsAfterRemove.map((column) => {
-        if (column.id === targetColumnId) {
+        if (column.id === doneColumnId) {
           return { ...column, tasks: [...column.tasks, movingTask] }
         }
         return column
