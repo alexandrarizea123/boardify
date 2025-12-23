@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { boardUsers, priorities, difficulties } from '../../data/boardData'
+import { boardUsers, priorities, difficulties, createId } from '../../data/boardData'
 import MentionTextarea from '../mentions/MentionTextarea'
 
 function TaskForm({
@@ -12,6 +12,7 @@ function TaskForm({
 }) {
   const [isAddingType, setIsAddingType] = useState(false)
   const [newTypeValue, setNewTypeValue] = useState('')
+  const [newSubtaskName, setNewSubtaskName] = useState('')
 
   const handleTypeChange = (event) => {
     const value = event.target.value
@@ -43,6 +44,35 @@ function TaskForm({
     }
   }
 
+  const handleAddSubtask = () => {
+    const trimmed = newSubtaskName.trim()
+    if (!trimmed) return
+    const newSubtask = { id: createId(), title: trimmed, isCompleted: false }
+    const currentSubtasks = draft.subtasks || []
+    onUpdateDraft(columnId, 'subtasks', [...currentSubtasks, newSubtask])
+    setNewSubtaskName('')
+  }
+
+  const handleRemoveSubtask = (subtaskId) => {
+    const currentSubtasks = draft.subtasks || []
+    onUpdateDraft(
+      columnId,
+      'subtasks',
+      currentSubtasks.filter((t) => t.id !== subtaskId)
+    )
+  }
+
+  const handleSubtaskNameChange = (subtaskId, newName) => {
+    const currentSubtasks = draft.subtasks || []
+    onUpdateDraft(
+      columnId,
+      'subtasks',
+      currentSubtasks.map((t) =>
+        t.id === subtaskId ? { ...t, title: newName } : t
+      )
+    )
+  }
+
   return (
     <form
       className="mt-3 flex flex-col gap-2 border-t border-slate-200 pt-3"
@@ -64,6 +94,50 @@ function TaskForm({
         users={boardUsers}
         placeholder="Short description"
       />
+      
+      <div className="space-y-2">
+        {(draft.subtasks || []).map((subtask) => (
+          <div key={subtask.id} className="flex gap-2">
+            <input
+              className="flex-1 rounded-md border border-slate-200 bg-white px-2 py-1 text-xs outline-none focus:border-slate-300"
+              value={subtask.title}
+              onChange={(e) =>
+                handleSubtaskNameChange(subtask.id, e.target.value)
+              }
+              placeholder="Subtask name"
+            />
+            <button
+              type="button"
+              className="text-slate-400 hover:text-red-500"
+              onClick={() => handleRemoveSubtask(subtask.id)}
+            >
+              ✕
+            </button>
+          </div>
+        ))}
+        <div className="flex gap-2">
+          <input
+            className="flex-1 rounded-md border border-slate-200 bg-white px-2 py-1 text-xs outline-none focus:border-slate-300"
+            value={newSubtaskName}
+            onChange={(e) => setNewSubtaskName(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault()
+                handleAddSubtask()
+              }
+            }}
+            placeholder="+ Add subtask"
+          />
+          <button
+            type="button"
+            className="rounded-md border border-slate-200 px-2 py-1 text-xs font-semibold text-slate-600 hover:border-slate-300 hover:text-slate-900"
+            onClick={handleAddSubtask}
+          >
+            Add
+          </button>
+        </div>
+      </div>
+
       <select
         className="rounded-md border border-slate-200 bg-white px-2 py-1 text-xs outline-none focus:border-slate-300"
         value={draft.assignee}
