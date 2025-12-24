@@ -1,4 +1,5 @@
 import { useBoardState } from './hooks/useBoardState'
+import { emptyTaskDraft } from './data/boardData'
 import {
   BoardCreateForm,
   BoardHeader,
@@ -140,7 +141,7 @@ function App() {
                 <div className="rounded-md border border-slate-200 bg-white p-4 shadow-sm">
                   <TaskForm
                     columnId={todoColumn.id}
-                    draft={taskDrafts?.[todoColumn.id]}
+                    draft={taskDrafts?.[todoColumn.id] || emptyTaskDraft()}
                     taskTypes={taskTypes}
                     onAddType={handleAddTaskType}
                     onAddTask={handleAddTask}

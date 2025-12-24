@@ -75,31 +75,29 @@ function TaskForm({
 
   return (
     <form
-      className="mt-3 flex flex-col gap-2 border-t border-slate-200 pt-3"
+      className="flex flex-col gap-3 pt-1"
       onSubmit={(event) => onAddTask(event, columnId)}
     >
-      <p className="text-xs font-semibold uppercase tracking-wide text-slate-600">
-        Add task
-      </p>
       <input
-        className="rounded-md border border-slate-200 bg-white px-2 py-1 text-xs outline-none focus:border-slate-300"
+        className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:bg-white focus:ring-1 focus:ring-blue-500 transition-all"
         value={draft.name}
         onChange={(event) => onUpdateDraft(columnId, 'name', event.target.value)}
         placeholder="Task name"
+        autoFocus
       />
       <MentionTextarea
-        className="min-h-[64px] resize-none rounded-md border border-slate-200 bg-white px-2 py-1 text-xs outline-none focus:border-slate-300"
+        className="min-h-[80px] resize-none rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:bg-white focus:ring-1 focus:ring-blue-500 transition-all"
         value={draft.description}
         onChange={(value) => onUpdateDraft(columnId, 'description', value)}
         users={boardUsers}
-        placeholder="Short description"
+        placeholder="Add a description... (use @ to mention)"
       />
       
       <div className="space-y-2">
         {(draft.subtasks || []).map((subtask) => (
           <div key={subtask.id} className="flex gap-2">
             <input
-              className="flex-1 rounded-md border border-slate-200 bg-white px-2 py-1 text-xs outline-none focus:border-slate-300"
+              className="flex-1 rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs outline-none focus:border-blue-500 focus:bg-white transition-all"
               value={subtask.title}
               onChange={(e) =>
                 handleSubtaskNameChange(subtask.id, e.target.value)
@@ -108,7 +106,7 @@ function TaskForm({
             />
             <button
               type="button"
-              className="text-slate-400 hover:text-red-500"
+              className="text-slate-400 hover:text-red-500 transition-colors"
               onClick={() => handleRemoveSubtask(subtask.id)}
             >
               ✕
@@ -117,7 +115,7 @@ function TaskForm({
         ))}
         <div className="flex gap-2">
           <input
-            className="flex-1 rounded-md border border-slate-200 bg-white px-2 py-1 text-xs outline-none focus:border-slate-300"
+            className="flex-1 rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs outline-none focus:border-blue-500 focus:bg-white transition-all"
             value={newSubtaskName}
             onChange={(e) => setNewSubtaskName(e.target.value)}
             onKeyDown={(e) => {
@@ -130,7 +128,7 @@ function TaskForm({
           />
           <button
             type="button"
-            className="rounded-md border border-slate-200 px-2 py-1 text-xs font-semibold text-slate-600 hover:border-slate-300 hover:text-slate-900"
+            className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:border-slate-300 hover:text-slate-900 transition-colors"
             onClick={handleAddSubtask}
           >
             Add
@@ -138,35 +136,34 @@ function TaskForm({
         </div>
       </div>
 
-      <select
-        className="rounded-md border border-slate-200 bg-white px-2 py-1 text-xs outline-none focus:border-slate-300"
-        value={draft.assignee}
-        onChange={(event) =>
-          onUpdateDraft(columnId, 'assignee', event.target.value)
-        }
-      >
-        {boardUsers.map((user) => (
-          <option key={user} value={user}>
-            {user}
-          </option>
-        ))}
-      </select>
-      <div className="flex flex-wrap gap-2">
+      <div className="grid grid-cols-2 gap-2">
+        <select
+          className="rounded-lg border border-slate-200 bg-slate-50 px-2 py-1.5 text-xs outline-none focus:border-blue-500 focus:bg-white transition-all"
+          value={draft.assignee}
+          onChange={(event) =>
+            onUpdateDraft(columnId, 'assignee', event.target.value)
+          }
+        >
+          {boardUsers.map((user) => (
+            <option key={user} value={user}>
+              {user}
+            </option>
+          ))}
+        </select>
+
         {isAddingType ? (
-          <div className="flex flex-1 items-center gap-1">
-            <input
-              className="w-full min-w-0 rounded-md border border-slate-200 bg-white px-2 py-1 text-xs outline-none focus:border-slate-300"
-              value={newTypeValue}
-              onChange={(e) => setNewTypeValue(e.target.value)}
-              onBlur={handleNewTypeSubmit}
-              onKeyDown={handleNewTypeKeyDown}
-              placeholder="Type name..."
-              autoFocus
-            />
-          </div>
+          <input
+            className="w-full min-w-0 rounded-lg border border-slate-200 bg-slate-50 px-2 py-1.5 text-xs outline-none focus:border-blue-500 focus:bg-white transition-all"
+            value={newTypeValue}
+            onChange={(e) => setNewTypeValue(e.target.value)}
+            onBlur={handleNewTypeSubmit}
+            onKeyDown={handleNewTypeKeyDown}
+            placeholder="Type name..."
+            autoFocus
+          />
         ) : (
           <select
-            className="min-w-[120px] flex-1 rounded-md border border-slate-200 bg-white px-2 py-1 text-xs outline-none focus:border-slate-300"
+            className="rounded-lg border border-slate-200 bg-slate-50 px-2 py-1.5 text-xs outline-none focus:border-blue-500 focus:bg-white transition-all"
             value={draft.type}
             onChange={handleTypeChange}
           >
@@ -176,12 +173,13 @@ function TaskForm({
               </option>
             ))}
             <option value="__new__" className="font-semibold text-slate-500">
-              + Add new type...
+              + New type
             </option>
           </select>
         )}
+
         <select
-          className="min-w-[120px] flex-1 rounded-md border border-slate-200 bg-white px-2 py-1 text-xs outline-none focus:border-slate-300"
+          className="rounded-lg border border-slate-200 bg-slate-50 px-2 py-1.5 text-xs outline-none focus:border-blue-500 focus:bg-white transition-all"
           value={draft.priority}
           onChange={(event) =>
             onUpdateDraft(columnId, 'priority', event.target.value)
@@ -193,10 +191,9 @@ function TaskForm({
             </option>
           ))}
         </select>
-      </div>
-      <div className="flex flex-wrap gap-2">
+
         <select
-          className="min-w-[120px] flex-1 rounded-md border border-slate-200 bg-white px-2 py-1 text-xs outline-none focus:border-slate-300"
+          className="rounded-lg border border-slate-200 bg-slate-50 px-2 py-1.5 text-xs outline-none focus:border-blue-500 focus:bg-white transition-all"
           value={draft.difficulty}
           onChange={(event) =>
             onUpdateDraft(columnId, 'difficulty', event.target.value)
@@ -208,8 +205,11 @@ function TaskForm({
             </option>
           ))}
         </select>
+      </div>
+
+      <div className="flex gap-2">
         <input
-          className="min-w-[120px] flex-1 rounded-md border border-slate-200 bg-white px-2 py-1 text-xs outline-none focus:border-slate-300"
+          className="flex-1 rounded-lg border border-slate-200 bg-slate-50 px-2 py-1.5 text-xs outline-none focus:border-blue-500 focus:bg-white transition-all"
           value={draft.estimatedTime}
           onChange={(event) =>
             onUpdateDraft(columnId, 'estimatedTime', event.target.value)
@@ -218,18 +218,19 @@ function TaskForm({
         />
         <input
           type="date"
-          className="min-w-[120px] flex-1 rounded-md border border-slate-200 bg-white px-2 py-1 text-xs outline-none focus:border-slate-300"
+          className="flex-1 rounded-lg border border-slate-200 bg-slate-50 px-2 py-1.5 text-xs outline-none focus:border-blue-500 focus:bg-white transition-all"
           value={draft.dueDate}
           onChange={(event) =>
             onUpdateDraft(columnId, 'dueDate', event.target.value)
           }
         />
       </div>
+
       <button
-        className="w-fit self-end rounded-md border border-slate-300 bg-slate-100 px-4 py-1.5 text-xs font-semibold uppercase tracking-wide text-slate-900"
+        className="w-full rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 transition-colors"
         type="submit"
       >
-        Add task
+        Create Task
       </button>
     </form>
   )
