@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { parseEstimatedTime } from '../utils/date'
 import {
   boardUsers,
@@ -14,12 +14,27 @@ import {
 const MAX_BOARDS = 3
 
 export const useBoardState = () => {
-  const [boards, setBoards] = useState([])
-  const [activeBoardId, setActiveBoardId] = useState(null)
+  const initialBoardRef = useRef(null)
+  if (!initialBoardRef.current) {
+    const columns = buildDefaultColumns()
+    initialBoardRef.current = {
+      id: createId(),
+      name: 'Default Board',
+      description: '',
+      columns,
+    }
+  }
+
+  const initialBoard = initialBoardRef.current
+
+  const [boards, setBoards] = useState(() => [initialBoard])
+  const [activeBoardId, setActiveBoardId] = useState(() => initialBoard.id)
   const [isCreatingBoard, setIsCreatingBoard] = useState(false)
   const [boardName, setBoardName] = useState('')
   const [boardDescription, setBoardDescription] = useState('')
-  const [taskDraftsByBoard, setTaskDraftsByBoard] = useState({})
+  const [taskDraftsByBoard, setTaskDraftsByBoard] = useState(() => ({
+    [initialBoard.id]: buildDrafts(initialBoard.columns),
+  }))
   const [taskTypes, setTaskTypes] = useState(defaultTaskTypes)
   const [filterType, setFilterType] = useState('All')
   const [isTaskFormOpen, setIsTaskFormOpen] = useState(false)
@@ -136,13 +151,28 @@ export const useBoardState = () => {
   }
 
   const handleDeleteBoard = (boardId) => {
-    setBoards((current) => {
-      const remaining = current.filter((board) => board.id !== boardId)
-      setActiveBoardId((currentId) =>
-        currentId === boardId ? remaining[0]?.id ?? null : currentId,
-      )
-      return remaining
-    })
+    const remaining = boards.filter((board) => board.id !== boardId)
+    if (remaining.length === 0) {
+      const columns = buildDefaultColumns()
+      const fallbackBoard = {
+        id: createId(),
+        name: 'Default Board',
+        description: '',
+        columns,
+      }
+      setBoards([fallbackBoard])
+      setActiveBoardId(fallbackBoard.id)
+      setTaskDraftsByBoard({
+        [fallbackBoard.id]: buildDrafts(columns),
+      })
+      setIsCreatingBoard(false)
+      return
+    }
+
+    setBoards(remaining)
+    setActiveBoardId((currentId) =>
+      currentId === boardId ? remaining[0]?.id ?? null : currentId,
+    )
     setTaskDraftsByBoard((current) => {
       const { [boardId]: _, ...rest } = current
       return rest
