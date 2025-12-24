@@ -171,7 +171,7 @@ export const useBoardState = () => {
       [activeBoardId]: {
         ...(current[activeBoardId] || {}),
         [columnId]: {
-          ...(current[activeBoardId]?.[columnId] || {}),
+          ...(current[activeBoardId]?.[columnId] || emptyTaskDraft()),
           [field]: value,
         },
       },
