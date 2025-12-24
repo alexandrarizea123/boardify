@@ -22,29 +22,61 @@ const priorityStyles = {
   Low: 'bg-slate-50 text-slate-700 border-slate-200 ring-slate-200',
 }
 
-const getTypeEmoji = (type) => {
+const getTypeContent = (type) => {
   switch (type) {
     case 'Feature':
-      return '🚀' // Rocket for feature
+      return { icon: '🚀', style: 'bg-indigo-50 text-indigo-700 border-indigo-200' }
     case 'Bug':
-      return '🐞' // Lady beetle for bug
+      // Gray icon (grayscale emoji) with subtle background
+      return { icon: <span className="grayscale opacity-75">🐞</span>, style: 'bg-slate-100 text-slate-700 border-slate-200' }
     case 'Chore':
-      return '🧹' // Broom for chore
+      return { icon: '🧹', style: 'bg-slate-50 text-slate-600 border-slate-200' }
     case 'Research':
-      return '🔬' // Microscope for research
+      return { icon: '🔬', style: 'bg-purple-50 text-purple-700 border-purple-200' }
     default:
-      return '📋'
+      return { icon: '📋', style: 'bg-slate-50 text-slate-600 border-slate-200' }
+  }
+}
+
+const getPriorityIcon = (priority) => {
+  switch (priority) {
+    case 'Highest': 
+      return (
+        <svg className="h-3 w-3 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+        </svg>
+      )
+    case 'High':
+      return (
+        <svg className="h-3 w-3 text-orange-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
+        </svg>
+      )
+    case 'Medium':
+      return (
+        <svg className="h-3 w-3 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h14" />
+        </svg>
+      )
+    case 'Low':
+      return (
+        <svg className="h-3 w-3 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+        </svg>
+      )
+    default:
+      return null
   }
 }
 
 const getDueDateBadgeColor = (status) => {
   switch (status) {
     case 'overdue':
-      return 'text-red-600 bg-red-50 border-red-100'
+      return 'text-red-700 bg-red-50 border-red-200'
     case 'due-soon':
-      return 'text-amber-600 bg-amber-50 border-amber-100'
+      return 'text-amber-700 bg-amber-50 border-amber-200'
     default:
-      return 'text-slate-500 bg-slate-50 border-slate-200'
+      return 'text-slate-600 bg-slate-50 border-slate-200'
   }
 }
 
@@ -221,7 +253,7 @@ function TaskCard({
 
   if (isEditing) {
     return (
-      <article className="flex flex-col gap-3 rounded-xl bg-white p-3 shadow-sm ring-1 ring-slate-200/50">
+      <article className="flex flex-col gap-3 rounded-xl bg-white p-4 shadow-sm ring-1 ring-slate-200/50">
         <div className="flex items-start justify-between gap-2">
           <h3 className="text-sm font-semibold text-slate-900">Edit task</h3>
         </div>
@@ -238,7 +270,8 @@ function TaskCard({
           users={boardUsers}
           placeholder="Add a description... (use @ to mention)"
         />
-
+        
+        {/* ... existing edit inputs ... */}
         <div className="space-y-2">
           {draft.subtasks.map((subtask) => (
             <div key={subtask.id} className="flex gap-2">
@@ -388,9 +421,11 @@ function TaskCard({
     )
   }
 
+  const typeContent = getTypeContent(task.type)
+
   return (
     <article
-      className="group relative flex flex-col gap-3 rounded-xl bg-white p-3 shadow-sm ring-1 ring-slate-200/50 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md hover:ring-slate-300/50"
+      className="group relative flex flex-col gap-3 rounded-xl bg-white p-4 shadow-sm ring-1 ring-slate-200/50 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md hover:ring-slate-300/50 cursor-pointer"
       draggable
       onDragStart={(event) => {
         event.dataTransfer.setData(
@@ -407,62 +442,46 @@ function TaskCard({
         event.currentTarget.style.transform = ''
       }}
     >
-      <div className="flex items-start justify-between gap-2">
-        <div className="flex min-w-0 flex-1 flex-col gap-2">
-          <div className="flex items-center gap-2 flex-wrap">
-             {/* Type Badge */}
-             <span className="inline-flex items-center gap-1 rounded-md bg-slate-50 px-2 py-1 text-[10px] font-medium text-slate-600 ring-1 ring-inset ring-slate-200/50">
-               <span>{getTypeEmoji(task.type)}</span>
-               <span>{task.type}</span>
-             </span>
-             
-             {/* Priority Badge */}
-             <span className={`inline-flex items-center rounded-md px-2 py-1 text-[10px] font-medium border ${priorityStyles[task.priority] || 'bg-slate-100 text-slate-600 border-slate-200'}`}>
-               {task.priority}
-             </span>
-          </div>
-          
-          <h3 className="break-words text-sm font-medium text-slate-800 leading-snug">
-            {task.name}
-          </h3>
-        </div>
-        <div className="flex shrink-0 items-start gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-          <button
-            className="p-1 text-slate-400 hover:text-blue-600 rounded-md hover:bg-blue-50"
-            type="button"
-            onClick={() => {
-              setDraft(buildDraft(task))
-              setIsEditing(true)
-            }}
-            aria-label="Edit"
-          >
-            <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-            </svg>
-          </button>
-          <button
-            className="p-1 text-slate-400 hover:text-red-600 rounded-md hover:bg-red-50"
-            type="button"
-            onClick={() => onDeleteTask(task.id, columnId)}
-            aria-label="Delete"
-          >
-            <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-            </svg>
-          </button>
+      {/* Avatar Overlap */}
+      <div 
+        className={`absolute -top-3 -right-3 z-10 flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold shadow-sm ring-2 ring-white ${getAvatarColor(task.assignee)}`}
+        title={task.assignee}
+      >
+        {getInitials(task.assignee)}
+      </div>
+
+      <div className="flex flex-col gap-2">
+        {/* Title */}
+        <h3 className="break-words text-base font-semibold text-slate-900 leading-snug pr-6">
+          {task.name}
+        </h3>
+
+        {/* Badges Row */}
+        <div className="flex flex-wrap items-center gap-2">
+           {/* Type Badge */}
+           <span className={`inline-flex items-center gap-1.5 rounded-md border px-2 py-0.5 text-xs font-medium shadow-sm ${typeContent.style}`}>
+             <span className="text-sm">{typeContent.icon}</span>
+             <span>{task.type}</span>
+           </span>
+           
+           {/* Priority Badge */}
+           <span className={`inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-xs font-medium shadow-sm ${priorityStyles[task.priority] || 'bg-slate-50 text-slate-600 border-slate-200'}`}>
+             {getPriorityIcon(task.priority)}
+             <span>{task.priority}</span>
+           </span>
         </div>
       </div>
 
+      {/* Description */}
       {task?.description && (
-        <div className="pl-2.5">
-          <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed">
-            {renderDescription(task.description)}
-          </p>
-        </div>
+        <p className="text-sm text-slate-600 line-clamp-2 leading-relaxed">
+          {renderDescription(task.description)}
+        </p>
       )}
 
+      {/* Subtasks */}
       {task?.subtasks && task.subtasks.length > 0 && (
-        <div className="pl-2.5 mt-1 space-y-2">
+        <div className="mt-1 space-y-2">
           <div className="flex items-center gap-2">
             <div className="h-1.5 flex-1 rounded-full bg-slate-100 overflow-hidden">
               <div
@@ -483,53 +502,74 @@ function TaskCard({
         </div>
       )}
 
-      <div className="pl-2.5 mt-1 flex flex-wrap items-center justify-between gap-2 border-t border-slate-50 pt-2">
-        <div className="flex flex-wrap items-center gap-2">
-           {dueDateStatus && (
-            <span
-              className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-medium ${
-                dueDateStatus.status === 'overdue' ? 'bg-red-50 text-red-700' :
-                dueDateStatus.status === 'due-soon' ? 'bg-amber-50 text-amber-700' :
-                'bg-slate-100 text-slate-600'
-              }`}
-              title={formatDate(task.dueDate)}
-            >
-              <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+      {/* Metadata Footer */}
+      <div className="mt-3 flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-3">
+         {/* Due Date */}
+         {dueDateStatus ? (
+          <span
+            className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs font-medium ${
+              getDueDateBadgeColor(dueDateStatus.status)
+            }`}
+            title={formatDate(task.dueDate)}
+          >
+            <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            {dueDateStatus.text}
+          </span>
+        ) : (
+          <span /> // Spacer
+        )}
+
+        <div className="flex items-center gap-3 text-xs text-slate-500 ml-auto">
+          {/* Difficulty */}
+          {task.difficulty && (
+             <span className="font-medium text-slate-500 hover:text-slate-700 transition-colors">
+               {task.difficulty}
+             </span>
+          )}
+          
+          {/* Estimated Time */}
+          {task.estimatedTime && (
+            <span className="flex items-center gap-1" title="Estimated Time">
+              <svg className="h-3.5 w-3.5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              {dueDateStatus.text}
+              {task.estimatedTime}
             </span>
           )}
-
-          {(task.difficulty || task.estimatedTime) && (
-             <div className="flex items-center gap-2 text-[10px] text-slate-400">
-                {task.difficulty && (
-                  <span className={`font-medium ${
-                    task.difficulty === 'Hard' ? 'text-red-500' :
-                    task.difficulty === 'Medium' ? 'text-orange-500' :
-                    'text-green-500'
-                  }`}>
-                    {task.difficulty}
-                  </span>
-                )}
-                {task.estimatedTime && (
-                  <span className="flex items-center gap-0.5" title="Estimated Time">
-                    <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    {task.estimatedTime}
-                  </span>
-                )}
-             </div>
-          )}
         </div>
+      </div>
 
-        <div 
-          className={`flex h-6 w-6 items-center justify-center rounded-full text-[10px] font-bold shadow-sm ring-2 ring-white ${getAvatarColor(task.assignee)}`}
-          title={task.assignee}
+      {/* Hover Actions */}
+      <div className="absolute top-3 right-8 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">
+        <button
+          className="rounded-md p-1 text-slate-400 hover:bg-blue-50 hover:text-blue-600 bg-white/80 backdrop-blur-sm shadow-sm ring-1 ring-slate-200"
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation()
+            setDraft(buildDraft(task))
+            setIsEditing(true)
+          }}
+          aria-label="Edit"
         >
-          {getInitials(task.assignee)}
-        </div>
+          <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+          </svg>
+        </button>
+        <button
+          className="rounded-md p-1 text-slate-400 hover:bg-red-50 hover:text-red-600 bg-white/80 backdrop-blur-sm shadow-sm ring-1 ring-slate-200"
+          type="button"
+          onClick={(e) => {
+             e.stopPropagation()
+             onDeleteTask(task.id, columnId)
+          }}
+          aria-label="Delete"
+        >
+          <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+          </svg>
+        </button>
       </div>
     </article>
   )
