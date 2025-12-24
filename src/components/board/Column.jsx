@@ -1,17 +1,13 @@
 import TaskCard from './TaskCard'
-import TaskForm from './TaskForm'
 
 function Column({
   column,
-  draft,
   columns,
   taskTypes,
   onAddType,
   onDeleteColumn,
   onDeleteTask,
   onMoveTask,
-  onAddTask,
-  onUpdateDraft,
   onUpdateTask,
 }) {
   const handleDrop = (event) => {
@@ -73,15 +69,6 @@ function Column({
           />
         ))}
       </div>
-
-      <TaskForm
-        columnId={column.id}
-        draft={draft}
-        taskTypes={taskTypes}
-        onAddType={onAddType}
-        onAddTask={onAddTask}
-        onUpdateDraft={onUpdateDraft}
-      />
     </section>
   )
 }

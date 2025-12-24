@@ -20,6 +20,7 @@ export const useBoardState = () => {
   const [taskDraftsByBoard, setTaskDraftsByBoard] = useState({})
   const [taskTypes, setTaskTypes] = useState(defaultTaskTypes)
   const [filterType, setFilterType] = useState('All')
+  const [isTaskFormOpen, setIsTaskFormOpen] = useState(false)
 
   const activeBoard = useMemo(
     () => boards.find((board) => board.id === activeBoardId) ?? null,
@@ -238,6 +239,7 @@ export const useBoardState = () => {
         [columnId]: emptyTaskDraft(),
       },
     }))
+    setIsTaskFormOpen(false)
   }
 
   const handleMoveTask = (taskId, fromColumnId, toColumnId) => {
@@ -384,7 +386,9 @@ export const useBoardState = () => {
     taskTypes,
     filterType,
     filteredColumns,
+    isTaskFormOpen,
     setFilterType,
+    setIsTaskFormOpen,
     setBoardName,
     setBoardDescription,
     setNewColumnName,

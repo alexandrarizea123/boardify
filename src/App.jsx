@@ -44,7 +44,13 @@ function App() {
     handleDeleteColumn,
     handleDeleteTask,
     handleUpdateTask,
+    isTaskFormOpen,
+    setIsTaskFormOpen,
   } = useBoardState()
+
+  const todoColumn = activeBoard?.columns.find(
+    (c) => c.name.toLowerCase() === 'to do',
+  ) || activeBoard?.columns[0]
 
   if (!activeBoard || isCreatingBoard) {
     return (
@@ -79,6 +85,13 @@ function App() {
               onFilterChange={setFilterType}
               onUpdate={handleUpdateBoardDetails}
               onDelete={() => handleDeleteBoard(activeBoard.id)}
+              isTaskFormOpen={isTaskFormOpen}
+              onToggleTaskForm={() => setIsTaskFormOpen(!isTaskFormOpen)}
+              draft={taskDrafts?.[todoColumn?.id]}
+              onAddType={handleAddTaskType}
+              onAddTask={handleAddTask}
+              onUpdateDraft={updateTaskDraft}
+              todoColumnId={todoColumn?.id}
             />
             <ColumnForm
               value={newColumnName}
@@ -87,11 +100,8 @@ function App() {
             />
             <ColumnList
               columns={filteredColumns}
-              taskDrafts={taskDrafts}
               taskTypes={taskTypes}
               onAddType={handleAddTaskType}
-              onAddTask={handleAddTask}
-              onUpdateDraft={updateTaskDraft}
               onDeleteColumn={handleDeleteColumn}
               onDeleteTask={handleDeleteTask}
               onMoveTask={handleMoveTask}

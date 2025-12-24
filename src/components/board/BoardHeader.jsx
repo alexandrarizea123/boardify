@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import TaskForm from './TaskForm'
 
 function BoardHeader({
   name,
@@ -8,6 +9,13 @@ function BoardHeader({
   onFilterChange = () => {},
   onUpdate,
   onDelete,
+  isTaskFormOpen,
+  onToggleTaskForm,
+  draft,
+  onAddType,
+  onAddTask,
+  onUpdateDraft,
+  todoColumnId,
 }) {
   const [isEditing, setIsEditing] = useState(false)
   const [draftName, setDraftName] = useState(name)
@@ -54,6 +62,17 @@ function BoardHeader({
               </option>
             ))}
           </select>
+          <button
+            className={`rounded-md border px-3 py-1 text-xs font-semibold transition-colors ${
+              isTaskFormOpen
+                ? 'border-slate-200 bg-slate-100 text-slate-900 hover:bg-slate-200'
+                : 'border-blue-600 bg-blue-600 text-white hover:bg-blue-700'
+            }`}
+            type="button"
+            onClick={onToggleTaskForm}
+          >
+            {isTaskFormOpen ? 'Cancel' : 'New task'}
+          </button>
           {!isEditing && (
             <button
               className="rounded-md border border-slate-200 px-3 py-1 text-xs font-semibold text-slate-700 hover:border-slate-300 hover:text-slate-900"
@@ -112,6 +131,16 @@ function BoardHeader({
             </p>
           )}
         </div>
+      )}
+      {isTaskFormOpen && todoColumnId && (
+        <TaskForm
+          columnId={todoColumnId}
+          draft={draft}
+          taskTypes={taskTypes}
+          onAddType={onAddType}
+          onAddTask={onAddTask}
+          onUpdateDraft={onUpdateDraft}
+        />
       )}
     </header>
   )
