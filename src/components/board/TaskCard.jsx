@@ -16,39 +16,25 @@ const buildDraft = (task) => ({
 })
 
 const priorityStyles = {
-  Highest: 'bg-red-200 text-red-800 border-red-200',
-  High: 'bg-red-100 text-red-700 border-red-100',
-  Medium: 'bg-orange-100 text-orange-800 border-orange-100',
-  Low: 'bg-blue-100 text-blue-800 border-blue-100',
+  Highest: 'bg-red-50 text-red-700 border-red-200 ring-red-200',
+  High: 'bg-orange-50 text-orange-700 border-orange-200 ring-orange-200',
+  Medium: 'bg-amber-50 text-amber-700 border-amber-200 ring-amber-200',
+  Low: 'bg-slate-50 text-slate-700 border-slate-200 ring-slate-200',
 }
 
-const typeColors = {
-  Feature: 'bg-green-500',
-  Bug: 'bg-red-500',
-  Chore: 'bg-slate-500',
-  Research: 'bg-purple-500',
-}
-
-const defaultTypeColors = [
-  'bg-blue-500',
-  'bg-yellow-500',
-  'bg-pink-500',
-  'bg-indigo-500',
-  'bg-teal-500',
-  'bg-cyan-500',
-]
-
-const getTypeColor = (type) => {
-  if (typeColors[type]) return typeColors[type]
-  
-  // Simple hash to pick a stable color for custom types
-  let hash = 0
-  for (let i = 0; i < type.length; i++) {
-    hash = type.charCodeAt(i) + ((hash << 5) - hash)
+const getTypeEmoji = (type) => {
+  switch (type) {
+    case 'Feature':
+      return '🚀' // Rocket for feature
+    case 'Bug':
+      return '🐞' // Lady beetle for bug
+    case 'Chore':
+      return '🧹' // Broom for chore
+    case 'Research':
+      return '🔬' // Microscope for research
+    default:
+      return '📋'
   }
-  
-  const index = Math.abs(hash) % defaultTypeColors.length
-  return defaultTypeColors[index]
 }
 
 const getDueDateBadgeColor = (status) => {
@@ -421,20 +407,21 @@ function TaskCard({
         event.currentTarget.style.transform = ''
       }}
     >
-      {/* Priority Stripe */}
-      <div className={`absolute left-0 top-3 bottom-3 w-1 rounded-r-full ${
-        task.priority === 'Highest' ? 'bg-red-500' :
-        task.priority === 'High' ? 'bg-orange-500' :
-        task.priority === 'Medium' ? 'bg-blue-400' :
-        'bg-slate-300'
-      }`} />
-
-      <div className="pl-2.5 flex items-start justify-between gap-2">
-        <div className="flex min-w-0 flex-1 flex-col gap-1">
-          <div className="flex items-center gap-1.5">
-             <span className={`inline-block h-1.5 w-1.5 rounded-full ${getTypeColor(task.type)}`} />
-             <span className="text-[10px] font-medium text-slate-500 uppercase tracking-wide">{task.type}</span>
+      <div className="flex items-start justify-between gap-2">
+        <div className="flex min-w-0 flex-1 flex-col gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
+             {/* Type Badge */}
+             <span className="inline-flex items-center gap-1 rounded-md bg-slate-50 px-2 py-1 text-[10px] font-medium text-slate-600 ring-1 ring-inset ring-slate-200/50">
+               <span>{getTypeEmoji(task.type)}</span>
+               <span>{task.type}</span>
+             </span>
+             
+             {/* Priority Badge */}
+             <span className={`inline-flex items-center rounded-md px-2 py-1 text-[10px] font-medium border ${priorityStyles[task.priority] || 'bg-slate-100 text-slate-600 border-slate-200'}`}>
+               {task.priority}
+             </span>
           </div>
+          
           <h3 className="break-words text-sm font-medium text-slate-800 leading-snug">
             {task.name}
           </h3>
