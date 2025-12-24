@@ -27,7 +27,6 @@ const getTypeContent = (type) => {
     case 'Feature':
       return { icon: '🚀', style: 'bg-indigo-50 text-indigo-700 border-indigo-200' }
     case 'Bug':
-      // Gray icon (grayscale emoji) with subtle background
       return { icon: <span className="grayscale opacity-75">🐞</span>, style: 'bg-slate-100 text-slate-700 border-slate-200' }
     case 'Chore':
       return { icon: '🧹', style: 'bg-slate-50 text-slate-600 border-slate-200' }
@@ -210,7 +209,7 @@ function TaskCard({
       return (
         <span
           key={`${token}-${index}`}
-          className="text-xs text-slate-700"
+          className="text-sm text-slate-600"
         >
           {token}
         </span>
@@ -272,7 +271,6 @@ function TaskCard({
           placeholder="Add a description... (use @ to mention)"
         />
         
-        {/* ... existing edit inputs ... */}
         <div className="space-y-2">
           {draft.subtasks.map((subtask) => (
             <div key={subtask.id} className="flex gap-2">
@@ -426,9 +424,15 @@ function TaskCard({
 
   return (
     <article
-      className="group relative flex flex-col gap-3 rounded-xl bg-white p-4 shadow-sm ring-1 ring-slate-200/50 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md hover:ring-slate-300/50 cursor-pointer"
+      className={`group relative flex flex-col gap-3 rounded-xl p-4 shadow-sm ring-1 ring-slate-200/50 transition-all duration-200 cursor-pointer ${
+        isExpanded ? 'bg-slate-50/50 shadow-md ring-slate-300/50' : 'bg-white hover:-translate-y-0.5 hover:shadow-md hover:ring-slate-300/50'
+      }`}
       draggable
-      onClick={() => setIsExpanded(!isExpanded)}
+      onClick={(e) => {
+        // Prevent expansion toggle when clicking specific interactive elements
+        if (e.defaultPrevented) return;
+        setIsExpanded(!isExpanded);
+      }}
       onDragStart={(event) => {
         event.dataTransfer.setData(
           'application/json',
@@ -436,7 +440,6 @@ function TaskCard({
         )
         event.dataTransfer.setData('text/plain', task.id)
         event.dataTransfer.effectAllowed = 'move'
-        // Rotate slightly for delight
         const el = event.currentTarget
         el.style.transform = 'rotate(3deg)'
       }}
@@ -453,20 +456,25 @@ function TaskCard({
       </div>
 
       <div className="flex flex-col gap-2">
-        {/* Title */}
-        <h3 className="break-words text-base font-semibold text-slate-900 leading-snug pr-6">
-          {task.name}
-        </h3>
+        {/* Title & Expand Icon */}
+        <div className="flex items-start justify-between gap-2 pr-6">
+          <h3 className="break-words text-base font-semibold text-slate-900 leading-snug">
+            {task.name}
+          </h3>
+          <div className={`mt-1.5 shrink-0 transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`}>
+            <svg className="h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
+          </div>
+        </div>
 
         {/* Badges Row */}
         <div className="flex flex-wrap items-center gap-2">
-           {/* Type Badge */}
            <span className={`inline-flex items-center gap-1.5 rounded-md border px-2 py-0.5 text-xs font-medium shadow-sm ${typeContent.style}`}>
              <span className="text-sm">{typeContent.icon}</span>
              <span>{task.type}</span>
            </span>
            
-           {/* Priority Badge */}
            <span className={`inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-xs font-medium shadow-sm ${priorityStyles[task.priority] || 'bg-slate-50 text-slate-600 border-slate-200'}`}>
              {getPriorityIcon(task.priority)}
              <span>{task.priority}</span>
@@ -476,28 +484,28 @@ function TaskCard({
 
       {/* Description */}
       {task?.description && (
-        <p className={`text-sm text-slate-600 leading-relaxed ${isExpanded ? '' : 'line-clamp-2'}`}>
+        <div className={`text-sm text-slate-600 leading-relaxed ${isExpanded ? '' : 'line-clamp-2'}`}>
           {renderDescription(task.description)}
-        </p>
+        </div>
       )}
 
-      {/* Expanded Details */}
+      {/* Expanded Details - Subtasks List */}
       {isExpanded && task?.subtasks && task.subtasks.length > 0 && (
-        <div className="flex flex-col gap-2 border-t border-slate-50 pt-3">
+        <div className="flex flex-col gap-2 border-t border-slate-100 pt-3 mt-1">
           <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Subtasks</span>
           <div className="space-y-1.5">
             {task.subtasks.map((subtask) => (
               <div 
                 key={subtask.id} 
-                className="flex items-center gap-2"
+                className="flex items-center gap-2 group/subtask"
                 onClick={(e) => {
-                   e.stopPropagation()
-                   handleToggleSubtask(subtask.id)
+                   e.stopPropagation();
+                   handleToggleSubtask(subtask.id);
                 }}
               >
-                <div className={`h-3.5 w-3.5 rounded border transition-colors flex items-center justify-center ${subtask.isCompleted ? 'bg-blue-500 border-blue-500' : 'bg-white border-slate-300'}`}>
+                <div className={`h-4 w-4 rounded border transition-colors flex items-center justify-center ${subtask.isCompleted ? 'bg-blue-500 border-blue-500' : 'bg-white border-slate-300 group-hover/subtask:border-blue-400'}`}>
                   {subtask.isCompleted && (
-                    <svg className="h-2.5 w-2.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg className="h-3 w-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                     </svg>
                   )}
@@ -511,32 +519,29 @@ function TaskCard({
         </div>
       )}
 
-      {/* Subtasks */}
+      {/* Progress Bar (Always show if subtasks exist) */}
       {task?.subtasks && task.subtasks.length > 0 && (
-        <div className="mt-1 space-y-2">
-          <div className="flex items-center gap-2">
-            <div className="h-1.5 flex-1 rounded-full bg-slate-100 overflow-hidden">
-              <div
-                className="h-full rounded-full bg-blue-500 transition-all duration-300"
-                style={{
-                  width: `${
-                    (task.subtasks.filter((t) => t?.isCompleted).length /
-                      task.subtasks.length) *
-                    100
-                  }%`,
-                }}
-              />
-            </div>
-            <span className="text-[10px] font-medium text-slate-500">
-              {task.subtasks.filter((t) => t?.isCompleted).length}/{task.subtasks.length}
-            </span>
+        <div className="mt-1 flex items-center gap-2">
+          <div className="h-1.5 flex-1 rounded-full bg-slate-100 overflow-hidden">
+            <div
+              className="h-full rounded-full bg-blue-500 transition-all duration-300"
+              style={{
+                width: `${
+                  (task.subtasks.filter((t) => t?.isCompleted).length /
+                    task.subtasks.length) *
+                  100
+                }%`,
+              }}
+            />
           </div>
+          <span className="text-[10px] font-medium text-slate-500">
+            {task.subtasks.filter((t) => t?.isCompleted).length}/{task.subtasks.length}
+          </span>
         </div>
       )}
 
       {/* Metadata Footer */}
       <div className="mt-3 flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-3">
-         {/* Due Date */}
          {dueDateStatus ? (
           <span
             className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs font-medium ${
@@ -550,18 +555,16 @@ function TaskCard({
             {dueDateStatus.text}
           </span>
         ) : (
-          <span /> // Spacer
+          <span />
         )}
 
         <div className="flex items-center gap-3 text-xs text-slate-500 ml-auto">
-          {/* Difficulty */}
           {task.difficulty && (
-             <span className="font-medium text-slate-500 hover:text-slate-700 transition-colors">
+             <span className="font-medium text-slate-500">
                {task.difficulty}
              </span>
           )}
           
-          {/* Estimated Time */}
           {task.estimatedTime && (
             <span className="flex items-center gap-1" title="Estimated Time">
               <svg className="h-3.5 w-3.5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -579,9 +582,9 @@ function TaskCard({
           className="rounded-md p-1 text-slate-400 hover:bg-blue-50 hover:text-blue-600 bg-white/80 backdrop-blur-sm shadow-sm ring-1 ring-slate-200"
           type="button"
           onClick={(e) => {
-            e.stopPropagation()
-            setDraft(buildDraft(task))
-            setIsEditing(true)
+            e.stopPropagation();
+            setDraft(buildDraft(task));
+            setIsEditing(true);
           }}
           aria-label="Edit"
         >
@@ -593,8 +596,8 @@ function TaskCard({
           className="rounded-md p-1 text-slate-400 hover:bg-red-50 hover:text-red-600 bg-white/80 backdrop-blur-sm shadow-sm ring-1 ring-slate-200"
           type="button"
           onClick={(e) => {
-             e.stopPropagation()
-             onDeleteTask(task.id, columnId)
+             e.stopPropagation();
+             onDeleteTask(task.id, columnId);
           }}
           aria-label="Delete"
         >
