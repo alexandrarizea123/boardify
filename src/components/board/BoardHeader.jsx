@@ -6,6 +6,17 @@ function BoardHeader({
   taskTypes = [],
   filterType = 'All',
   onFilterChange = () => {},
+  assigneeOptions = [],
+  assigneeFilter = 'All',
+  onAssigneeFilterChange = () => {},
+  priorityOptions = [],
+  priorityFilter = 'All',
+  onPriorityFilterChange = () => {},
+  difficultyOptions = [],
+  difficultyFilter = 'All',
+  onDifficultyFilterChange = () => {},
+  subtaskFilter = 'All',
+  onSubtaskFilterChange = () => {},
   onUpdate,
   onDelete,
 }) {
@@ -53,6 +64,57 @@ function BoardHeader({
                 {type}
               </option>
             ))}
+          </select>
+          <select
+            className="rounded-md border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-700 outline-none focus:border-slate-300"
+            value={assigneeFilter}
+            onChange={(e) => onAssigneeFilterChange(e.target.value)}
+          >
+            <option value="All">All Assignees</option>
+            {assigneeOptions
+              .filter((assignee) => assignee !== 'All')
+              .map((assignee) => (
+                <option key={assignee} value={assignee}>
+                  {assignee}
+                </option>
+              ))}
+          </select>
+          <select
+            className="rounded-md border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-700 outline-none focus:border-slate-300"
+            value={priorityFilter}
+            onChange={(e) => onPriorityFilterChange(e.target.value)}
+          >
+            <option value="All">All Priorities</option>
+            {priorityOptions
+              .filter((priority) => priority !== 'All')
+              .map((priority) => (
+                <option key={priority} value={priority}>
+                  {priority}
+                </option>
+              ))}
+          </select>
+          <select
+            className="rounded-md border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-700 outline-none focus:border-slate-300"
+            value={difficultyFilter}
+            onChange={(e) => onDifficultyFilterChange(e.target.value)}
+          >
+            <option value="All">All Difficulties</option>
+            {difficultyOptions
+              .filter((difficulty) => difficulty !== 'All')
+              .map((difficulty) => (
+                <option key={difficulty} value={difficulty}>
+                  {difficulty}
+                </option>
+              ))}
+          </select>
+          <select
+            className="rounded-md border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-700 outline-none focus:border-slate-300"
+            value={subtaskFilter}
+            onChange={(e) => onSubtaskFilterChange(e.target.value)}
+          >
+            <option value="All">All Subtasks</option>
+            <option value="Has Subtasks">Has Subtasks</option>
+            <option value="No Subtasks">No Subtasks</option>
           </select>
           {!isEditing && (
             <button

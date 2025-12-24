@@ -394,9 +394,9 @@ function TaskCard({
           </select>
         </div>
 
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <input
-            className="flex-1 rounded-lg border border-slate-200 bg-slate-50 px-2 py-1.5 text-xs outline-none focus:border-blue-500 focus:bg-white transition-all"
+            className="min-w-0 flex-1 rounded-lg border border-slate-200 bg-slate-50 px-2 py-1.5 text-xs outline-none focus:border-blue-500 focus:bg-white transition-all"
             value={draft.estimatedTime}
             onChange={(event) =>
               handleDraftChange('estimatedTime', event.target.value)
@@ -405,7 +405,7 @@ function TaskCard({
           />
           <input
             type="date"
-            className="flex-1 rounded-lg border border-slate-200 bg-slate-50 px-2 py-1.5 text-xs outline-none focus:border-blue-500 focus:bg-white transition-all"
+            className="min-w-0 flex-1 rounded-lg border border-slate-200 bg-slate-50 px-2 py-1.5 text-xs outline-none focus:border-blue-500 focus:bg-white transition-all"
             value={draft.dueDate}
             onChange={(event) => handleDraftChange('dueDate', event.target.value)}
           />

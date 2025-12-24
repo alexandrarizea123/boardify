@@ -26,8 +26,19 @@ function App() {
     isCreatingBoard,
     taskTypes,
     filterType,
+    filterAssignee,
+    filterPriority,
+    filterDifficulty,
+    filterHasSubtasks,
     filteredColumns,
+    assigneeOptions,
+    priorityOptions,
+    difficultyOptions,
     setFilterType,
+    setFilterAssignee,
+    setFilterPriority,
+    setFilterDifficulty,
+    setFilterHasSubtasks,
     setBoardName,
     setBoardDescription,
     startCreateBoard,
@@ -83,6 +94,17 @@ function App() {
               taskTypes={taskTypes}
               filterType={filterType}
               onFilterChange={setFilterType}
+              assigneeOptions={assigneeOptions}
+              assigneeFilter={filterAssignee}
+              onAssigneeFilterChange={setFilterAssignee}
+              priorityOptions={priorityOptions}
+              priorityFilter={filterPriority}
+              onPriorityFilterChange={setFilterPriority}
+              difficultyOptions={difficultyOptions}
+              difficultyFilter={filterDifficulty}
+              onDifficultyFilterChange={setFilterDifficulty}
+              subtaskFilter={filterHasSubtasks}
+              onSubtaskFilterChange={setFilterHasSubtasks}
               onUpdate={handleUpdateBoardDetails}
               onDelete={() => handleDeleteBoard(activeBoard.id)}
             />

@@ -37,6 +37,10 @@ export const useBoardState = () => {
   }))
   const [taskTypes, setTaskTypes] = useState(defaultTaskTypes)
   const [filterType, setFilterType] = useState('All')
+  const [filterAssignee, setFilterAssignee] = useState('All')
+  const [filterPriority, setFilterPriority] = useState('All')
+  const [filterDifficulty, setFilterDifficulty] = useState('All')
+  const [filterHasSubtasks, setFilterHasSubtasks] = useState('All')
   const [isTaskFormOpen, setIsTaskFormOpen] = useState(false)
 
   const activeBoard = useMemo(
@@ -46,13 +50,51 @@ export const useBoardState = () => {
 
   const filteredColumns = useMemo(() => {
     if (!activeBoard) return []
-    if (filterType === 'All') return activeBoard.columns
+    const hasTypeFilter = filterType !== 'All'
+    const hasAssigneeFilter = filterAssignee !== 'All'
+    const hasPriorityFilter = filterPriority !== 'All'
+    const hasDifficultyFilter = filterDifficulty !== 'All'
+    const hasSubtaskFilter = filterHasSubtasks !== 'All'
+
+    if (
+      !hasTypeFilter &&
+      !hasAssigneeFilter &&
+      !hasPriorityFilter &&
+      !hasDifficultyFilter &&
+      !hasSubtaskFilter
+    ) {
+      return activeBoard.columns
+    }
 
     return activeBoard.columns.map((column) => ({
       ...column,
-      tasks: column.tasks.filter((task) => task.type === filterType),
+      tasks: column.tasks.filter((task) => {
+        if (hasTypeFilter && task.type !== filterType) return false
+        if (hasAssigneeFilter) {
+          if (filterAssignee === 'Unassigned') {
+            if (task.assignee) return false
+          } else if (task.assignee !== filterAssignee) {
+            return false
+          }
+        }
+        if (hasPriorityFilter && task.priority !== filterPriority) return false
+        if (hasDifficultyFilter && task.difficulty !== filterDifficulty) return false
+        if (hasSubtaskFilter) {
+          const hasSubtasks = (task.subtasks || []).length > 0
+          if (filterHasSubtasks === 'Has Subtasks' && !hasSubtasks) return false
+          if (filterHasSubtasks === 'No Subtasks' && hasSubtasks) return false
+        }
+        return true
+      }),
     }))
-  }, [activeBoard, filterType])
+  }, [
+    activeBoard,
+    filterAssignee,
+    filterDifficulty,
+    filterHasSubtasks,
+    filterPriority,
+    filterType,
+  ])
 
   const activeTaskDrafts = taskDraftsByBoard[activeBoardId] || {}
 
@@ -66,6 +108,22 @@ export const useBoardState = () => {
     }
     return stats
   }, [activeBoard])
+
+  const assigneeOptions = useMemo(() => {
+    if (!activeBoard) return ['All', ...boardUsers]
+    const assignees = new Set(boardUsers)
+    for (const column of activeBoard.columns) {
+      for (const task of column.tasks) {
+        if (task.assignee) {
+          assignees.add(task.assignee)
+        }
+      }
+    }
+    return ['All', ...Array.from(assignees), 'Unassigned']
+  }, [activeBoard])
+
+  const priorityOptions = useMemo(() => ['All', ...priorities], [])
+  const difficultyOptions = useMemo(() => ['All', ...difficulties], [])
 
   const progress = useMemo(() => {
     if (!activeBoard) return { todoCount: 0, doneCount: 0, percent: 0 }
@@ -382,9 +440,20 @@ export const useBoardState = () => {
     isCreatingBoard,
     taskTypes,
     filterType,
+    filterAssignee,
+    filterPriority,
+    filterDifficulty,
+    filterHasSubtasks,
     filteredColumns,
+    assigneeOptions,
+    priorityOptions,
+    difficultyOptions,
     isTaskFormOpen,
     setFilterType,
+    setFilterAssignee,
+    setFilterPriority,
+    setFilterDifficulty,
+    setFilterHasSubtasks,
     setIsTaskFormOpen,
     setBoardName,
     setBoardDescription,
