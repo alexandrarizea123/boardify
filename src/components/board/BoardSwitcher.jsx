@@ -1,7 +1,12 @@
 function BoardSwitcher({ boards, activeBoardId, onSelect, onAdd, canAdd }) {
   return (
     <div className="flex flex-wrap items-center gap-3 rounded-md border border-slate-200 bg-white p-3">
-      <span className="text-xs font-semibold uppercase tracking-wide text-slate-600">
+      <span className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-slate-600">
+        <img
+          src="/assets/favicon.ico"
+          alt="Boardify"
+          className="h-4 w-4"
+        />
         Boards
       </span>
       <div className="flex flex-wrap gap-2">
