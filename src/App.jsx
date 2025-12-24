@@ -165,10 +165,18 @@ function App() {
               percent={progress.percent}
             />
           </div>
-          <div className="w-full space-y-6 lg:w-auto lg:pt-[52px]">
-            <TaskSummary typeStats={typeStats} />
-            <DeveloperHoursChart developerStats={developerStats} />
-            <OverdueTrendChart tasks={allTasks} />
+          
+          <div className="w-full shrink-0 space-y-6 lg:w-80 lg:pt-[52px]">
+             <div className="sticky top-8 space-y-6">
+                <div className="rounded-xl bg-white p-6 shadow-sm ring-1 ring-slate-200/50">
+                   <h2 className="mb-6 text-lg font-semibold text-slate-800">Analytics</h2>
+                   <div className="space-y-8 divide-y divide-slate-100">
+                      <div><TaskSummary typeStats={typeStats} /></div>
+                      <div className="pt-8"><DeveloperHoursChart developerStats={developerStats} /></div>
+                      <div className="pt-8"><OverdueTrendChart tasks={allTasks} /></div>
+                   </div>
+                </div>
+             </div>
           </div>
         </div>
       </div>

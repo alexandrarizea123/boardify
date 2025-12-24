@@ -29,38 +29,40 @@ const getTypeColor = (type) => {
 }
 
 function TaskSummary({ typeStats }) {
-  const totalTasks = Object.values(typeStats).reduce((acc, count) => acc + count, 0)
-
+  const total = Object.values(typeStats).reduce((a, b) => a + b, 0)
+  
   return (
-    <aside className="w-full shrink-0 space-y-4 rounded-md border border-slate-200 bg-white p-4 xl:w-64">
-      <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-600">
-        Task Summary
-      </h3>
+    <div className="w-full shrink-0 space-y-5">
+      <div className="flex items-center justify-between">
+         <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
+           Task Distribution
+         </h3>
+         <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-bold text-slate-600">
+            {total} Total
+         </span>
+      </div>
+      
       <div className="space-y-3">
-        {Object.entries(typeStats).map(([type, count]) => (
-          <div key={type} className="flex items-center justify-between text-sm">
-            <div className="flex items-center gap-2">
-              <span
-                className={`h-2.5 w-2.5 rounded-full ${getTypeColor(type)}`}
-              />
-              <span className="font-medium text-slate-700">{type}</span>
+        {Object.entries(typeStats).length > 0 ? (
+          Object.entries(typeStats).map(([type, count]) => (
+            <div key={type} className="flex items-center justify-between text-sm">
+              <span className="text-slate-600">{type}</span>
+              <div className="flex items-center gap-2">
+                 <div className="h-1.5 w-24 rounded-full bg-slate-100 overflow-hidden">
+                    <div 
+                       className="h-full rounded-full bg-slate-800"
+                       style={{ width: `${(count / total) * 100}%` }}
+                    />
+                 </div>
+                 <span className="w-4 text-right font-medium text-slate-900">{count}</span>
+              </div>
             </div>
-            <span className="font-semibold text-slate-900">{count}</span>
-          </div>
-        ))}
-        {totalTasks === 0 && (
-          <p className="text-xs text-slate-500">No tasks yet.</p>
+          ))
+        ) : (
+          <p className="text-xs text-slate-400 italic">No tasks yet.</p>
         )}
       </div>
-      {totalTasks > 0 && (
-        <div className="mt-4 border-t border-slate-100 pt-3">
-          <div className="flex items-center justify-between text-sm">
-            <span className="font-semibold text-slate-600">Total</span>
-            <span className="font-bold text-slate-900">{totalTasks}</span>
-          </div>
-        </div>
-      )}
-    </aside>
+    </div>
   )
 }
 

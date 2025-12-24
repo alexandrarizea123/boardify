@@ -62,9 +62,9 @@ function OverdueTrendChart({ tasks = [] }) {
     .join(' ')
 
   return (
-    <div className="w-full shrink-0 space-y-4 rounded-md border border-slate-200 bg-white p-4 lg:w-64">
-      <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-600">
-        Overdue Trend (7 Days)
+    <div className="w-full shrink-0 space-y-5">
+      <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
+        Overdue Trend
       </h3>
       
       <div className="relative h-[120px] w-full">
@@ -78,16 +78,16 @@ function OverdueTrendChart({ tasks = [] }) {
             y1={height - padding}
             x2={width - padding}
             y2={height - padding}
-            stroke="#e2e8f0"
-            strokeWidth="1"
+            stroke="#f1f5f9"
+            strokeWidth="1.5"
           />
           <line
             x1={padding}
             y1={padding}
             x2={width - padding}
             y2={padding}
-            stroke="#e2e8f0"
-            strokeWidth="1"
+            stroke="#f1f5f9"
+            strokeWidth="1.5"
             strokeDasharray="4 4"
           />
 
@@ -95,10 +95,11 @@ function OverdueTrendChart({ tasks = [] }) {
           <polyline
             fill="none"
             stroke="currentColor"
-            strokeWidth="2"
+            strokeWidth="2.5"
             points={points}
             strokeLinecap="round"
             strokeLinejoin="round"
+            className="drop-shadow-sm"
           />
 
           {/* Data Points */}
@@ -107,10 +108,10 @@ function OverdueTrendChart({ tasks = [] }) {
               key={i}
               cx={getX(i)}
               cy={getY(d.count)}
-              r="3"
+              r="3.5"
               fill="white"
               stroke="currentColor"
-              strokeWidth="2"
+              strokeWidth="2.5"
             />
           ))}
 
@@ -119,10 +120,11 @@ function OverdueTrendChart({ tasks = [] }) {
             <text
               key={i}
               x={getX(i)}
-              y={height}
-              fontSize="8"
+              y={height + 12}
+              fontSize="9"
               textAnchor="middle"
-              fill="#64748b"
+              fill="#94a3b8"
+              fontWeight="500"
             >
               {d.date}
             </text>
@@ -130,7 +132,7 @@ function OverdueTrendChart({ tasks = [] }) {
         </svg>
 
         {/* Current Value Tooltip (Static for last point) */}
-        <div className="absolute right-0 top-0 rounded bg-slate-800 px-1.5 py-0.5 text-[10px] font-bold text-white shadow-sm">
+        <div className="absolute right-0 top-0 rounded-full bg-slate-800 px-2 py-0.5 text-[10px] font-bold text-white shadow-sm ring-2 ring-white">
           {trendData[trendData.length - 1].count} overdue
         </div>
       </div>
