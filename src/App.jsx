@@ -3,7 +3,6 @@ import {
   BoardCreateForm,
   BoardHeader,
   BoardSwitcher,
-  ColumnForm,
   ColumnList,
   ProgressBar,
   TaskSummary,
@@ -17,7 +16,6 @@ function App() {
     activeBoard,
     boardName,
     boardDescription,
-    newColumnName,
     taskDrafts,
     progress,
     typeStats,
@@ -30,19 +28,16 @@ function App() {
     setFilterType,
     setBoardName,
     setBoardDescription,
-    setNewColumnName,
     startCreateBoard,
     cancelCreateBoard,
     handleCreateBoard,
     handleSelectBoard,
     handleUpdateBoardDetails,
     handleDeleteBoard,
-    handleAddColumn,
     handleAddTaskType,
     updateTaskDraft,
     handleAddTask,
     handleMoveTask,
-    handleDeleteColumn,
     handleDeleteTask,
     handleUpdateTask,
     isTaskFormOpen,
@@ -88,7 +83,7 @@ function App() {
               onDelete={() => handleDeleteBoard(activeBoard.id)}
             />
             <div className="flex flex-col gap-4">
-              <div className="flex flex-wrap items-start justify-between gap-4">
+              <div className="flex items-center">
                 <button
                   className={`flex items-center gap-2 rounded-md border px-4 py-3 text-sm font-semibold shadow-sm transition-all ${
                     isTaskFormOpen
@@ -136,13 +131,6 @@ function App() {
                     </>
                   )}
                 </button>
-                <div className="w-full max-w-xs">
-                  <ColumnForm
-                    value={newColumnName}
-                    onChange={setNewColumnName}
-                    onSubmit={handleAddColumn}
-                  />
-                </div>
               </div>
               
               {isTaskFormOpen && todoColumn?.id && (
@@ -163,7 +151,7 @@ function App() {
               columns={filteredColumns}
               taskTypes={taskTypes}
               onAddType={handleAddTaskType}
-              onDeleteColumn={handleDeleteColumn}
+              onDeleteColumn={() => {}} // No-op since columns are fixed
               onDeleteTask={handleDeleteTask}
               onMoveTask={handleMoveTask}
               onUpdateTask={handleUpdateTask}

@@ -16,7 +16,6 @@ export const useBoardState = () => {
   const [isCreatingBoard, setIsCreatingBoard] = useState(false)
   const [boardName, setBoardName] = useState('')
   const [boardDescription, setBoardDescription] = useState('')
-  const [newColumnName, setNewColumnName] = useState('')
   const [taskDraftsByBoard, setTaskDraftsByBoard] = useState({})
   const [taskTypes, setTaskTypes] = useState(defaultTaskTypes)
   const [filterType, setFilterType] = useState('All')
@@ -123,7 +122,6 @@ export const useBoardState = () => {
 
   const handleSelectBoard = (boardId) => {
     setActiveBoardId(boardId)
-    setNewColumnName('')
   }
 
   const handleUpdateBoardDetails = (updates) => {
@@ -155,26 +153,6 @@ export const useBoardState = () => {
         board.id === activeBoardId ? updater(board) : board,
       ),
     )
-  }
-
-  const handleAddColumn = (event) => {
-    event.preventDefault()
-    const trimmedName = newColumnName.trim()
-    if (!trimmedName || !activeBoardId) return
-
-    const column = { id: createId(), name: trimmedName, tasks: [] }
-    updateActiveBoard((board) => ({
-      ...board,
-      columns: [...board.columns, column],
-    }))
-    setTaskDraftsByBoard((current) => ({
-      ...current,
-      [activeBoardId]: {
-        ...(current[activeBoardId] || {}),
-        [column.id]: emptyTaskDraft(),
-      },
-    }))
-    setNewColumnName('')
   }
 
   const handleAddTaskType = (newType) => {
@@ -267,19 +245,6 @@ export const useBoardState = () => {
             : column,
         ),
       }
-    })
-  }
-
-  const handleDeleteColumn = (columnId) => {
-    if (!activeBoardId) return
-
-    updateActiveBoard((board) => ({
-      ...board,
-      columns: board.columns.filter((column) => column.id !== columnId),
-    }))
-    setTaskDraftsByBoard((current) => {
-      const { [columnId]: _, ...rest } = current[activeBoardId] || {}
-      return { ...current, [activeBoardId]: rest }
     })
   }
 
@@ -376,7 +341,6 @@ export const useBoardState = () => {
     activeBoard,
     boardName,
     boardDescription,
-    newColumnName,
     taskDrafts: activeTaskDrafts,
     progress,
     typeStats,
@@ -391,19 +355,16 @@ export const useBoardState = () => {
     setIsTaskFormOpen,
     setBoardName,
     setBoardDescription,
-    setNewColumnName,
     startCreateBoard,
     cancelCreateBoard,
     handleCreateBoard,
     handleSelectBoard,
     handleUpdateBoardDetails,
     handleDeleteBoard,
-    handleAddColumn,
     handleAddTaskType,
     updateTaskDraft,
     handleAddTask,
     handleMoveTask,
-    handleDeleteColumn,
     handleDeleteTask,
     handleUpdateTask,
   }

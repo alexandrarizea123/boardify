@@ -5,7 +5,6 @@ function Column({
   columns,
   taskTypes,
   onAddType,
-  onDeleteColumn,
   onDeleteTask,
   onMoveTask,
   onUpdateTask,
@@ -42,14 +41,6 @@ function Column({
           <span className="text-xs text-slate-600">
             {column.tasks.length}
           </span>
-          <button
-            className="rounded-md border border-slate-200 px-2 py-0.5 text-[10px] uppercase tracking-wide text-slate-700 hover:border-slate-300 hover:bg-slate-50"
-            type="button"
-            onClick={() => onDeleteColumn(column.id)}
-            aria-label={`Delete ${column.name} column`}
-          >
-            Delete column
-          </button>
         </div>
       </div>
 
