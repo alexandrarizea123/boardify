@@ -8,6 +8,7 @@ import {
   ProgressBar,
   TaskSummary,
   DeveloperHoursChart,
+  TaskForm,
 } from './components/board'
 
 function App() {
@@ -85,19 +86,43 @@ function App() {
               onFilterChange={setFilterType}
               onUpdate={handleUpdateBoardDetails}
               onDelete={() => handleDeleteBoard(activeBoard.id)}
-              isTaskFormOpen={isTaskFormOpen}
-              onToggleTaskForm={() => setIsTaskFormOpen(!isTaskFormOpen)}
-              draft={taskDrafts?.[todoColumn?.id]}
-              onAddType={handleAddTaskType}
-              onAddTask={handleAddTask}
-              onUpdateDraft={updateTaskDraft}
-              todoColumnId={todoColumn?.id}
             />
-            <ColumnForm
-              value={newColumnName}
-              onChange={setNewColumnName}
-              onSubmit={handleAddColumn}
-            />
+            <div className="flex flex-col gap-3">
+              <div className="flex flex-wrap items-end justify-between gap-3">
+                <div className="flex-1">
+                  <ColumnForm
+                    value={newColumnName}
+                    onChange={setNewColumnName}
+                    onSubmit={handleAddColumn}
+                  />
+                </div>
+                <button
+                  className={`h-[42px] rounded-md border px-4 text-sm font-semibold transition-colors ${
+                    isTaskFormOpen
+                      ? 'border-slate-200 bg-slate-100 text-slate-900 hover:bg-slate-200'
+                      : 'border-blue-600 bg-blue-600 text-white hover:bg-blue-700'
+                  }`}
+                  type="button"
+                  onClick={() => setIsTaskFormOpen(!isTaskFormOpen)}
+                >
+                  {isTaskFormOpen ? 'Cancel' : 'New task'}
+                </button>
+              </div>
+              
+              {isTaskFormOpen && todoColumn?.id && (
+                <div className="rounded-md border border-slate-200 bg-white p-3">
+                  <TaskForm
+                    columnId={todoColumn.id}
+                    draft={taskDrafts?.[todoColumn.id]}
+                    taskTypes={taskTypes}
+                    onAddType={handleAddTaskType}
+                    onAddTask={handleAddTask}
+                    onUpdateDraft={updateTaskDraft}
+                  />
+                </div>
+              )}
+            </div>
+
             <ColumnList
               columns={filteredColumns}
               taskTypes={taskTypes}
