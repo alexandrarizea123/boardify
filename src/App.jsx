@@ -87,30 +87,66 @@ function App() {
               onUpdate={handleUpdateBoardDetails}
               onDelete={() => handleDeleteBoard(activeBoard.id)}
             />
-            <div className="flex flex-col gap-3">
-              <div className="flex flex-wrap items-end justify-between gap-3">
-                <div className="flex-1">
+            <div className="flex flex-col gap-4">
+              <div className="flex flex-wrap items-start justify-between gap-4">
+                <button
+                  className={`flex items-center gap-2 rounded-md border px-4 py-3 text-sm font-semibold shadow-sm transition-all ${
+                    isTaskFormOpen
+                      ? 'border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200'
+                      : 'border-blue-600 bg-blue-600 text-white hover:bg-blue-700 hover:shadow-md'
+                  }`}
+                  type="button"
+                  onClick={() => setIsTaskFormOpen(!isTaskFormOpen)}
+                >
+                  {isTaskFormOpen ? (
+                    <>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                      </svg>
+                      Cancel
+                    </>
+                  ) : (
+                    <>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                      </svg>
+                      New task
+                    </>
+                  )}
+                </button>
+                <div className="w-full max-w-xs">
                   <ColumnForm
                     value={newColumnName}
                     onChange={setNewColumnName}
                     onSubmit={handleAddColumn}
                   />
                 </div>
-                <button
-                  className={`h-[42px] rounded-md border px-4 text-sm font-semibold transition-colors ${
-                    isTaskFormOpen
-                      ? 'border-slate-200 bg-slate-100 text-slate-900 hover:bg-slate-200'
-                      : 'border-blue-600 bg-blue-600 text-white hover:bg-blue-700'
-                  }`}
-                  type="button"
-                  onClick={() => setIsTaskFormOpen(!isTaskFormOpen)}
-                >
-                  {isTaskFormOpen ? 'Cancel' : 'New task'}
-                </button>
               </div>
               
               {isTaskFormOpen && todoColumn?.id && (
-                <div className="rounded-md border border-slate-200 bg-white p-3">
+                <div className="rounded-md border border-slate-200 bg-white p-4 shadow-sm">
                   <TaskForm
                     columnId={todoColumn.id}
                     draft={taskDrafts?.[todoColumn.id]}
