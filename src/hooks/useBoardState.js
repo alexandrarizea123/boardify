@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { parseEstimatedTime } from '../utils/date'
 import {
   boardUsers,
@@ -12,6 +12,32 @@ import {
 } from '../data/boardData'
 
 const MAX_BOARDS = 3
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000'
+
+const requestJson = async (path, options = {}) => {
+  const response = await fetch(`${API_BASE_URL}${path}`, {
+    headers: {
+      'Content-Type': 'application/json',
+      ...(options.headers || {}),
+    },
+    ...options,
+  })
+
+  if (!response.ok) {
+    const message = await response.text()
+    const error = new Error(message || 'Request failed')
+    error.status = response.status
+    throw error
+  }
+
+  if (response.status === 204) return null
+  return response.json()
+}
+
+const buildDraftsForBoards = (boards) =>
+  Object.fromEntries(
+    boards.map((board) => [board.id, buildDrafts(board.columns)]),
+  )
 
 export const useBoardState = () => {
   const initialBoardRef = useRef(null)
@@ -28,6 +54,7 @@ export const useBoardState = () => {
   const initialBoard = initialBoardRef.current
 
   const [boards, setBoards] = useState(() => [initialBoard])
+  const boardsRef = useRef([initialBoard])
   const [activeBoardId, setActiveBoardId] = useState(() => initialBoard.id)
   const [isCreatingBoard, setIsCreatingBoard] = useState(false)
   const [boardName, setBoardName] = useState('')
@@ -42,6 +69,65 @@ export const useBoardState = () => {
   const [filterDifficulty, setFilterDifficulty] = useState('All')
   const [filterHasSubtasks, setFilterHasSubtasks] = useState('All')
   const [isTaskFormOpen, setIsTaskFormOpen] = useState(false)
+
+  useEffect(() => {
+    let isMounted = true
+
+    const loadData = async () => {
+      try {
+        const [boardsData, taskTypesData] = await Promise.all([
+          requestJson('/api/boards'),
+          requestJson('/api/task-types'),
+        ])
+
+        if (!isMounted) return
+
+        const nextBoards =
+          Array.isArray(boardsData) && boardsData.length > 0
+            ? boardsData
+            : [initialBoardRef.current]
+        setBoards(nextBoards)
+        setActiveBoardId(nextBoards[0]?.id ?? null)
+        setTaskDraftsByBoard(buildDraftsForBoards(nextBoards))
+
+        const nextTypes =
+          Array.isArray(taskTypesData) && taskTypesData.length > 0
+            ? taskTypesData
+            : defaultTaskTypes
+        setTaskTypes(nextTypes)
+
+        if (!boardsData || boardsData.length === 0) {
+          await requestJson('/api/boards', {
+            method: 'POST',
+            body: JSON.stringify(initialBoardRef.current),
+          })
+        }
+
+        if (!taskTypesData || taskTypesData.length === 0) {
+          await Promise.all(
+            defaultTaskTypes.map((type) =>
+              requestJson('/api/task-types', {
+                method: 'POST',
+                body: JSON.stringify({ name: type }),
+              }),
+            ),
+          )
+        }
+      } catch (err) {
+        console.error('Failed to load data from API:', err)
+      }
+    }
+
+    loadData()
+
+    return () => {
+      isMounted = false
+    }
+  }, [])
+
+  useEffect(() => {
+    boardsRef.current = boards
+  }, [boards])
 
   const activeBoard = useMemo(
     () => boards.find((board) => board.id === activeBoardId) ?? null,
@@ -157,6 +243,43 @@ export const useBoardState = () => {
 
   const canAddBoard = boards.length < MAX_BOARDS
 
+  const saveBoard = async (board) => {
+    try {
+      await requestJson(`/api/boards/${board.id}`, {
+        method: 'PUT',
+        body: JSON.stringify(board),
+      })
+    } catch (err) {
+      if (err.status === 404) {
+        await requestJson('/api/boards', {
+          method: 'POST',
+          body: JSON.stringify(board),
+        })
+      } else {
+        console.error('Failed to save board:', err)
+      }
+    }
+  }
+
+  const deleteBoardFromApi = async (boardId) => {
+    try {
+      await requestJson(`/api/boards/${boardId}`, { method: 'DELETE' })
+    } catch (err) {
+      console.error('Failed to delete board:', err)
+    }
+  }
+
+  const persistTaskType = async (type) => {
+    try {
+      await requestJson('/api/task-types', {
+        method: 'POST',
+        body: JSON.stringify({ name: type }),
+      })
+    } catch (err) {
+      console.error('Failed to save task type:', err)
+    }
+  }
+
   const startCreateBoard = () => {
     if (!canAddBoard) return
     setIsCreatingBoard(true)
@@ -194,6 +317,7 @@ export const useBoardState = () => {
     setBoardName('')
     setBoardDescription('')
     setIsCreatingBoard(false)
+    void saveBoard(newBoard)
   }
 
   const handleSelectBoard = (boardId) => {
@@ -224,6 +348,8 @@ export const useBoardState = () => {
         [fallbackBoard.id]: buildDrafts(columns),
       })
       setIsCreatingBoard(false)
+      void deleteBoardFromApi(boardId)
+      void saveBoard(fallbackBoard)
       return
     }
 
@@ -236,14 +362,22 @@ export const useBoardState = () => {
       return rest
     })
     setIsCreatingBoard(false)
+    void deleteBoardFromApi(boardId)
   }
 
   const updateActiveBoard = (updater) => {
-    setBoards((current) =>
-      current.map((board) =>
-        board.id === activeBoardId ? updater(board) : board,
-      ),
+    if (!activeBoardId) return
+    const currentBoards = boardsRef.current
+    const updatedBoards = currentBoards.map((board) =>
+      board.id === activeBoardId ? updater(board) : board,
     )
+    const updatedBoard = updatedBoards.find(
+      (board) => board.id === activeBoardId,
+    )
+    setBoards(updatedBoards)
+    if (updatedBoard) {
+      void saveBoard(updatedBoard)
+    }
   }
 
   const handleAddTaskType = (newType) => {
@@ -253,6 +387,7 @@ export const useBoardState = () => {
       if (current.includes(trimmed)) return current
       return [...current, trimmed]
     })
+    void persistTaskType(trimmed)
   }
 
   const updateTaskDraft = (columnId, field, value) => {
