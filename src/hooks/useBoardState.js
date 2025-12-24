@@ -281,7 +281,7 @@ export const useBoardState = () => {
       id: createId(),
       name: draft.name.trim(),
       description: draft.description.trim(),
-      assignee: draft.assignee || boardUsers[0],
+      assignee: draft.assignee || '',
       type: draft.type || taskTypes[0],
       priority: draft.priority || priorities[2],
       difficulty: draft.difficulty || difficulties[1],

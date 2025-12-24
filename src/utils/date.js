@@ -1,6 +1,23 @@
-export const formatDate = (value) => {
+export const parseDateInput = (value) => {
+  if (!value) return null
+  if (value instanceof Date) return value
+  if (typeof value === 'string') {
+    const match = value.match(/^(\d{4})-(\d{2})-(\d{2})$/)
+    if (match) {
+      const year = Number(match[1])
+      const month = Number(match[2]) - 1
+      const day = Number(match[3])
+      return new Date(year, month, day)
+    }
+  }
   const date = new Date(value)
-  if (Number.isNaN(date.getTime())) return 'N/A'
+  if (Number.isNaN(date.getTime())) return null
+  return date
+}
+
+export const formatDate = (value) => {
+  const date = parseDateInput(value)
+  if (!date) return 'N/A'
   return date.toLocaleDateString()
 }
 
@@ -29,7 +46,8 @@ export const parseEstimatedTime = (timeStr) => {
 export const getDueDateStatus = (dateStr) => {
   if (!dateStr) return null
 
-  const due = new Date(dateStr)
+  const due = parseDateInput(dateStr)
+  if (!due) return null
   due.setHours(0, 0, 0, 0)
   
   const today = new Date()

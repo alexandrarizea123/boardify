@@ -144,8 +144,8 @@ function TaskForm({
             onUpdateDraft(columnId, 'assignee', event.target.value)
           }
         >
-          <option value="" disabled>
-            Select assignee
+          <option value="">
+            Unassigned
           </option>
           {boardUsers.map((user) => (
             <option key={user} value={user}>

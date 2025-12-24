@@ -5,13 +5,16 @@ Boardify is a minimal task management board built with React + Vite and Tailwind
 ## Features
 - **Multiple Boards**: Create up to 3 boards with name and description.
 - **Custom Columns**: Default columns (To Do, In Progress, Done) plus the ability to add your own.
-- **Rich Task Creation**: Create tasks with name, description, assignee, type, priority, **difficulty**, and **estimated time**.
+- **Rich Task Creation**: Create tasks with name, description, assignee, type, priority, **difficulty**, **estimated time**, due date, and subtasks.
 - **Task Summary**: Sidebar showing real-time counts of tasks by type.
-- **Filtering**: Filter tasks by type (Feature, Bug, Chore, Research) per board.
+- **Filtering**: Filter tasks by type, assignee, priority, difficulty, and subtask presence.
 - **Inline Editing**: Quick editing for task details and board names/descriptions.
 - **Drag-and-Drop**: Move tasks between columns intuitively.
 - **Progress Tracking**: Visual progress bar showing completion rate (Done vs To Do).
+- **Subtask Progress**: Checklist-style subtasks with per-task completion progress.
 - **Mention Tagging**: `@` mention autocomplete in task descriptions for team members.
+- **Due Date Status**: Badges for overdue, due soon, and upcoming tasks.
+- **Analytics Sidebar**: Task distribution, developer workload (estimated hours), and overdue trend chart.
 - **Responsive Design**: Fully compatible with desktop and mobile views, with an adaptive layout for different screen sizes and zoom levels.
 
 ## Project Structure
@@ -23,13 +26,15 @@ src/
       BoardCreateForm.jsx
       BoardHeader.jsx
       BoardSwitcher.jsx
-      Column.jsx
-      ColumnForm.jsx
-      ColumnList.jsx
-      ProgressBar.jsx
-      TaskCard.jsx
-      TaskForm.jsx
-      TaskSummary.jsx
+    Column.jsx
+    ColumnForm.jsx
+    ColumnList.jsx
+    DeveloperHoursChart.jsx
+    OverdueTrendChart.jsx
+    ProgressBar.jsx
+    TaskCard.jsx
+    TaskForm.jsx
+    TaskSummary.jsx
       index.js
     mentions/
       MentionTextarea.jsx
@@ -50,7 +55,7 @@ src/
 ## State Model
 - **Board**: `{ id, name, description, columns[] }`
 - **Column**: `{ id, name, tasks[] }`
-- **Task**: `{ id, name, description, assignee, type, priority, difficulty, estimatedTime, createdAt, updatedAt }`
+- **Task**: `{ id, name, description, assignee, type, priority, difficulty, estimatedTime, dueDate, subtasks, createdAt, updatedAt }`
 
 ## Running the App
 ```

@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { parseDateInput } from '../../utils/date'
 
 function OverdueTrendChart({ tasks = [] }) {
   const trendData = useMemo(() => {
@@ -17,11 +18,12 @@ function OverdueTrendChart({ tasks = [] }) {
       const overdueCount = tasks.filter((task) => {
         if (!task.dueDate) return false
         
-        const dueDate = new Date(task.dueDate)
+        const dueDate = parseDateInput(task.dueDate)
+        if (!dueDate) return false
         dueDate.setHours(23, 59, 59, 999) // End of due day
         
         // Task must be created before or on this day
-        const createdAt = new Date(task.createdAt || 0)
+        const createdAt = parseDateInput(task.createdAt) || new Date(0)
         if (createdAt > date) return false
 
         // It is overdue if the date is past the due date
@@ -32,7 +34,7 @@ function OverdueTrendChart({ tasks = [] }) {
         // Ideally we'd have a specific completedAt, but this is a heuristic
         let isCompletedOnDate = false
         if (task.status === 'Done') {
-          const completedAt = new Date(task.updatedAt || 0)
+          const completedAt = parseDateInput(task.updatedAt) || new Date(0)
           isCompletedOnDate = completedAt <= date
         }
 

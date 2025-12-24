@@ -331,6 +331,9 @@ function TaskCard({
             value={draft.assignee}
             onChange={(event) => handleDraftChange('assignee', event.target.value)}
           >
+            <option value="">
+              Unassigned
+            </option>
             {boardUsers.map((user) => (
               <option key={user} value={user}>
                 {user}
@@ -472,12 +475,14 @@ function TaskCard({
       }
     >
       {/* Avatar Overlap */}
-      <div
-        className={`absolute -top-3 -right-3 z-10 flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold shadow-sm ring-2 ring-white ${getAvatarColor(task.assignee)}`}
-        title={task.assignee}
-      >
-        {getInitials(task.assignee)}
-      </div>
+      {task.assignee ? (
+        <div
+          className={`absolute -top-3 -right-3 z-10 flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold shadow-sm ring-2 ring-white ${getAvatarColor(task.assignee)}`}
+          title={task.assignee}
+        >
+          {getInitials(task.assignee)}
+        </div>
+      ) : null}
 
       <div className="flex flex-col gap-2">
         {/* Title & Expand Icon */}
