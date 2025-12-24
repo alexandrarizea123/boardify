@@ -73,6 +73,7 @@ function TaskCard({
   onUpdateTask,
   isDone,
 }) {
+  const dueDateStatus = getDueDateStatus(task.dueDate)
   const [isEditing, setIsEditing] = useState(false)
   const [draft, setDraft] = useState(() => buildDraft(task))
   const [isAddingType, setIsAddingType] = useState(false)
