@@ -7,6 +7,7 @@ import {
   ProgressBar,
   TaskSummary,
   DeveloperHoursChart,
+  OverdueTrendChart,
   TaskForm,
 } from './components/board'
 
@@ -47,6 +48,8 @@ function App() {
   const todoColumn = activeBoard?.columns.find(
     (c) => c.name.toLowerCase() === 'to do',
   ) || activeBoard?.columns[0]
+
+  const allTasks = activeBoard?.columns.flatMap(col => col.tasks.map(t => ({...t, status: col.name}))) || []
 
   if (!activeBoard || isCreatingBoard) {
     return (
@@ -165,6 +168,7 @@ function App() {
           <div className="w-full space-y-6 lg:w-auto lg:pt-[52px]">
             <TaskSummary typeStats={typeStats} />
             <DeveloperHoursChart developerStats={developerStats} />
+            <OverdueTrendChart tasks={allTasks} />
           </div>
         </div>
       </div>
