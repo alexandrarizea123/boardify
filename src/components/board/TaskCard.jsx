@@ -428,6 +428,7 @@ function TaskCard({
     <article
       className="group relative flex flex-col gap-3 rounded-xl bg-white p-4 shadow-sm ring-1 ring-slate-200/50 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md hover:ring-slate-300/50 cursor-pointer"
       draggable
+      onClick={() => setIsExpanded(!isExpanded)}
       onDragStart={(event) => {
         event.dataTransfer.setData(
           'application/json',
@@ -475,9 +476,39 @@ function TaskCard({
 
       {/* Description */}
       {task?.description && (
-        <p className="text-sm text-slate-600 line-clamp-2 leading-relaxed">
+        <p className={`text-sm text-slate-600 leading-relaxed ${isExpanded ? '' : 'line-clamp-2'}`}>
           {renderDescription(task.description)}
         </p>
+      )}
+
+      {/* Expanded Details */}
+      {isExpanded && task?.subtasks && task.subtasks.length > 0 && (
+        <div className="flex flex-col gap-2 border-t border-slate-50 pt-3">
+          <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Subtasks</span>
+          <div className="space-y-1.5">
+            {task.subtasks.map((subtask) => (
+              <div 
+                key={subtask.id} 
+                className="flex items-center gap-2"
+                onClick={(e) => {
+                   e.stopPropagation()
+                   handleToggleSubtask(subtask.id)
+                }}
+              >
+                <div className={`h-3.5 w-3.5 rounded border transition-colors flex items-center justify-center ${subtask.isCompleted ? 'bg-blue-500 border-blue-500' : 'bg-white border-slate-300'}`}>
+                  {subtask.isCompleted && (
+                    <svg className="h-2.5 w-2.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                    </svg>
+                  )}
+                </div>
+                <span className={`text-xs ${subtask.isCompleted ? 'text-slate-400 line-through' : 'text-slate-700'}`}>
+                  {subtask.title}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
       )}
 
       {/* Subtasks */}
