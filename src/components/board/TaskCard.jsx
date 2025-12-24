@@ -91,13 +91,10 @@ const getDueDateBadgeColor = (status) => {
 function TaskCard({
   task,
   columnId,
-  columns,
   taskTypes,
   onAddType,
-  onMoveTask,
   onDeleteTask,
   onUpdateTask,
-  isDone,
 }) {
   const dueDateStatus = getDueDateStatus(task.dueDate)
   const [isEditing, setIsEditing] = useState(false)
@@ -230,7 +227,7 @@ function TaskCard({
       )
     })
   }
-  
+
   const getInitials = (name) => {
     return name
       .split(' ')
@@ -278,13 +275,13 @@ function TaskCard({
           placeholder="Task name"
         />
         <MentionTextarea
-          className="min-h-[80px] resize-none rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:bg-white focus:ring-1 focus:ring-blue-500 transition-all"
+          className="min-h-20 resize-none rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:bg-white focus:ring-1 focus:ring-blue-500 transition-all"
           value={draft.description}
           onChange={(value) => handleDraftChange('description', value)}
           users={boardUsers}
           placeholder="Add a description... (use @ to mention)"
         />
-        
+
         <div className="space-y-2">
           {draft.subtasks.map((subtask) => (
             <div key={subtask.id} className="flex gap-2">
@@ -327,7 +324,7 @@ function TaskCard({
             </button>
           </div>
         </div>
-        
+
         <div className="grid grid-cols-2 gap-2">
           <select
             className="rounded-lg border border-slate-200 bg-slate-50 px-2 py-1.5 text-xs outline-none focus:border-blue-500 focus:bg-white transition-all"
@@ -396,7 +393,7 @@ function TaskCard({
             ))}
           </select>
         </div>
-        
+
         <div className="flex gap-2">
           <input
             className="flex-1 rounded-lg border border-slate-200 bg-slate-50 px-2 py-1.5 text-xs outline-none focus:border-blue-500 focus:bg-white transition-all"
@@ -441,9 +438,8 @@ function TaskCard({
 
   return (
     <article
-      className={`group relative flex flex-col gap-3 rounded-xl p-4 shadow-sm ring-1 ring-slate-200/50 transition-all duration-200 cursor-pointer ${
-        isExpanded ? 'bg-slate-50/50 shadow-md ring-slate-300/50' : 'bg-white hover:-translate-y-0.5 hover:shadow-md hover:ring-slate-300/50'
-      }`}
+      className={`group relative flex flex-col gap-3 rounded-xl p-4 shadow-sm ring-1 ring-slate-200/50 transition-all duration-200 cursor-pointer ${isExpanded ? 'bg-slate-50/50 shadow-md ring-slate-300/50' : 'bg-white hover:-translate-y-0.5 hover:shadow-md hover:ring-slate-300/50'
+        }`}
       draggable={canDrag}
       onClick={(e) => {
         if (e.defaultPrevented) return
@@ -454,29 +450,29 @@ function TaskCard({
       onDragStart={
         canDrag
           ? (event) => {
-              isDraggingRef.current = true
-              event.dataTransfer.setData(
-                'application/json',
-                JSON.stringify({ taskId: task.id, columnId }),
-              )
-              event.dataTransfer.setData('text/plain', task.id)
-              event.dataTransfer.effectAllowed = 'move'
-              const el = event.currentTarget
-              el.style.transform = 'rotate(3deg)'
-            }
+            isDraggingRef.current = true
+            event.dataTransfer.setData(
+              'application/json',
+              JSON.stringify({ taskId: task.id, columnId }),
+            )
+            event.dataTransfer.setData('text/plain', task.id)
+            event.dataTransfer.effectAllowed = 'move'
+            const el = event.currentTarget
+            el.style.transform = 'rotate(3deg)'
+          }
           : undefined
       }
       onDragEnd={
         canDrag
           ? (event) => {
-              isDraggingRef.current = false
-              event.currentTarget.style.transform = ''
-            }
+            isDraggingRef.current = false
+            event.currentTarget.style.transform = ''
+          }
           : undefined
       }
     >
       {/* Avatar Overlap */}
-      <div 
+      <div
         className={`absolute -top-3 -right-3 z-10 flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold shadow-sm ring-2 ring-white ${getAvatarColor(task.assignee)}`}
         title={task.assignee}
       >
@@ -487,9 +483,8 @@ function TaskCard({
         {/* Title & Expand Icon */}
         <div className="flex items-start gap-2">
           <button
-            className={`mt-0.5 shrink-0 rounded-md p-1 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600 ${
-              isExpanded ? 'rotate-180' : ''
-            }`}
+            className={`mt-0.5 shrink-0 rounded-md p-1 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600 ${isExpanded ? 'rotate-180' : ''
+              }`}
             type="button"
             aria-label={isExpanded ? 'Collapse task' : 'Expand task'}
             onClick={(event) => {
@@ -501,24 +496,24 @@ function TaskCard({
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
             </svg>
           </button>
-          <h3 className="break-words text-base font-semibold text-slate-900 leading-snug">
+          <h3 className="wrap-break-word text-base font-semibold text-slate-900 leading-snug">
             {task.name}
           </h3>
         </div>
 
         {/* Badges Row */}
         <div className="flex flex-wrap items-center gap-2">
-           <span className={`inline-flex items-center gap-1.5 rounded-md border px-2 py-0.5 text-xs font-medium shadow-sm ${typeContent.style}`}>
-             {TypeIcon && <TypeIcon className="h-3.5 w-3.5" />}
-             <span>{task.type}</span>
-           </span>
-           
-           <span className={`inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-xs font-medium shadow-sm ${priorityStyles[task.priority] || 'bg-slate-50 text-slate-600 border-slate-200'}`}>
-             {PriorityIcon && (
-               <PriorityIcon className={`h-3.5 w-3.5 ${priorityIcon.className}`} />
-             )}
-             <span>{task.priority}</span>
-           </span>
+          <span className={`inline-flex items-center gap-1.5 rounded-md border px-2 py-0.5 text-xs font-medium shadow-sm ${typeContent.style}`}>
+            {TypeIcon && <TypeIcon className="h-3.5 w-3.5" />}
+            <span>{task.type}</span>
+          </span>
+
+          <span className={`inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-xs font-medium shadow-sm ${priorityStyles[task.priority] || 'bg-slate-50 text-slate-600 border-slate-200'}`}>
+            {PriorityIcon && (
+              <PriorityIcon className={`h-3.5 w-3.5 ${priorityIcon.className}`} />
+            )}
+            <span>{task.priority}</span>
+          </span>
         </div>
       </div>
 
@@ -535,12 +530,12 @@ function TaskCard({
           <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Subtasks</span>
           <div className="space-y-1.5">
             {task.subtasks.map((subtask) => (
-              <div 
-                key={subtask.id} 
+              <div
+                key={subtask.id}
                 className="flex items-center gap-2 group/subtask"
                 onClick={(e) => {
-                   e.stopPropagation();
-                   handleToggleSubtask(subtask.id);
+                  e.stopPropagation();
+                  handleToggleSubtask(subtask.id);
                 }}
               >
                 <div className={`h-4 w-4 rounded border transition-colors flex items-center justify-center ${subtask.isCompleted ? 'bg-blue-500 border-blue-500' : 'bg-white border-slate-300 group-hover/subtask:border-blue-400'}`}>
@@ -564,11 +559,10 @@ function TaskCard({
             <div
               className="h-full rounded-full bg-blue-500 transition-all duration-300"
               style={{
-                width: `${
-                  (task.subtasks.filter((t) => t?.isCompleted).length /
+                width: `${(task.subtasks.filter((t) => t?.isCompleted).length /
                     task.subtasks.length) *
                   100
-                }%`,
+                  }%`,
               }}
             />
           </div>
@@ -580,11 +574,10 @@ function TaskCard({
 
       {/* Metadata Footer */}
       <div className="mt-3 flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-3">
-         {dueDateStatus ? (
+        {dueDateStatus ? (
           <span
-            className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs font-medium ${
-              getDueDateBadgeColor(dueDateStatus.status)
-            }`}
+            className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs font-medium ${getDueDateBadgeColor(dueDateStatus.status)
+              }`}
             title={formatDate(task.dueDate)}
           >
             <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -598,12 +591,12 @@ function TaskCard({
 
         <div className="flex items-center gap-3 text-xs text-slate-500 ml-auto">
           {task.difficulty && (
-             <span className="flex items-center gap-1 font-medium text-slate-500">
-               <BoltIcon className="h-3.5 w-3.5 text-slate-400" />
-               {task.difficulty}
-             </span>
+            <span className="flex items-center gap-1 font-medium text-slate-500">
+              <BoltIcon className="h-3.5 w-3.5 text-slate-400" />
+              {task.difficulty}
+            </span>
           )}
-          
+
           {task.estimatedTime && (
             <span className="flex items-center gap-1" title="Estimated Time">
               <svg className="h-3.5 w-3.5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -635,8 +628,8 @@ function TaskCard({
           className="rounded-md p-1 text-slate-400 hover:bg-red-50 hover:text-red-600 bg-white/80 backdrop-blur-sm shadow-sm ring-1 ring-slate-200"
           type="button"
           onClick={(e) => {
-             e.stopPropagation();
-             onDeleteTask(task.id, columnId);
+            e.stopPropagation();
+            onDeleteTask(task.id, columnId);
           }}
           aria-label="Delete"
         >
