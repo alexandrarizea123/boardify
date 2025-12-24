@@ -1,4 +1,14 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
+import {
+  ArrowDownIcon,
+  ArrowUpIcon,
+  BoltIcon,
+  BugAntIcon,
+  CheckIcon,
+  MinusIcon,
+  SparklesIcon,
+  TagIcon,
+} from '@heroicons/react/24/outline'
 import { boardUsers, priorities, difficulties, createId } from '../../data/boardData'
 import MentionTextarea from '../mentions/MentionTextarea'
 import { formatDate, getDueDateStatus } from '../../utils/date'
@@ -25,44 +35,43 @@ const priorityStyles = {
 const getTypeContent = (type) => {
   switch (type) {
     case 'Feature':
-      return { icon: '🚀', style: 'bg-indigo-50 text-indigo-700 border-indigo-200' }
+      return {
+        icon: SparklesIcon,
+        style: 'bg-indigo-50 text-indigo-700 border-indigo-200',
+      }
     case 'Bug':
-      return { icon: <span className="grayscale opacity-75">🐞</span>, style: 'bg-slate-100 text-slate-700 border-slate-200' }
+      return {
+        icon: BugAntIcon,
+        style: 'bg-slate-100 text-slate-700 border-slate-200',
+      }
     case 'Chore':
-      return { icon: '🧹', style: 'bg-slate-50 text-slate-600 border-slate-200' }
+      return {
+        icon: TagIcon,
+        style: 'bg-slate-50 text-slate-600 border-slate-200',
+      }
     case 'Research':
-      return { icon: '🔬', style: 'bg-purple-50 text-purple-700 border-purple-200' }
+      return {
+        icon: TagIcon,
+        style: 'bg-purple-50 text-purple-700 border-purple-200',
+      }
     default:
-      return { icon: '📋', style: 'bg-slate-50 text-slate-600 border-slate-200' }
+      return {
+        icon: TagIcon,
+        style: 'bg-slate-50 text-slate-600 border-slate-200',
+      }
   }
 }
 
 const getPriorityIcon = (priority) => {
   switch (priority) {
-    case 'Highest': 
-      return (
-        <svg className="h-3 w-3 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-        </svg>
-      )
+    case 'Highest':
+      return { icon: ArrowUpIcon, className: 'text-red-600' }
     case 'High':
-      return (
-        <svg className="h-3 w-3 text-orange-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
-        </svg>
-      )
+      return { icon: ArrowUpIcon, className: 'text-orange-600' }
     case 'Medium':
-      return (
-        <svg className="h-3 w-3 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h14" />
-        </svg>
-      )
+      return { icon: MinusIcon, className: 'text-amber-600' }
     case 'Low':
-      return (
-        <svg className="h-3 w-3 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-        </svg>
-      )
+      return { icon: ArrowDownIcon, className: 'text-slate-600' }
     default:
       return null
   }
@@ -97,6 +106,11 @@ function TaskCard({
   const [isAddingType, setIsAddingType] = useState(false)
   const [newTypeValue, setNewTypeValue] = useState('')
   const [newSubtaskName, setNewSubtaskName] = useState('')
+  const isDraggingRef = useRef(false)
+  const canDrag =
+    typeof window !== 'undefined' &&
+    typeof window.matchMedia === 'function' &&
+    window.matchMedia('(pointer: fine)').matches
 
   const handleDraftChange = (field, value) => {
     setDraft((current) => ({ ...current, [field]: value }))
@@ -421,31 +435,45 @@ function TaskCard({
   }
 
   const typeContent = getTypeContent(task.type)
+  const priorityIcon = getPriorityIcon(task.priority)
+  const TypeIcon = typeContent.icon
+  const PriorityIcon = priorityIcon?.icon
 
   return (
     <article
       className={`group relative flex flex-col gap-3 rounded-xl p-4 shadow-sm ring-1 ring-slate-200/50 transition-all duration-200 cursor-pointer ${
         isExpanded ? 'bg-slate-50/50 shadow-md ring-slate-300/50' : 'bg-white hover:-translate-y-0.5 hover:shadow-md hover:ring-slate-300/50'
       }`}
-      draggable
+      draggable={canDrag}
       onClick={(e) => {
-        // Prevent expansion toggle when clicking specific interactive elements
-        if (e.defaultPrevented) return;
-        setIsExpanded(!isExpanded);
+        if (e.defaultPrevented) return
+        if (isDraggingRef.current) {
+          isDraggingRef.current = false
+        }
       }}
-      onDragStart={(event) => {
-        event.dataTransfer.setData(
-          'application/json',
-          JSON.stringify({ taskId: task.id, columnId }),
-        )
-        event.dataTransfer.setData('text/plain', task.id)
-        event.dataTransfer.effectAllowed = 'move'
-        const el = event.currentTarget
-        el.style.transform = 'rotate(3deg)'
-      }}
-      onDragEnd={(event) => {
-        event.currentTarget.style.transform = ''
-      }}
+      onDragStart={
+        canDrag
+          ? (event) => {
+              isDraggingRef.current = true
+              event.dataTransfer.setData(
+                'application/json',
+                JSON.stringify({ taskId: task.id, columnId }),
+              )
+              event.dataTransfer.setData('text/plain', task.id)
+              event.dataTransfer.effectAllowed = 'move'
+              const el = event.currentTarget
+              el.style.transform = 'rotate(3deg)'
+            }
+          : undefined
+      }
+      onDragEnd={
+        canDrag
+          ? (event) => {
+              isDraggingRef.current = false
+              event.currentTarget.style.transform = ''
+            }
+          : undefined
+      }
     >
       {/* Avatar Overlap */}
       <div 
@@ -457,26 +485,38 @@ function TaskCard({
 
       <div className="flex flex-col gap-2">
         {/* Title & Expand Icon */}
-        <div className="flex items-start justify-between gap-2 pr-6">
+        <div className="flex items-start gap-2">
+          <button
+            className={`mt-0.5 shrink-0 rounded-md p-1 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600 ${
+              isExpanded ? 'rotate-180' : ''
+            }`}
+            type="button"
+            aria-label={isExpanded ? 'Collapse task' : 'Expand task'}
+            onClick={(event) => {
+              event.stopPropagation()
+              setIsExpanded(!isExpanded)
+            }}
+          >
+            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
           <h3 className="break-words text-base font-semibold text-slate-900 leading-snug">
             {task.name}
           </h3>
-          <div className={`mt-1.5 shrink-0 transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`}>
-            <svg className="h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-            </svg>
-          </div>
         </div>
 
         {/* Badges Row */}
         <div className="flex flex-wrap items-center gap-2">
            <span className={`inline-flex items-center gap-1.5 rounded-md border px-2 py-0.5 text-xs font-medium shadow-sm ${typeContent.style}`}>
-             <span className="text-sm">{typeContent.icon}</span>
+             {TypeIcon && <TypeIcon className="h-3.5 w-3.5" />}
              <span>{task.type}</span>
            </span>
            
            <span className={`inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-xs font-medium shadow-sm ${priorityStyles[task.priority] || 'bg-slate-50 text-slate-600 border-slate-200'}`}>
-             {getPriorityIcon(task.priority)}
+             {PriorityIcon && (
+               <PriorityIcon className={`h-3.5 w-3.5 ${priorityIcon.className}`} />
+             )}
              <span>{task.priority}</span>
            </span>
         </div>
@@ -505,9 +545,7 @@ function TaskCard({
               >
                 <div className={`h-4 w-4 rounded border transition-colors flex items-center justify-center ${subtask.isCompleted ? 'bg-blue-500 border-blue-500' : 'bg-white border-slate-300 group-hover/subtask:border-blue-400'}`}>
                   {subtask.isCompleted && (
-                    <svg className="h-3 w-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                    </svg>
+                    <CheckIcon className="h-3 w-3 text-white" />
                   )}
                 </div>
                 <span className={`text-xs ${subtask.isCompleted ? 'text-slate-400 line-through' : 'text-slate-700'}`}>
@@ -560,7 +598,8 @@ function TaskCard({
 
         <div className="flex items-center gap-3 text-xs text-slate-500 ml-auto">
           {task.difficulty && (
-             <span className="font-medium text-slate-500">
+             <span className="flex items-center gap-1 font-medium text-slate-500">
+               <BoltIcon className="h-3.5 w-3.5 text-slate-400" />
                {task.difficulty}
              </span>
           )}
@@ -577,7 +616,7 @@ function TaskCard({
       </div>
 
       {/* Hover Actions */}
-      <div className="absolute top-3 right-8 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">
+      <div className="absolute top-3 right-8 z-10 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">
         <button
           className="rounded-md p-1 text-slate-400 hover:bg-blue-50 hover:text-blue-600 bg-white/80 backdrop-blur-sm shadow-sm ring-1 ring-slate-200"
           type="button"

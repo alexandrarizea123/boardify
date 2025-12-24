@@ -139,11 +139,14 @@ function TaskForm({
       <div className="grid grid-cols-2 gap-2">
         <select
           className="rounded-lg border border-slate-200 bg-slate-50 px-2 py-1.5 text-xs outline-none focus:border-blue-500 focus:bg-white transition-all"
-          value={draft.assignee}
+          value={draft.assignee || ''}
           onChange={(event) =>
             onUpdateDraft(columnId, 'assignee', event.target.value)
           }
         >
+          <option value="" disabled>
+            Select assignee
+          </option>
           {boardUsers.map((user) => (
             <option key={user} value={user}>
               {user}
@@ -164,9 +167,12 @@ function TaskForm({
         ) : (
           <select
             className="rounded-lg border border-slate-200 bg-slate-50 px-2 py-1.5 text-xs outline-none focus:border-blue-500 focus:bg-white transition-all"
-            value={draft.type}
+            value={draft.type || ''}
             onChange={handleTypeChange}
           >
+            <option value="" disabled>
+              Select type
+            </option>
             {taskTypes.map((type) => (
               <option key={type} value={type}>
                 {type}
@@ -180,11 +186,14 @@ function TaskForm({
 
         <select
           className="rounded-lg border border-slate-200 bg-slate-50 px-2 py-1.5 text-xs outline-none focus:border-blue-500 focus:bg-white transition-all"
-          value={draft.priority}
+          value={draft.priority || ''}
           onChange={(event) =>
             onUpdateDraft(columnId, 'priority', event.target.value)
           }
         >
+          <option value="" disabled>
+            Select priority
+          </option>
           {priorities.map((priority) => (
             <option key={priority} value={priority}>
               {priority}
@@ -194,11 +203,14 @@ function TaskForm({
 
         <select
           className="rounded-lg border border-slate-200 bg-slate-50 px-2 py-1.5 text-xs outline-none focus:border-blue-500 focus:bg-white transition-all"
-          value={draft.difficulty}
+          value={draft.difficulty || ''}
           onChange={(event) =>
             onUpdateDraft(columnId, 'difficulty', event.target.value)
           }
         >
+          <option value="" disabled>
+            Select difficulty
+          </option>
           {difficulties.map((difficulty) => (
             <option key={difficulty} value={difficulty}>
               {difficulty}

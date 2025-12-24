@@ -1,10 +1,13 @@
 import { useMemo, useState } from 'react'
 import { parseEstimatedTime } from '../utils/date'
 import {
+  boardUsers,
   buildDefaultColumns,
   buildDrafts,
   createId,
+  difficulties,
   emptyTaskDraft,
+  priorities,
   taskTypes as defaultTaskTypes,
 } from '../data/boardData'
 
@@ -190,10 +193,10 @@ export const useBoardState = () => {
       id: createId(),
       name: draft.name.trim(),
       description: draft.description.trim(),
-      assignee: draft.assignee,
-      type: draft.type,
-      priority: draft.priority,
-      difficulty: draft.difficulty,
+      assignee: draft.assignee || boardUsers[0],
+      type: draft.type || taskTypes[0],
+      priority: draft.priority || priorities[2],
+      difficulty: draft.difficulty || difficulties[1],
       estimatedTime: draft.estimatedTime,
       dueDate: draft.dueDate,
       subtasks: draft.subtasks || [],
