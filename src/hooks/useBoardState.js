@@ -412,14 +412,17 @@ export const useBoardState = () => {
     if (!draft.name.trim()) return
 
     const now = new Date().toISOString()
+    const typeValue = draft.type?.trim()
+    const priorityValue = draft.priority?.trim()
+    const difficultyValue = draft.difficulty?.trim()
     const task = {
       id: createId(),
       name: draft.name.trim(),
       description: draft.description.trim(),
       assignee: draft.assignee || '',
-      type: draft.type || taskTypes[0],
-      priority: draft.priority || priorities[2],
-      difficulty: draft.difficulty || difficulties[1],
+      type: typeValue || 'task',
+      ...(priorityValue ? { priority: priorityValue } : {}),
+      ...(difficultyValue ? { difficulty: difficultyValue } : {}),
       estimatedTime: draft.estimatedTime,
       dueDate: draft.dueDate,
       subtasks: draft.subtasks || [],

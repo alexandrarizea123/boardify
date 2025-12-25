@@ -1,4 +1,4 @@
-export const taskTypes = ['Feature', 'Bug', 'Chore', 'Research']
+export const taskTypes = ['task', 'Feature', 'Bug', 'Chore', 'Research']
 export const priorities = ['Highest', 'High', 'Medium', 'Low']
 export const difficulties = ['Easy', 'Medium', 'Hard']
 export const boardUsers = ['Me', 'Alex']

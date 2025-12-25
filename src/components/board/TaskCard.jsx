@@ -17,9 +17,9 @@ const buildDraft = (task) => ({
   name: task.name,
   description: task.description,
   assignee: task.assignee,
-  type: task.type,
-  priority: task.priority,
-  difficulty: task.difficulty || difficulties[1],
+  type: task.type || 'task',
+  priority: task.priority || '',
+  difficulty: task.difficulty || '',
   estimatedTime: task.estimatedTime || '',
   dueDate: task.dueDate || '',
   subtasks: task.subtasks ? [...task.subtasks] : [],
@@ -179,17 +179,20 @@ function TaskCard({
 
   const handleSave = () => {
     if (!draft.name.trim()) return
-    onUpdateTask(task.id, columnId, {
+    const updates = {
       name: draft.name.trim(),
       description: draft.description.trim(),
       assignee: draft.assignee,
       type: draft.type,
       priority: draft.priority,
-      difficulty: draft.difficulty,
       estimatedTime: draft.estimatedTime,
       dueDate: draft.dueDate,
       subtasks: draft.subtasks,
-    })
+    }
+    if (draft.difficulty) {
+      updates.difficulty = draft.difficulty
+    }
+    onUpdateTask(task.id, columnId, updates)
     setIsEditing(false)
   }
 
@@ -375,6 +378,9 @@ function TaskCard({
               handleDraftChange('priority', event.target.value)
             }
           >
+            <option value="" disabled>
+              Select priority
+            </option>
             {priorities.map((priority) => (
               <option key={priority} value={priority}>
                 {priority}
@@ -389,6 +395,9 @@ function TaskCard({
               handleDraftChange('difficulty', event.target.value)
             }
           >
+            <option value="" disabled>
+              Select difficulty
+            </option>
             {difficulties.map((difficulty) => (
               <option key={difficulty} value={difficulty}>
                 {difficulty}
@@ -513,12 +522,14 @@ function TaskCard({
             <span>{task.type}</span>
           </span>
 
-          <span className={`inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-xs font-medium shadow-sm ${priorityStyles[task.priority] || 'bg-slate-50 text-slate-600 border-slate-200'}`}>
-            {PriorityIcon && (
-              <PriorityIcon className={`h-3.5 w-3.5 ${priorityIcon.className}`} />
-            )}
-            <span>{task.priority}</span>
-          </span>
+          {task.priority ? (
+            <span className={`inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-xs font-medium shadow-sm ${priorityStyles[task.priority] || 'bg-slate-50 text-slate-600 border-slate-200'}`}>
+              {PriorityIcon && (
+                <PriorityIcon className={`h-3.5 w-3.5 ${priorityIcon.className}`} />
+              )}
+              <span>{task.priority}</span>
+            </span>
+          ) : null}
         </div>
       </div>
 
