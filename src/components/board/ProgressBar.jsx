@@ -1,9 +1,9 @@
-function ProgressBar({ doneCount, todoCount, percent }) {
+function ProgressBar({ doneCount, totalCount, percent }) {
   return (
     <footer className="rounded-2xl border border-slate-200/70 bg-white p-4 shadow-sm">
       <div className="flex items-center justify-between text-sm font-medium text-slate-700">
         <span>
-          Done {doneCount} of {todoCount} tasks from To Do
+          Done {doneCount} of {totalCount} tasks
         </span>
         <span className="font-semibold text-slate-700">
           {percent}%

@@ -239,7 +239,7 @@ function App() {
             />
             <ProgressBar
               doneCount={progress.doneCount}
-              todoCount={progress.todoCount}
+              totalCount={progress.totalCount}
               percent={progress.percent}
             />
           </div>

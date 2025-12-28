@@ -262,20 +262,20 @@ export const useBoardState = () => {
   }, [activeBoard])
 
   const progress = useMemo(() => {
-    if (!activeBoard) return { todoCount: 0, doneCount: 0, percent: 0 }
+    if (!activeBoard) return { totalCount: 0, doneCount: 0, percent: 0 }
 
-    const todoColumn = activeBoard.columns.find(
-      (column) => column.name.toLowerCase() === 'to do',
-    )
     const doneColumn = activeBoard.columns.find(
       (column) => column.name.toLowerCase() === 'done',
     )
-    const todoCount = todoColumn?.tasks.length ?? 0
     const doneCount = doneColumn?.tasks.length ?? 0
-    const total = todoCount + doneCount
-    const percent = total === 0 ? 0 : Math.round((doneCount / total) * 100)
+    const totalCount = activeBoard.columns.reduce(
+      (sum, column) => sum + column.tasks.length,
+      0,
+    )
+    const percent =
+      totalCount === 0 ? 0 : Math.round((doneCount / totalCount) * 100)
 
-    return { todoCount, doneCount, percent }
+    return { totalCount, doneCount, percent }
   }, [activeBoard])
 
   const developerStats = useMemo(() => {
