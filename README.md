@@ -40,11 +40,28 @@ Boardify is a minimal-footprint, yet powerful task-management board built with *
 ## Getting Started
 
 ### Prerequisites
-- Node.js (v18 or higher)
+- Node.js (v20.19+ recommended)
 - npm
 - Docker (for backend)
 
 ### Installation & Setup
+
+#### Option A: Docker (recommended)
+Runs Postgres + backend + frontend with one command.
+
+```bash
+docker compose up --build
+```
+
+- Frontend: `http://localhost:5173`
+- Backend: `http://localhost:3000`
+- Postgres: runs inside Docker (not exposed to host by default to avoid port conflicts)
+
+Optional: if you want to connect to Postgres from your host (psql/DBeaver), add a port mapping to `docker-compose.yml` (example: `5433:5432`).
+
+Optional: copy `/.env.example` to `/.env` to document local env vars (Docker Compose already sets defaults for Docker).
+
+#### Option B: Local (npm)
 
 1. **Clone and install frontend dependencies**:
    ```bash
@@ -73,8 +90,8 @@ Boardify is a minimal-footprint, yet powerful task-management board built with *
    - Install dependencies and start the server on `http://localhost:3000`:
      ```bash
      npm install
-     npm start
-     ```
+   npm start
+   ```
 
 ## API Endpoints
 The backend exposes the following RESTful endpoints.
