@@ -4,7 +4,11 @@ function Column({
   column,
   columns,
   taskTypes,
+  sprints,
+  projectTagOptions,
+  dependencyOptions,
   onAddType,
+  onAddSprint,
   onDeleteTask,
   onMoveTask,
   onOpenTaskForm,
@@ -69,11 +73,12 @@ function Column({
   }
 
   const columnStyle = columnStyles[columnKey] || columnStyles['to do']
-  const showTaskCta = columnKey === 'to do' && typeof onOpenTaskForm === 'function'
+  const showTaskCta = typeof onOpenTaskForm === 'function'
+  const canQuickAdd = columnKey === 'to do' && showTaskCta
 
   return (
     <section
-      className="flex min-w-[280px] flex-1 flex-col rounded-2xl bg-white/80 p-3 shadow-sm ring-1 ring-slate-200/60 transition-colors duration-200"
+      className="flex min-w-[280px] flex-1 flex-col gap-3"
       onDragOver={(event) => {
         event.preventDefault()
         event.currentTarget.classList.add('bg-blue-50/80')
@@ -86,53 +91,31 @@ function Column({
         handleDrop(event)
       }}
     >
-      <div
-        className={`sticky top-0 z-10 mb-3 flex items-center justify-between rounded-xl border px-3 py-2 backdrop-blur ${columnStyle.header}`}
-      >
+      <div className="flex items-center justify-between rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-sm">
         <div className="flex items-center gap-2">
-          <div className={`h-2.5 w-2.5 rounded-full ${columnStyle.dot}`} />
-          <h2 className={`text-base font-semibold tracking-tight ${columnStyle.title}`}>
+          <h2 className="text-sm font-semibold text-slate-900">
             {column.name}
           </h2>
-          <span className="rounded-full bg-white/70 px-2 py-0.5 text-xs font-semibold text-slate-500">
+          <span className="text-xs font-semibold text-slate-400">
             {column.tasks.length}
           </span>
         </div>
+        {canQuickAdd ? (
+          <button
+            className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-slate-200 text-sm font-semibold text-slate-600 transition hover:border-slate-300 hover:text-slate-900"
+            type="button"
+            onClick={onOpenTaskForm}
+            aria-label={`Add task to ${column.name}`}
+          >
+            +
+          </button>
+        ) : null}
       </div>
 
       <div className="flex flex-1 flex-col gap-3">
         {column.tasks.length === 0 ? (
-          <div className={`flex flex-1 flex-col items-center justify-center rounded-xl border-2 border-dashed ${columnStyle.empty.border} bg-white/60 px-4 py-10 text-center`}>
-            <div className={`mb-3 rounded-full p-3 ${columnStyle.empty.iconBg}`}>
-              <svg
-                className={`h-7 w-7 ${columnStyle.empty.iconColor}`}
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={1.5}
-                  d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
-                />
-              </svg>
-            </div>
-            <p className="text-sm font-semibold text-slate-700">
-              {columnStyle.empty.title}
-            </p>
-            <p className="mt-1 max-w-[180px] text-xs text-slate-500">
-              {columnStyle.empty.description}
-            </p>
-            {showTaskCta ? (
-              <button
-                className="mt-4 rounded-lg bg-blue-600 px-4 py-2 text-xs font-semibold text-white shadow-sm transition-colors hover:bg-blue-700"
-                type="button"
-                onClick={onOpenTaskForm}
-              >
-                New task
-              </button>
-            ) : null}
+          <div className="rounded-2xl border border-dashed border-slate-200 bg-white px-4 py-10 text-center text-xs text-slate-400">
+            {columnStyle.empty.title}
           </div>
         ) : (
           column.tasks.map((task) => (
@@ -142,7 +125,11 @@ function Column({
               columnId={column.id}
               columns={columns}
               taskTypes={taskTypes}
+              sprints={sprints}
+              projectTagOptions={projectTagOptions}
+              dependencyOptions={dependencyOptions}
               onAddType={onAddType}
+              onAddSprint={onAddSprint}
               onMoveTask={onMoveTask}
               onDeleteTask={onDeleteTask}
               onUpdateTask={onUpdateTask}

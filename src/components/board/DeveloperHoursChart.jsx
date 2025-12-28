@@ -7,7 +7,7 @@ function DeveloperHoursChart({ developerStats }) {
 
   return (
     <div className="w-full shrink-0 space-y-5">
-      <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
+      <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500">
         Workload
       </h3>
       <div className="space-y-4">
@@ -24,9 +24,9 @@ function DeveloperHoursChart({ developerStats }) {
                     {Number(hours).toFixed(1)}h
                   </span>
                 </div>
-                <div className="h-2.5 w-full overflow-hidden rounded-full bg-slate-100/80">
+                <div className="h-2.5 w-full overflow-hidden rounded-full bg-slate-200/70">
                   <div
-                    className="h-full rounded-full bg-blue-500 shadow-sm transition-all duration-500"
+                    className="h-full rounded-full bg-slate-900 shadow-sm transition-all duration-500"
                     style={{ width: `${percent}%` }}
                   />
                 </div>

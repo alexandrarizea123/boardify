@@ -18,11 +18,14 @@ const buildDraft = (task) => ({
   description: task.description,
   assignee: task.assignee,
   type: task.type || 'task',
+  sprint: task.sprint || '',
   priority: task.priority || '',
   difficulty: task.difficulty || '',
   estimatedTime: task.estimatedTime || '',
   dueDate: task.dueDate || '',
   subtasks: task.subtasks ? [...task.subtasks] : [],
+  projectTags: task.projectTags ? [...task.projectTags] : [],
+  dependencies: task.dependencies ? [...task.dependencies] : [],
 })
 
 const priorityStyles = {
@@ -92,7 +95,11 @@ function TaskCard({
   task,
   columnId,
   taskTypes,
+  sprints = [],
+  projectTagOptions = [],
+  dependencyOptions = [],
   onAddType,
+  onAddSprint,
   onDeleteTask,
   isDone = false,
   onUpdateTask,
@@ -103,7 +110,11 @@ function TaskCard({
   const [draft, setDraft] = useState(() => buildDraft(task))
   const [isAddingType, setIsAddingType] = useState(false)
   const [newTypeValue, setNewTypeValue] = useState('')
+  const [isAddingSprint, setIsAddingSprint] = useState(false)
+  const [newSprintValue, setNewSprintValue] = useState('')
   const [newSubtaskName, setNewSubtaskName] = useState('')
+  const [newProjectTag, setNewProjectTag] = useState('')
+  const [selectedDependencyId, setSelectedDependencyId] = useState('')
   const isDraggingRef = useRef(false)
   const canDrag =
     typeof window !== 'undefined' &&
@@ -178,6 +189,91 @@ function TaskCard({
     }
   }
 
+  const handleSprintChange = (event) => {
+    const value = event.target.value
+    if (value === '__new__') {
+      setIsAddingSprint(true)
+      setNewSprintValue('')
+    } else {
+      handleDraftChange('sprint', value)
+    }
+  }
+
+  const handleNewSprintSubmit = () => {
+    const trimmed = newSprintValue.trim()
+    if (trimmed) {
+      if (typeof onAddSprint === 'function') {
+        onAddSprint(trimmed)
+      }
+      handleDraftChange('sprint', trimmed)
+    }
+    setIsAddingSprint(false)
+    setNewSprintValue('')
+  }
+
+  const handleNewSprintKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault()
+      handleNewSprintSubmit()
+    } else if (event.key === 'Escape') {
+      setIsAddingSprint(false)
+      setNewSprintValue('')
+    }
+  }
+
+  const handleAddProjectTag = () => {
+    const trimmed = newProjectTag.trim()
+    if (!trimmed) return
+    const currentTags = draft.projectTags || []
+    if (currentTags.includes(trimmed)) {
+      setNewProjectTag('')
+      return
+    }
+    handleDraftChange('projectTags', [...currentTags, trimmed])
+    setNewProjectTag('')
+  }
+
+  const handleRemoveProjectTag = (tagToRemove) => {
+    const currentTags = draft.projectTags || []
+    handleDraftChange(
+      'projectTags',
+      currentTags.filter((tag) => tag !== tagToRemove),
+    )
+  }
+
+  const handleProjectTagKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault()
+      handleAddProjectTag()
+    }
+  }
+
+  const handleAddDependency = () => {
+    if (!selectedDependencyId) return
+    const currentDependencies = draft.dependencies || []
+    if (currentDependencies.some((dep) => dep.id === selectedDependencyId)) {
+      setSelectedDependencyId('')
+      return
+    }
+    const dependency = dependencyOptions.find(
+      (option) => option.id === selectedDependencyId,
+    )
+    if (!dependency) return
+    handleDraftChange('dependencies', [
+      ...currentDependencies,
+      { id: dependency.id, name: dependency.name },
+    ])
+    setSelectedDependencyId('')
+  }
+
+  const handleRemoveDependency = (dependencyId) => {
+    const currentDependencies = draft.dependencies || []
+    handleDraftChange(
+      'dependencies',
+      currentDependencies.filter((dep) => dep.id !== dependencyId),
+    )
+  }
+
   const handleSave = () => {
     if (!draft.name.trim()) return
     const updates = {
@@ -185,10 +281,13 @@ function TaskCard({
       description: draft.description.trim(),
       assignee: draft.assignee,
       type: draft.type,
+      sprint: draft.sprint,
       priority: draft.priority,
       estimatedTime: draft.estimatedTime,
       dueDate: draft.dueDate,
       subtasks: draft.subtasks,
+      projectTags: draft.projectTags || [],
+      dependencies: draft.dependencies || [],
     }
     if (draft.difficulty) {
       updates.difficulty = draft.difficulty
@@ -202,6 +301,10 @@ function TaskCard({
     setIsEditing(false)
     setIsAddingType(false)
     setNewTypeValue('')
+    setIsAddingSprint(false)
+    setNewSprintValue('')
+    setNewProjectTag('')
+    setSelectedDependencyId('')
   }
 
   const renderDescription = (text) => {
@@ -215,7 +318,7 @@ function TaskCard({
         return (
           <span
             key={`${token}-${index}`}
-            className="rounded-md border border-slate-200 bg-slate-50 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-slate-700"
+            className="inline-block max-w-full break-all rounded-md border border-slate-200 bg-slate-50 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-slate-700"
           >
             {token}
           </span>
@@ -265,6 +368,12 @@ function TaskCard({
     }
     return colors[Math.abs(hash) % colors.length]
   }
+
+  const availableDependencies = dependencyOptions.filter(
+    (option) =>
+      option.id !== task.id &&
+      !(draft.dependencies || []).some((dep) => dep.id === option.id),
+  )
 
   if (isEditing) {
     return (
@@ -330,6 +439,36 @@ function TaskCard({
         </div>
 
         <div className="grid grid-cols-2 gap-2">
+          {isAddingSprint ? (
+            <input
+              className="w-full min-w-0 rounded-lg border border-slate-200 bg-slate-50 px-2 py-1.5 text-xs outline-none focus:border-blue-500 focus:bg-white transition-all"
+              value={newSprintValue}
+              onChange={(event) => setNewSprintValue(event.target.value)}
+              onBlur={handleNewSprintSubmit}
+              onKeyDown={handleNewSprintKeyDown}
+              placeholder="Sprint..."
+              autoFocus
+            />
+          ) : (
+            <select
+              className="rounded-lg border border-slate-200 bg-slate-50 px-2 py-1.5 text-xs outline-none focus:border-blue-500 focus:bg-white transition-all"
+              value={draft.sprint || ''}
+              onChange={handleSprintChange}
+            >
+              <option value="">
+                Sprint
+              </option>
+              {sprints.map((sprint) => (
+                <option key={sprint} value={sprint}>
+                  {sprint}
+                </option>
+              ))}
+              <option value="__new__" className="font-semibold text-slate-500">
+                + New sprint
+              </option>
+            </select>
+          )}
+
           <select
             className="rounded-lg border border-slate-200 bg-slate-50 px-2 py-1.5 text-xs outline-none focus:border-blue-500 focus:bg-white transition-all"
             value={draft.assignee}
@@ -405,11 +544,9 @@ function TaskCard({
               </option>
             ))}
           </select>
-        </div>
 
-        <div className="flex flex-wrap gap-2">
           <input
-            className="min-w-0 flex-1 rounded-lg border border-slate-200 bg-slate-50 px-2 py-1.5 text-xs outline-none focus:border-blue-500 focus:bg-white transition-all"
+            className="min-w-0 rounded-lg border border-slate-200 bg-slate-50 px-2 py-1.5 text-xs outline-none focus:border-blue-500 focus:bg-white transition-all"
             value={draft.estimatedTime}
             onChange={(event) =>
               handleDraftChange('estimatedTime', event.target.value)
@@ -418,10 +555,111 @@ function TaskCard({
           />
           <input
             type="date"
-            className="min-w-0 flex-1 rounded-lg border border-slate-200 bg-slate-50 px-2 py-1.5 text-xs outline-none focus:border-blue-500 focus:bg-white transition-all"
+            className="min-w-0 rounded-lg border border-slate-200 bg-slate-50 px-2 py-1.5 text-xs outline-none focus:border-blue-500 focus:bg-white transition-all"
             value={draft.dueDate}
             onChange={(event) => handleDraftChange('dueDate', event.target.value)}
           />
+        </div>
+
+        <div className="space-y-1">
+          <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-500">
+            Project tags
+          </p>
+          {(draft.projectTags || []).length > 0 ? (
+            <div className="flex flex-wrap gap-1.5">
+              {(draft.projectTags || []).map((tag) => (
+                <span
+                  key={tag}
+                  className="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white px-2 py-0.5 text-[10px] font-semibold text-slate-600"
+                >
+                  #{tag}
+                  <button
+                    type="button"
+                    className="text-slate-400 hover:text-slate-600"
+                    onClick={() => handleRemoveProjectTag(tag)}
+                    aria-label={`Remove ${tag}`}
+                  >
+                    ✕
+                  </button>
+                </span>
+              ))}
+            </div>
+          ) : null}
+          <div className="flex items-center gap-2">
+            <input
+              className="flex-1 rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs outline-none transition-all focus:border-blue-500 focus:bg-white"
+              value={newProjectTag}
+              onChange={(event) => setNewProjectTag(event.target.value)}
+              onKeyDown={handleProjectTagKeyDown}
+              placeholder="Add project tag"
+              list={`project-tags-edit-${task.id}`}
+            />
+            <button
+              type="button"
+              className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-600 transition-colors hover:border-slate-300 hover:text-slate-900"
+              onClick={handleAddProjectTag}
+            >
+              Add
+            </button>
+          </div>
+          {projectTagOptions.length > 0 ? (
+            <datalist id={`project-tags-edit-${task.id}`}>
+              {projectTagOptions.map((tag) => (
+                <option key={tag} value={tag} />
+              ))}
+            </datalist>
+          ) : null}
+        </div>
+
+        <div className="space-y-1">
+          <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-500">
+            Depends on
+          </p>
+          {(draft.dependencies || []).length > 0 ? (
+            <div className="flex flex-wrap gap-1.5">
+              {(draft.dependencies || []).map((dependency) => (
+                <span
+                  key={dependency.id}
+                  className="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white px-2 py-0.5 text-[10px] font-semibold text-slate-600"
+                >
+                  {dependency.name}
+                  <button
+                    type="button"
+                    className="text-slate-400 hover:text-slate-600"
+                    onClick={() => handleRemoveDependency(dependency.id)}
+                    aria-label={`Remove ${dependency.name}`}
+                  >
+                    ✕
+                  </button>
+                </span>
+              ))}
+            </div>
+          ) : null}
+          <div className="flex items-center gap-2">
+            <select
+              className="flex-1 rounded-lg border border-slate-200 bg-slate-50 px-2 py-1.5 text-xs outline-none transition-all focus:border-blue-500 focus:bg-white"
+              value={selectedDependencyId}
+              onChange={(event) => setSelectedDependencyId(event.target.value)}
+              disabled={availableDependencies.length === 0}
+            >
+              <option value="">
+                {availableDependencies.length === 0 ? 'No tasks yet' : 'Select task'}
+              </option>
+              {availableDependencies.map((taskOption) => (
+                <option key={taskOption.id} value={taskOption.id}>
+                  {taskOption.name} · {taskOption.column}
+                </option>
+              ))}
+            </select>
+            <button
+              type="button"
+              className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-600 transition-colors hover:border-slate-300 hover:text-slate-900"
+              onClick={handleAddDependency}
+              disabled={!selectedDependencyId}
+            >
+              Add
+            </button>
+          </div>
         </div>
 
         <div className="flex gap-2 pt-2">
@@ -450,19 +688,19 @@ function TaskCard({
   const PriorityIcon = priorityIcon?.icon
   const surfaceClasses = isDone
     ? {
-        base: 'bg-emerald-50/60 ring-emerald-200/70',
-        expanded: 'bg-emerald-50/80 ring-emerald-200/80 shadow-md',
-        hover: 'hover:bg-emerald-50/80 hover:ring-emerald-300/80',
+        base: 'bg-emerald-50/50 border-emerald-200/70',
+        expanded: 'bg-emerald-50 border-emerald-300/60 shadow-md',
+        hover: 'hover:bg-emerald-50',
       }
     : {
-        base: 'bg-white ring-slate-200/60',
-        expanded: 'bg-slate-50/60 ring-slate-300/50 shadow-md',
-        hover: 'hover:bg-white hover:ring-slate-300/60',
+        base: 'bg-white border-slate-200',
+        expanded: 'bg-white border-slate-300 shadow-md',
+        hover: 'hover:border-slate-300',
       }
 
   return (
     <article
-      className={`group relative flex flex-col gap-3 rounded-xl p-4 shadow-sm ring-1 transition-all duration-200 cursor-pointer ${isExpanded
+      className={`group relative flex flex-col gap-3 rounded-2xl border p-4 shadow-sm transition-all duration-200 cursor-pointer ${isExpanded
         ? surfaceClasses.expanded
         : `${surfaceClasses.base} ${surfaceClasses.hover} hover:-translate-y-0.5 hover:shadow-md`
         }`}
@@ -500,7 +738,7 @@ function TaskCard({
       {/* Avatar Overlap */}
       {task.assignee ? (
         <div
-          className={`absolute -top-3 -right-3 z-10 flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold shadow-sm ring-2 ring-white ${getAvatarColor(task.assignee)}`}
+          className={`absolute right-3 top-3 z-10 flex h-7 w-7 items-center justify-center rounded-full text-[10px] font-bold shadow-sm ring-2 ring-white ${getAvatarColor(task.assignee)}`}
           title={task.assignee}
         >
           {getInitials(task.assignee)}
@@ -545,11 +783,34 @@ function TaskCard({
             </span>
           ) : null}
         </div>
+
+        {(task.sprint || (task.projectTags || []).length > 0 || (task.dependencies || []).length > 0) ? (
+          <div className="flex flex-wrap items-center gap-2 text-[11px] text-slate-500">
+            {task.sprint ? (
+              <span className="rounded-full border border-slate-200 bg-white px-2.5 py-0.5 text-[10px] font-semibold text-slate-600">
+                Sprint {task.sprint}
+              </span>
+            ) : null}
+            {(task.projectTags || []).map((tag) => (
+              <span
+                key={tag}
+                className="rounded-full border border-slate-200 bg-white px-2.5 py-0.5 text-[10px] font-semibold text-slate-600"
+              >
+                #{tag}
+              </span>
+            ))}
+            {(task.dependencies || []).length > 0 ? (
+              <span className="rounded-full border border-slate-200 bg-white px-2.5 py-0.5 text-[10px] font-semibold text-slate-600">
+                {task.dependencies.length} deps
+              </span>
+            ) : null}
+          </div>
+        ) : null}
       </div>
 
       {/* Description */}
       {task?.description && (
-        <div className={`text-sm text-slate-600 leading-relaxed ${isExpanded ? '' : 'line-clamp-2'}`}>
+        <div className={`break-words text-sm text-slate-600 leading-relaxed ${isExpanded ? '' : 'line-clamp-2'}`}>
           {renderDescription(task.description)}
         </div>
       )}

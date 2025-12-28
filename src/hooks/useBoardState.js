@@ -8,6 +8,7 @@ import {
   difficulties,
   emptyTaskDraft,
   priorities,
+  sprints as defaultSprints,
   taskTypes as defaultTaskTypes,
 } from '../data/boardData'
 
@@ -63,11 +64,13 @@ export const useBoardState = () => {
     [initialBoard.id]: buildDrafts(initialBoard.columns),
   }))
   const [taskTypes, setTaskTypes] = useState(defaultTaskTypes)
+  const [sprints, setSprints] = useState(defaultSprints)
   const [filterType, setFilterType] = useState('All')
   const [filterAssignee, setFilterAssignee] = useState('All')
   const [filterPriority, setFilterPriority] = useState('All')
   const [filterDifficulty, setFilterDifficulty] = useState('All')
   const [filterHasSubtasks, setFilterHasSubtasks] = useState('All')
+  const [filterQuery, setFilterQuery] = useState('')
   const [isTaskFormOpen, setIsTaskFormOpen] = useState(false)
 
   useEffect(() => {
@@ -141,13 +144,16 @@ export const useBoardState = () => {
     const hasPriorityFilter = filterPriority !== 'All'
     const hasDifficultyFilter = filterDifficulty !== 'All'
     const hasSubtaskFilter = filterHasSubtasks !== 'All'
+    const normalizedQuery = filterQuery.trim().toLowerCase()
+    const hasQuery = normalizedQuery.length > 0
 
     if (
       !hasTypeFilter &&
       !hasAssigneeFilter &&
       !hasPriorityFilter &&
       !hasDifficultyFilter &&
-      !hasSubtaskFilter
+      !hasSubtaskFilter &&
+      !hasQuery
     ) {
       return activeBoard.columns
     }
@@ -155,6 +161,13 @@ export const useBoardState = () => {
     return activeBoard.columns.map((column) => ({
       ...column,
       tasks: column.tasks.filter((task) => {
+        if (hasQuery) {
+          const nameMatches = task.name?.toLowerCase().includes(normalizedQuery)
+          const descriptionMatches = task.description
+            ?.toLowerCase()
+            .includes(normalizedQuery)
+          if (!nameMatches && !descriptionMatches) return false
+        }
         if (hasTypeFilter && task.type !== filterType) return false
         if (hasAssigneeFilter) {
           if (filterAssignee === 'Unassigned') {
@@ -179,6 +192,7 @@ export const useBoardState = () => {
     filterDifficulty,
     filterHasSubtasks,
     filterPriority,
+    filterQuery,
     filterType,
   ])
 
@@ -210,6 +224,18 @@ export const useBoardState = () => {
 
   const priorityOptions = useMemo(() => ['All', ...priorities], [])
   const difficultyOptions = useMemo(() => ['All', ...difficulties], [])
+  const projectTagOptions = useMemo(() => {
+    if (!activeBoard) return []
+    const tags = new Set()
+    for (const column of activeBoard.columns) {
+      for (const task of column.tasks) {
+        for (const tag of task.projectTags || []) {
+          if (tag) tags.add(tag)
+        }
+      }
+    }
+    return Array.from(tags)
+  }, [activeBoard])
 
   const progress = useMemo(() => {
     if (!activeBoard) return { todoCount: 0, doneCount: 0, percent: 0 }
@@ -390,6 +416,15 @@ export const useBoardState = () => {
     void persistTaskType(trimmed)
   }
 
+  const handleAddSprint = (newSprint) => {
+    const trimmed = newSprint.trim()
+    if (!trimmed) return
+    setSprints((current) => {
+      if (current.includes(trimmed)) return current
+      return [...current, trimmed]
+    })
+  }
+
   const updateTaskDraft = (columnId, field, value) => {
     if (!activeBoardId) return
     setTaskDraftsByBoard((current) => ({
@@ -415,12 +450,22 @@ export const useBoardState = () => {
     const typeValue = draft.type?.trim()
     const priorityValue = draft.priority?.trim()
     const difficultyValue = draft.difficulty?.trim()
+    const sprintValue = draft.sprint?.trim()
+    const projectTags = (draft.projectTags || [])
+      .map((tag) => tag.trim())
+      .filter(Boolean)
+    const dependencies = (draft.dependencies || []).filter(
+      (dep) => dep && dep.id && dep.name,
+    )
     const task = {
       id: createId(),
       name: draft.name.trim(),
       description: draft.description.trim(),
       assignee: draft.assignee || '',
       type: typeValue || 'task',
+      ...(sprintValue ? { sprint: sprintValue } : {}),
+      ...(projectTags.length ? { projectTags } : {}),
+      ...(dependencies.length ? { dependencies } : {}),
       ...(priorityValue ? { priority: priorityValue } : {}),
       ...(difficultyValue ? { difficulty: difficultyValue } : {}),
       estimatedTime: draft.estimatedTime,
@@ -577,21 +622,25 @@ export const useBoardState = () => {
     canAddBoard,
     isCreatingBoard,
     taskTypes,
+    sprints,
     filterType,
     filterAssignee,
     filterPriority,
     filterDifficulty,
     filterHasSubtasks,
+    filterQuery,
     filteredColumns,
     assigneeOptions,
     priorityOptions,
     difficultyOptions,
+    projectTagOptions,
     isTaskFormOpen,
     setFilterType,
     setFilterAssignee,
     setFilterPriority,
     setFilterDifficulty,
     setFilterHasSubtasks,
+    setFilterQuery,
     setIsTaskFormOpen,
     setBoardName,
     setBoardDescription,
@@ -602,6 +651,7 @@ export const useBoardState = () => {
     handleUpdateBoardDetails,
     handleDeleteBoard,
     handleAddTaskType,
+    handleAddSprint,
     updateTaskDraft,
     handleAddTask,
     handleMoveTask,

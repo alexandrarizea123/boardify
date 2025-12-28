@@ -6,6 +6,8 @@ function BoardHeader({
   taskTypes = [],
   filterType = 'All',
   onFilterChange = () => {},
+  searchQuery = '',
+  onSearchChange = () => {},
   assigneeOptions = [],
   assigneeFilter = 'All',
   onAssigneeFilterChange = () => {},
@@ -21,6 +23,7 @@ function BoardHeader({
   onDelete,
 }) {
   const [isEditing, setIsEditing] = useState(false)
+  const [showFilters, setShowFilters] = useState(false)
   const [draftName, setDraftName] = useState(name)
   const [draftDescription, setDraftDescription] = useState(description || '')
 
@@ -47,14 +50,69 @@ function BoardHeader({
   }
 
   return (
-    <header className="space-y-3 rounded-md border border-slate-200 bg-white p-4">
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <p className="text-xs font-semibold uppercase tracking-wide text-slate-600">
-          Task Management Board
-        </p>
-        <div className="flex flex-wrap items-center gap-2">
+    <header className="space-y-3">
+      <div className="flex flex-wrap items-center gap-3">
+        <div className="relative flex-1 min-w-[240px]">
+          <svg
+            className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <circle cx="11" cy="11" r="7" />
+            <path d="M20 20l-3.5-3.5" />
+          </svg>
+          <input
+            className="w-full rounded-xl border border-slate-200 bg-white px-10 py-2 text-sm text-slate-800 shadow-sm outline-none transition focus:border-slate-400 focus:ring-2 focus:ring-slate-900/10"
+            value={searchQuery}
+            onChange={(event) => onSearchChange(event.target.value)}
+            placeholder="Search tasks..."
+          />
+        </div>
+        <button
+          className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-700 shadow-sm transition hover:border-slate-300"
+          type="button"
+          onClick={() => setShowFilters((current) => !current)}
+        >
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M3 5h18l-7 8v5l-4 2v-7L3 5z" />
+          </svg>
+          Filters
+        </button>
+        {!isEditing && (
+          <button
+            className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-600 transition hover:border-slate-300 hover:text-slate-900"
+            type="button"
+            onClick={handleStartEdit}
+          >
+            Rename
+          </button>
+        )}
+        <button
+          className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-600 transition hover:border-slate-300 hover:text-slate-900"
+          type="button"
+          onClick={onDelete}
+        >
+          Delete
+        </button>
+      </div>
+
+      {showFilters && !isEditing ? (
+        <div className="flex flex-wrap items-center gap-2 rounded-xl border border-slate-200 bg-white p-3 shadow-sm">
           <select
-            className="rounded-md border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-700 outline-none focus:border-slate-300"
+            className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-[11px] font-semibold text-slate-700 outline-none transition focus:border-slate-400 focus:bg-white"
             value={filterType}
             onChange={(e) => onFilterChange(e.target.value)}
           >
@@ -66,7 +124,7 @@ function BoardHeader({
             ))}
           </select>
           <select
-            className="rounded-md border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-700 outline-none focus:border-slate-300"
+            className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-[11px] font-semibold text-slate-700 outline-none transition focus:border-slate-400 focus:bg-white"
             value={assigneeFilter}
             onChange={(e) => onAssigneeFilterChange(e.target.value)}
           >
@@ -80,7 +138,7 @@ function BoardHeader({
               ))}
           </select>
           <select
-            className="rounded-md border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-700 outline-none focus:border-slate-300"
+            className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-[11px] font-semibold text-slate-700 outline-none transition focus:border-slate-400 focus:bg-white"
             value={priorityFilter}
             onChange={(e) => onPriorityFilterChange(e.target.value)}
           >
@@ -94,7 +152,7 @@ function BoardHeader({
               ))}
           </select>
           <select
-            className="rounded-md border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-700 outline-none focus:border-slate-300"
+            className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-[11px] font-semibold text-slate-700 outline-none transition focus:border-slate-400 focus:bg-white"
             value={difficultyFilter}
             onChange={(e) => onDifficultyFilterChange(e.target.value)}
           >
@@ -108,7 +166,7 @@ function BoardHeader({
               ))}
           </select>
           <select
-            className="rounded-md border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-700 outline-none focus:border-slate-300"
+            className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-[11px] font-semibold text-slate-700 outline-none transition focus:border-slate-400 focus:bg-white"
             value={subtaskFilter}
             onChange={(e) => onSubtaskFilterChange(e.target.value)}
           >
@@ -116,65 +174,43 @@ function BoardHeader({
             <option value="Has Subtasks">Has Subtasks</option>
             <option value="No Subtasks">No Subtasks</option>
           </select>
-          {!isEditing && (
-            <button
-              className="rounded-md border border-slate-200 px-3 py-1 text-xs font-semibold text-slate-700 hover:border-slate-300 hover:text-slate-900"
-              type="button"
-              onClick={handleStartEdit}
-            >
-              Rename
-            </button>
-          )}
-          <button
-            className="rounded-md border border-slate-200 px-3 py-1 text-xs font-semibold text-slate-700 hover:border-slate-300 hover:text-slate-900"
-            type="button"
-            onClick={onDelete}
-          >
-            Delete board
-          </button>
         </div>
-      </div>
+      ) : null}
+
       {isEditing ? (
-        <div className="space-y-3">
-          <input
-            className="w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-2xl font-semibold outline-none focus:border-slate-300"
-            value={draftName}
-            onChange={(event) => setDraftName(event.target.value)}
-            placeholder="Board name"
-          />
-          <textarea
-            className="min-h-[88px] w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:border-slate-300"
-            value={draftDescription}
-            onChange={(event) => setDraftDescription(event.target.value)}
-            placeholder="Board description"
-          />
-          <div className="flex flex-wrap gap-2">
-            <button
-              className="rounded-md border border-slate-300 bg-slate-100 px-4 py-2 text-xs font-semibold uppercase tracking-wide text-slate-900"
-              type="button"
-              onClick={handleSave}
-            >
-              Save
-            </button>
-            <button
-              className="rounded-md border border-slate-200 px-4 py-2 text-xs font-semibold uppercase tracking-wide text-slate-700"
-              type="button"
-              onClick={handleCancel}
-            >
-              Cancel
-            </button>
+        <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+          <div className="space-y-3">
+            <input
+              className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-lg font-semibold outline-none transition focus:border-slate-400 focus:bg-white focus:ring-2 focus:ring-slate-900/10"
+              value={draftName}
+              onChange={(event) => setDraftName(event.target.value)}
+              placeholder="Board name"
+            />
+            <textarea
+              className="min-h-[72px] w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none transition focus:border-slate-400 focus:bg-white focus:ring-2 focus:ring-slate-900/10"
+              value={draftDescription}
+              onChange={(event) => setDraftDescription(event.target.value)}
+              placeholder="Board description"
+            />
+            <div className="flex flex-wrap gap-2">
+              <button
+                className="rounded-lg bg-slate-900 px-4 py-2 text-xs font-semibold uppercase tracking-wide text-white transition hover:bg-slate-800"
+                type="button"
+                onClick={handleSave}
+              >
+                Save
+              </button>
+              <button
+                className="rounded-lg border border-slate-200 px-4 py-2 text-xs font-semibold uppercase tracking-wide text-slate-700 transition hover:border-slate-300 hover:text-slate-900"
+                type="button"
+                onClick={handleCancel}
+              >
+                Cancel
+              </button>
+            </div>
           </div>
         </div>
-      ) : (
-        <div className="space-y-1">
-          <h1 className="text-3xl font-semibold">{name}</h1>
-          {description && (
-            <p className="max-w-2xl text-sm text-slate-600">
-              {description}
-            </p>
-          )}
-        </div>
-      )}
+      ) : null}
     </header>
   )
 }

@@ -34,10 +34,10 @@ function TaskSummary({ typeStats }) {
   return (
     <div className="w-full shrink-0 space-y-5">
       <div className="flex items-center justify-between">
-         <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
+         <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500">
            Task Distribution
          </h3>
-         <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-bold text-slate-600">
+         <span className="rounded-full bg-white px-2 py-0.5 text-[10px] font-semibold text-slate-600 shadow-sm">
             {total} Total
          </span>
       </div>
@@ -48,13 +48,13 @@ function TaskSummary({ typeStats }) {
             <div key={type} className="flex items-center justify-between text-sm">
               <span className="text-slate-600">{type}</span>
               <div className="flex items-center gap-2">
-                 <div className="h-1.5 w-24 rounded-full bg-slate-100 overflow-hidden">
+                 <div className="h-1.5 w-24 rounded-full bg-slate-200/70 overflow-hidden">
                     <div 
-                       className="h-full rounded-full bg-slate-800"
+                       className="h-full rounded-full bg-slate-900"
                        style={{ width: `${(count / total) * 100}%` }}
                     />
                  </div>
-                 <span className="w-4 text-right font-medium text-slate-900">{count}</span>
+                 <span className="w-4 text-right text-xs font-semibold text-slate-900">{count}</span>
               </div>
             </div>
           ))

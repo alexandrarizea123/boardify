@@ -65,14 +65,14 @@ function OverdueTrendChart({ tasks = [] }) {
 
   return (
     <div className="w-full shrink-0 space-y-5">
-      <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
+      <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500">
         Overdue Trend
       </h3>
       
       <div className="relative h-[120px] w-full">
         <svg
           viewBox={`0 0 ${width} ${height}`}
-          className="h-full w-full overflow-visible text-blue-500"
+          className="h-full w-full overflow-visible text-slate-900"
         >
           {/* Grid lines */}
           <line
@@ -134,7 +134,7 @@ function OverdueTrendChart({ tasks = [] }) {
         </svg>
 
         {/* Current Value Tooltip (Static for last point) */}
-        <div className="absolute right-0 top-0 rounded-full bg-slate-800 px-2 py-0.5 text-[10px] font-bold text-white shadow-sm ring-2 ring-white">
+        <div className="absolute right-0 top-0 rounded-full bg-slate-900 px-2 py-0.5 text-[10px] font-semibold text-white shadow-sm">
           {trendData[trendData.length - 1].count} overdue
         </div>
       </div>

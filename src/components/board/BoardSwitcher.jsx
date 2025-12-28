@@ -1,22 +1,14 @@
 function BoardSwitcher({ boards, activeBoardId, onSelect, onAdd, canAdd }) {
   return (
-    <div className="flex flex-wrap items-center gap-3 rounded-md border border-slate-200 bg-white p-3">
-      <span className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-slate-600">
-        <img
-          src="/assets/favicon.ico"
-          alt="Boardify"
-          className="h-4 w-4"
-        />
-        Boards
-      </span>
-      <div className="flex flex-wrap gap-2">
+    <div className="flex flex-wrap items-center gap-2">
+      <div className="flex flex-wrap gap-2 rounded-xl border border-slate-200 bg-slate-50 px-2 py-1.5">
         {boards.map((board) => (
           <button
             key={board.id}
-            className={`rounded-md border px-3 py-1 text-xs font-semibold ${
+            className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors ${
               board.id === activeBoardId
-                ? 'border-slate-300 bg-slate-100 text-slate-900'
-                : 'border-slate-200 text-slate-700 hover:border-slate-300'
+                ? 'bg-white text-slate-900 shadow-sm'
+                : 'text-slate-500 hover:text-slate-900'
             }`}
             type="button"
             onClick={() => onSelect(board.id)}
@@ -26,7 +18,7 @@ function BoardSwitcher({ boards, activeBoardId, onSelect, onAdd, canAdd }) {
         ))}
       </div>
       <button
-        className="ml-auto inline-flex items-center gap-2 rounded-md border border-slate-300 bg-slate-100 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-slate-900 hover:border-slate-400 disabled:cursor-not-allowed disabled:border-slate-200 disabled:text-slate-400"
+        className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-[11px] font-semibold text-slate-700 shadow-sm transition-colors hover:border-slate-300"
         type="button"
         onClick={onAdd}
         disabled={!canAdd}
