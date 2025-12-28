@@ -71,6 +71,8 @@ export const useBoardState = () => {
   const [filterDifficulty, setFilterDifficulty] = useState('All')
   const [filterHasSubtasks, setFilterHasSubtasks] = useState('All')
   const [filterQuery, setFilterQuery] = useState('')
+  const [filterSprint, setFilterSprint] = useState('All')
+  const [filterProjectTag, setFilterProjectTag] = useState('All')
   const [isTaskFormOpen, setIsTaskFormOpen] = useState(false)
 
   useEffect(() => {
@@ -146,6 +148,8 @@ export const useBoardState = () => {
     const hasSubtaskFilter = filterHasSubtasks !== 'All'
     const normalizedQuery = filterQuery.trim().toLowerCase()
     const hasQuery = normalizedQuery.length > 0
+    const hasSprintFilter = filterSprint !== 'All'
+    const hasProjectTagFilter = filterProjectTag !== 'All'
 
     if (
       !hasTypeFilter &&
@@ -153,6 +157,8 @@ export const useBoardState = () => {
       !hasPriorityFilter &&
       !hasDifficultyFilter &&
       !hasSubtaskFilter &&
+      !hasSprintFilter &&
+      !hasProjectTagFilter &&
       !hasQuery
     ) {
       return activeBoard.columns
@@ -178,6 +184,21 @@ export const useBoardState = () => {
         }
         if (hasPriorityFilter && task.priority !== filterPriority) return false
         if (hasDifficultyFilter && task.difficulty !== filterDifficulty) return false
+        if (hasSprintFilter) {
+          if (filterSprint === 'None') {
+            if (task.sprint) return false
+          } else if (task.sprint !== filterSprint) {
+            return false
+          }
+        }
+        if (hasProjectTagFilter) {
+          const tags = task.projectTags || []
+          if (filterProjectTag === 'Untagged') {
+            if (tags.length > 0) return false
+          } else if (!tags.includes(filterProjectTag)) {
+            return false
+          }
+        }
         if (hasSubtaskFilter) {
           const hasSubtasks = (task.subtasks || []).length > 0
           if (filterHasSubtasks === 'Has Subtasks' && !hasSubtasks) return false
@@ -193,6 +214,8 @@ export const useBoardState = () => {
     filterHasSubtasks,
     filterPriority,
     filterQuery,
+    filterSprint,
+    filterProjectTag,
     filterType,
   ])
 
@@ -224,6 +247,7 @@ export const useBoardState = () => {
 
   const priorityOptions = useMemo(() => ['All', ...priorities], [])
   const difficultyOptions = useMemo(() => ['All', ...difficulties], [])
+  const sprintOptions = useMemo(() => ['All', 'None', ...sprints], [sprints])
   const projectTagOptions = useMemo(() => {
     if (!activeBoard) return []
     const tags = new Set()
@@ -629,10 +653,13 @@ export const useBoardState = () => {
     filterDifficulty,
     filterHasSubtasks,
     filterQuery,
+    filterSprint,
+    filterProjectTag,
     filteredColumns,
     assigneeOptions,
     priorityOptions,
     difficultyOptions,
+    sprintOptions,
     projectTagOptions,
     isTaskFormOpen,
     setFilterType,
@@ -641,6 +668,10 @@ export const useBoardState = () => {
     setFilterDifficulty,
     setFilterHasSubtasks,
     setFilterQuery,
+    setFilterSprint,
+    setFilterProjectTag,
+    setFilterSprint,
+    setFilterProjectTag,
     setIsTaskFormOpen,
     setBoardName,
     setBoardDescription,

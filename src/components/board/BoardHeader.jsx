@@ -17,6 +17,12 @@ function BoardHeader({
   difficultyOptions = [],
   difficultyFilter = 'All',
   onDifficultyFilterChange = () => {},
+  sprintOptions = [],
+  sprintFilter = 'All',
+  onSprintFilterChange = () => {},
+  projectTagOptions = [],
+  projectTagFilter = 'All',
+  onProjectTagFilterChange = () => {},
   subtaskFilter = 'All',
   onSubtaskFilterChange = () => {},
   onUpdate,
@@ -139,6 +145,17 @@ function BoardHeader({
           </select>
           <select
             className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-[11px] font-semibold text-slate-700 outline-none transition focus:border-slate-400 focus:bg-white"
+            value={sprintFilter}
+            onChange={(e) => onSprintFilterChange(e.target.value)}
+          >
+            {sprintOptions.map((sprint) => (
+              <option key={sprint} value={sprint}>
+                {sprint === 'None' ? 'No Sprint' : sprint}
+              </option>
+            ))}
+          </select>
+          <select
+            className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-[11px] font-semibold text-slate-700 outline-none transition focus:border-slate-400 focus:bg-white"
             value={priorityFilter}
             onChange={(e) => onPriorityFilterChange(e.target.value)}
           >
@@ -163,7 +180,7 @@ function BoardHeader({
                 <option key={difficulty} value={difficulty}>
                   {difficulty}
                 </option>
-              ))}
+            ))}
           </select>
           <select
             className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-[11px] font-semibold text-slate-700 outline-none transition focus:border-slate-400 focus:bg-white"
@@ -173,6 +190,19 @@ function BoardHeader({
             <option value="All">All Subtasks</option>
             <option value="Has Subtasks">Has Subtasks</option>
             <option value="No Subtasks">No Subtasks</option>
+          </select>
+          <select
+            className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-[11px] font-semibold text-slate-700 outline-none transition focus:border-slate-400 focus:bg-white"
+            value={projectTagFilter}
+            onChange={(e) => onProjectTagFilterChange(e.target.value)}
+          >
+            <option value="All">All Tags</option>
+            <option value="Untagged">Untagged</option>
+            {projectTagOptions.map((tag) => (
+              <option key={tag} value={tag}>
+                {tag}
+              </option>
+            ))}
           </select>
         </div>
       ) : null}

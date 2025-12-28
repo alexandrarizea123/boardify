@@ -31,17 +31,22 @@ function App() {
     filterPriority,
     filterDifficulty,
     filterHasSubtasks,
+    filterSprint,
+    filterProjectTag,
     filterQuery,
     filteredColumns,
     assigneeOptions,
     priorityOptions,
     difficultyOptions,
+    sprintOptions,
     projectTagOptions,
     setFilterType,
     setFilterAssignee,
     setFilterPriority,
     setFilterDifficulty,
     setFilterHasSubtasks,
+    setFilterSprint,
+    setFilterProjectTag,
     setFilterQuery,
     setBoardName,
     setBoardDescription,
@@ -153,6 +158,12 @@ function App() {
               difficultyOptions={difficultyOptions}
               difficultyFilter={filterDifficulty}
               onDifficultyFilterChange={setFilterDifficulty}
+              sprintOptions={sprintOptions}
+              sprintFilter={filterSprint}
+              onSprintFilterChange={setFilterSprint}
+              projectTagOptions={projectTagOptions}
+              projectTagFilter={filterProjectTag}
+              onProjectTagFilterChange={setFilterProjectTag}
               subtaskFilter={filterHasSubtasks}
               onSubtaskFilterChange={setFilterHasSubtasks}
               onUpdate={handleUpdateBoardDetails}
