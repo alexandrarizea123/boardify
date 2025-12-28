@@ -670,8 +670,6 @@ export const useBoardState = () => {
     setFilterQuery,
     setFilterSprint,
     setFilterProjectTag,
-    setFilterSprint,
-    setFilterProjectTag,
     setIsTaskFormOpen,
     setBoardName,
     setBoardDescription,
