@@ -109,7 +109,9 @@ function Column({
           >
             +
           </button>
-        ) : null}
+        ) : (
+          <span className="h-7 w-7 shrink-0" aria-hidden />
+        )}
       </div>
 
       <div className="flex flex-1 flex-col gap-3">
