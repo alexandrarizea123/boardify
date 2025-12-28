@@ -180,6 +180,7 @@ function App() {
               onDeleteColumn={() => {}} // No-op since columns are fixed
               onDeleteTask={handleDeleteTask}
               onMoveTask={handleMoveTask}
+              onOpenTaskForm={() => setIsTaskFormOpen(true)}
               onUpdateTask={handleUpdateTask}
             />
             <ProgressBar

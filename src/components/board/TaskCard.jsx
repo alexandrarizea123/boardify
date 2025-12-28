@@ -94,6 +94,7 @@ function TaskCard({
   taskTypes,
   onAddType,
   onDeleteTask,
+  isDone = false,
   onUpdateTask,
 }) {
   const dueDateStatus = getDueDateStatus(task.dueDate)
@@ -447,10 +448,23 @@ function TaskCard({
   const priorityIcon = getPriorityIcon(task.priority)
   const TypeIcon = typeContent.icon
   const PriorityIcon = priorityIcon?.icon
+  const surfaceClasses = isDone
+    ? {
+        base: 'bg-emerald-50/60 ring-emerald-200/70',
+        expanded: 'bg-emerald-50/80 ring-emerald-200/80 shadow-md',
+        hover: 'hover:bg-emerald-50/80 hover:ring-emerald-300/80',
+      }
+    : {
+        base: 'bg-white ring-slate-200/60',
+        expanded: 'bg-slate-50/60 ring-slate-300/50 shadow-md',
+        hover: 'hover:bg-white hover:ring-slate-300/60',
+      }
 
   return (
     <article
-      className={`group relative flex flex-col gap-3 rounded-xl p-4 shadow-sm ring-1 ring-slate-200/50 transition-all duration-200 cursor-pointer ${isExpanded ? 'bg-slate-50/50 shadow-md ring-slate-300/50' : 'bg-white hover:-translate-y-0.5 hover:shadow-md hover:ring-slate-300/50'
+      className={`group relative flex flex-col gap-3 rounded-xl p-4 shadow-sm ring-1 transition-all duration-200 cursor-pointer ${isExpanded
+        ? surfaceClasses.expanded
+        : `${surfaceClasses.base} ${surfaceClasses.hover} hover:-translate-y-0.5 hover:shadow-md`
         }`}
       draggable={canDrag}
       onClick={(e) => {
@@ -493,7 +507,7 @@ function TaskCard({
         </div>
       ) : null}
 
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-2.5">
         {/* Title & Expand Icon */}
         <div className="flex items-start gap-2">
           <button
@@ -510,20 +524,20 @@ function TaskCard({
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
             </svg>
           </button>
-          <h3 className="wrap-break-word text-base font-semibold text-slate-900 leading-snug">
+          <h3 className="wrap-break-word text-[15px] font-semibold tracking-tight text-slate-900 leading-snug">
             {task.name}
           </h3>
         </div>
 
         {/* Badges Row */}
         <div className="flex flex-wrap items-center gap-2">
-          <span className={`inline-flex items-center gap-1.5 rounded-md border px-2 py-0.5 text-xs font-medium shadow-sm ${typeContent.style}`}>
+          <span className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-[11px] font-semibold leading-none shadow-sm ${typeContent.style}`}>
             {TypeIcon && <TypeIcon className="h-3.5 w-3.5" />}
             <span>{task.type}</span>
           </span>
 
           {task.priority ? (
-            <span className={`inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-xs font-medium shadow-sm ${priorityStyles[task.priority] || 'bg-slate-50 text-slate-600 border-slate-200'}`}>
+            <span className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-[11px] font-semibold leading-none shadow-sm ${priorityStyles[task.priority] || 'bg-slate-50 text-slate-600 border-slate-200'}`}>
               {PriorityIcon && (
                 <PriorityIcon className={`h-3.5 w-3.5 ${priorityIcon.className}`} />
               )}
@@ -589,10 +603,10 @@ function TaskCard({
       )}
 
       {/* Metadata Footer */}
-      <div className="mt-3 flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-3">
+      <div className="mt-2 flex flex-wrap items-center justify-between gap-2 border-t border-slate-100 pt-2">
         {dueDateStatus ? (
           <span
-            className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs font-medium ${getDueDateBadgeColor(dueDateStatus.status)
+            className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-[11px] font-semibold leading-none ${getDueDateBadgeColor(dueDateStatus.status)
               }`}
             title={formatDate(task.dueDate)}
           >
@@ -605,7 +619,7 @@ function TaskCard({
           <span />
         )}
 
-        <div className="flex items-center gap-3 text-xs text-slate-500 ml-auto">
+        <div className="flex items-center gap-2 text-[11px] text-slate-500 ml-auto">
           {task.difficulty && (
             <span className="flex items-center gap-1 font-medium text-slate-500">
               <BoltIcon className="h-3.5 w-3.5 text-slate-400" />

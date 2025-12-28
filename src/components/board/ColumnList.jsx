@@ -7,6 +7,7 @@ function ColumnList({
   onDeleteColumn,
   onDeleteTask,
   onMoveTask,
+  onOpenTaskForm,
   onUpdateTask,
 }) {
   return (
@@ -21,6 +22,7 @@ function ColumnList({
           onDeleteColumn={onDeleteColumn}
           onDeleteTask={onDeleteTask}
           onMoveTask={onMoveTask}
+          onOpenTaskForm={onOpenTaskForm}
           onUpdateTask={onUpdateTask}
         />
       ))}
