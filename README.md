@@ -46,6 +46,21 @@ Boardify is a minimal-footprint, yet powerful task-management board built with *
 
 ### Installation & Setup
 
+#### Option A: Docker (recommended)
+Runs Postgres + backend + frontend with one command.
+
+```bash
+docker compose up --build
+```
+
+- Frontend: `http://localhost:5173`
+- Backend: `http://localhost:3000`
+- Postgres (host): `localhost:5433`
+
+Optional: copy `/.env.example` to `/.env` to document local env vars (Docker Compose already sets sensible defaults).
+
+#### Option B: Local (npm)
+
 1. **Clone and install frontend dependencies**:
    ```bash
    git clone <repository-url>
@@ -73,8 +88,8 @@ Boardify is a minimal-footprint, yet powerful task-management board built with *
    - Install dependencies and start the server on `http://localhost:3000`:
      ```bash
      npm install
-     npm start
-     ```
+   npm start
+   ```
 
 ## API Endpoints
 The backend exposes the following RESTful endpoints.
