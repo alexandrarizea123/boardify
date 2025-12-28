@@ -1,9 +1,10 @@
 # Boardify
 
-Boardify is a minimal task management board built with React + Vite and Tailwind CSS. It supports multiple boards (up to 3), custom columns, task creation, editing, and a progress indicator based on To Do vs Done.
+Boardify is a minimal task management board built with React + Vite and Tailwind CSS. It supports multiple boards (up to 3), custom columns, task creation, editing, and a progress indicator based on To Do vs Done. It features optional backend persistence using PostgreSQL.
 
 ## Features
 - **Multiple Boards**: Create up to 3 boards with name and description.
+- **Persistent Storage**: Save boards and tasks to a PostgreSQL database (optional).
 - **Custom Columns**: Default columns (To Do, In Progress, Done) plus the ability to add your own.
 - **Rich Task Creation**: Create tasks with name, description, assignee, type, priority, **difficulty**, **estimated time**, due date, and subtasks.
 - **Task Summary**: Sidebar showing real-time counts of tasks by type.
@@ -58,13 +59,34 @@ src/
 - **Task**: `{ id, name, description, assignee, type, priority, difficulty, estimatedTime, dueDate, subtasks, createdAt, updatedAt }`
 
 ## Running the App
+
+### Frontend
 ```
 npm install
 npm run dev
 ```
 
+### Backend (Optional)
+The backend requires Docker (for PostgreSQL) and Node.js.
+
+1. Navigate to the backend directory:
+   ```
+   cd boardify-backend
+   ```
+2. Start the database:
+   ```
+   docker-compose up -d
+   ```
+3. Install dependencies and start the server:
+   ```
+   npm install
+   npm start
+   ```
+
+The frontend (running on port 5173 by default) is configured to communicate with the backend on `http://localhost:3000`.
+
 ## Development Notes
-- In-memory state only (no backend).
-- Board limit is set to 3 in `useBoardState.js`.
-- Mention autocomplete filters on `@` and supports keyboard navigation.
-- Responsive layout uses CSS Grid and Flexbox with Tailwind's breakpoint system.
+- **State Management**: The app uses `useBoardState.js` to manage state. It attempts to sync with the backend API on load and on every change. If the backend is unavailable, it may fall back to local state (though persistence is not guaranteed without the backend).
+- **Board Limit**: Restricted to 3 boards in `useBoardState.js`.
+- **Mentions**: Autocomplete filters on `@` and supports keyboard navigation.
+- **Responsiveness**: Uses CSS Grid and Flexbox with Tailwind's breakpoint system.
