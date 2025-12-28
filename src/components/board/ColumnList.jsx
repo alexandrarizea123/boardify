@@ -15,7 +15,7 @@ function ColumnList({
   onUpdateTask,
 }) {
   return (
-    <main className="flex w-full gap-4 overflow-x-auto pb-4">
+    <main className="grid w-full grid-flow-col auto-cols-[minmax(280px,1fr)] gap-4 overflow-x-auto pb-4">
       {columns.map((column) => (
         <Column
           key={column.id}

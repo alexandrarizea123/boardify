@@ -752,7 +752,7 @@ function TaskCard({
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
             </svg>
           </button>
-          <h3 className="wrap-break-word text-[15px] font-semibold tracking-tight text-slate-900 leading-snug flex-1 min-w-0">
+          <h3 className="break-words text-[15px] font-semibold tracking-tight text-slate-900 leading-snug flex-1 min-w-0">
             {task.name}
           </h3>
           <div className="ml-auto flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
