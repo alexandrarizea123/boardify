@@ -752,7 +752,7 @@ function TaskCard({
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
             </svg>
           </button>
-          <h3 className="wrap-break-word text-[15px] font-semibold tracking-tight text-slate-900 leading-snug">
+          <h3 className="wrap-break-word text-[15px] font-semibold tracking-tight text-slate-900 leading-snug flex-1 min-w-0">
             {task.name}
           </h3>
           <div className="ml-auto flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
@@ -794,15 +794,22 @@ function TaskCard({
           </div>
         </div>
 
+        {/* Description */}
+        {task?.description && (
+          <div className={`break-words text-sm text-slate-600 leading-relaxed ${isExpanded ? '' : 'line-clamp-2'}`}>
+            {renderDescription(task.description)}
+          </div>
+        )}
+
         {/* Badges Row */}
-        <div className="flex flex-wrap items-center gap-2">
-          <span className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-[11px] font-semibold leading-none shadow-sm ${typeContent.style}`}>
+        <div className="flex items-center gap-2 overflow-hidden">
+          <span className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-[11px] font-semibold leading-none whitespace-nowrap shadow-sm ${typeContent.style}`}>
             {TypeIcon && <TypeIcon className="h-3.5 w-3.5" />}
             <span>{task.type}</span>
           </span>
 
           {task.priority ? (
-            <span className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-[11px] font-semibold leading-none shadow-sm ${priorityStyles[task.priority] || 'bg-slate-50 text-slate-600 border-slate-200'}`}>
+            <span className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-[11px] font-semibold leading-none whitespace-nowrap shadow-sm ${priorityStyles[task.priority] || 'bg-slate-50 text-slate-600 border-slate-200'}`}>
               {PriorityIcon && (
                 <PriorityIcon className={`h-3.5 w-3.5 ${priorityIcon.className}`} />
               )}
@@ -834,13 +841,6 @@ function TaskCard({
           </div>
         ) : null}
       </div>
-
-      {/* Description */}
-      {task?.description && (
-        <div className={`break-words text-sm text-slate-600 leading-relaxed ${isExpanded ? '' : 'line-clamp-2'}`}>
-          {renderDescription(task.description)}
-        </div>
-      )}
 
       {/* Expanded Details - Subtasks List */}
       {isExpanded && task?.subtasks && task.subtasks.length > 0 && (

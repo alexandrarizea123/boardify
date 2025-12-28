@@ -103,72 +103,76 @@ function App() {
       <div className="mx-auto w-full max-w-[1480px]">
         <div className="flex flex-col gap-6 xl:flex-row xl:items-start">
           <div className="flex flex-1 flex-col gap-5 min-w-0">
-            <div className="flex flex-wrap items-center justify-between gap-4">
-              <div className="flex items-center gap-3">
-                <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-slate-900 text-white shadow-sm">
-                  <svg
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.8"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <rect x="3" y="3" width="7" height="7" rx="2" />
-                    <rect x="14" y="3" width="7" height="7" rx="2" />
-                    <rect x="3" y="14" width="7" height="7" rx="2" />
-                    <rect x="14" y="14" width="7" height="7" rx="2" />
-                  </svg>
+            <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+              <div className="flex min-w-[260px] max-w-md flex-1 flex-col gap-3">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-slate-900 text-white shadow-sm">
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.8"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <rect x="3" y="3" width="7" height="7" rx="2" />
+                      <rect x="14" y="3" width="7" height="7" rx="2" />
+                      <rect x="3" y="14" width="7" height="7" rx="2" />
+                      <rect x="14" y="14" width="7" height="7" rx="2" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h1 className="text-xl font-semibold text-slate-900">
+                      {activeBoard.name}
+                    </h1>
+                    <p className="text-xs text-slate-500">
+                      {activeBoard.description || 'Task Management'}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <h1 className="text-xl font-semibold text-slate-900">
-                    {activeBoard.name}
-                  </h1>
-                  <p className="text-xs text-slate-500">
-                    {activeBoard.description || 'Task Management'}
-                  </p>
-                </div>
+
+                <BoardSwitcher
+                  boards={boards}
+                  activeBoardId={activeBoard.id}
+                  onSelect={handleSelectBoard}
+                  onAdd={startCreateBoard}
+                  canAdd={canAddBoard}
+                />
+              </div>
+
+              <div className="flex-1 min-w-[340px] lg:max-w-3xl">
+                <BoardHeader
+                  name={activeBoard.name}
+                  description={activeBoard.description}
+                  taskTypes={taskTypes}
+                  filterType={filterType}
+                  onFilterChange={setFilterType}
+                  searchQuery={filterQuery}
+                  onSearchChange={setFilterQuery}
+                  assigneeOptions={assigneeOptions}
+                  assigneeFilter={filterAssignee}
+                  onAssigneeFilterChange={setFilterAssignee}
+                  priorityOptions={priorityOptions}
+                  priorityFilter={filterPriority}
+                  onPriorityFilterChange={setFilterPriority}
+                  difficultyOptions={difficultyOptions}
+                  difficultyFilter={filterDifficulty}
+                  onDifficultyFilterChange={setFilterDifficulty}
+                  sprintOptions={sprintOptions}
+                  sprintFilter={filterSprint}
+                  onSprintFilterChange={setFilterSprint}
+                  projectTagOptions={projectTagOptions}
+                  projectTagFilter={filterProjectTag}
+                  onProjectTagFilterChange={setFilterProjectTag}
+                  subtaskFilter={filterHasSubtasks}
+                  onSubtaskFilterChange={setFilterHasSubtasks}
+                  onUpdate={handleUpdateBoardDetails}
+                  onDelete={() => handleDeleteBoard(activeBoard.id)}
+                />
               </div>
             </div>
-
-            <BoardSwitcher
-              boards={boards}
-              activeBoardId={activeBoard.id}
-              onSelect={handleSelectBoard}
-              onAdd={startCreateBoard}
-              canAdd={canAddBoard}
-            />
-
-            <BoardHeader
-              name={activeBoard.name}
-              description={activeBoard.description}
-              taskTypes={taskTypes}
-              filterType={filterType}
-              onFilterChange={setFilterType}
-              searchQuery={filterQuery}
-              onSearchChange={setFilterQuery}
-              assigneeOptions={assigneeOptions}
-              assigneeFilter={filterAssignee}
-              onAssigneeFilterChange={setFilterAssignee}
-              priorityOptions={priorityOptions}
-              priorityFilter={filterPriority}
-              onPriorityFilterChange={setFilterPriority}
-              difficultyOptions={difficultyOptions}
-              difficultyFilter={filterDifficulty}
-              onDifficultyFilterChange={setFilterDifficulty}
-              sprintOptions={sprintOptions}
-              sprintFilter={filterSprint}
-              onSprintFilterChange={setFilterSprint}
-              projectTagOptions={projectTagOptions}
-              projectTagFilter={filterProjectTag}
-              onProjectTagFilterChange={setFilterProjectTag}
-              subtaskFilter={filterHasSubtasks}
-              onSubtaskFilterChange={setFilterHasSubtasks}
-              onUpdate={handleUpdateBoardDetails}
-              onDelete={() => handleDeleteBoard(activeBoard.id)}
-            />
 
             {isTaskFormOpen && todoColumn?.id && (
               <div className="fixed inset-0 z-50 flex items-center justify-center px-4 py-6">
