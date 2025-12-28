@@ -6,9 +6,9 @@ Boardify is a minimal task management board built with React + Vite and Tailwind
 - **Multiple Boards**: Create up to 3 boards with name and description.
 - **Persistent Storage**: Save boards and tasks to a PostgreSQL database (optional).
 - **Custom Columns**: Default columns (To Do, In Progress, Done).
-- **Rich Task Creation**: Create tasks with name, description, assignee, type, priority, **difficulty**, **estimated time**, due date, and subtasks.
+- **Rich Task Creation**: Create tasks with name, description, assignee, type, priority, **difficulty**, **estimated time**, due date, sprint, project tags, dependencies, and subtasks.
 - **Task Summary**: Sidebar showing real-time counts of tasks by type.
-- **Filtering**: Filter tasks by type, assignee, priority, difficulty, and subtask presence.
+- **Filtering**: Filter tasks by type, assignee, priority, difficulty, sprint, project tag, and subtask presence.
 - **Inline Editing**: Quick editing for task details and board names/descriptions.
 - **Drag-and-Drop**: Move tasks between columns intuitively.
 - **Progress Tracking**: Visual progress bar showing completion rate (Done vs To Do).
@@ -17,7 +17,7 @@ Boardify is a minimal task management board built with React + Vite and Tailwind
 - **Due Date Status**: Badges for overdue, due soon, and upcoming tasks.
 - **Analytics Sidebar**: Task distribution, developer workload (estimated hours), and overdue trend chart.
 - **Responsive Design**: Fully compatible with desktop and mobile views, with an adaptive layout for different screen sizes and zoom levels.
-- **Refined UI Layout**: Board switcher now lives with the board title/description, and task badges sit beneath descriptions so titles span the full width.
+- **Refined UI Layout**: Board switcher now lives with the board title/description, and task badges (type/priority plus sprint, tags, dependencies) sit beneath descriptions so titles span the full width.
 
 ## Project Structure
 ```
@@ -57,7 +57,7 @@ src/
 ## State Model
 - **Board**: `{ id, name, description, columns[] }`
 - **Column**: `{ id, name, tasks[] }`
-- **Task**: `{ id, name, description, assignee, type, priority, difficulty, estimatedTime, dueDate, subtasks, createdAt, updatedAt }`
+- **Task**: `{ id, name, description, assignee, type, priority, difficulty, estimatedTime, dueDate, sprint, projectTags, dependencies, subtasks, createdAt, updatedAt }`
 
 ## Running the App
 
