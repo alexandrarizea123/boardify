@@ -2,8 +2,13 @@
 import { boardUsers } from '../../data/boardData'
 
 function DeveloperHoursChart({ developerStats }) {
-  const maxHours = Math.max(...Object.values(developerStats), 0)
-  const users = Object.keys(developerStats).sort()
+  const users = Array.from(
+    new Set([...boardUsers, ...Object.keys(developerStats)]),
+  ).sort()
+  const maxHours = users.reduce(
+    (max, user) => Math.max(max, developerStats[user] ?? 0),
+    0,
+  )
 
   return (
     <div className="w-full shrink-0 space-y-5">

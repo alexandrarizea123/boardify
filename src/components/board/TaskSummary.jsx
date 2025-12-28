@@ -46,12 +46,18 @@ function TaskSummary({ typeStats }) {
         {Object.entries(typeStats).length > 0 ? (
           Object.entries(typeStats).map(([type, count]) => (
             <div key={type} className="flex items-center justify-between text-sm">
-              <span className="text-slate-600">{type}</span>
+              <span className="flex items-center gap-2 text-slate-600">
+                <span
+                  className={`h-2.5 w-2.5 rounded-full ${getTypeColor(type)}`}
+                  aria-hidden
+                />
+                {type}
+              </span>
               <div className="flex items-center gap-2">
                  <div className="h-1.5 w-24 rounded-full bg-slate-200/70 overflow-hidden">
                     <div 
-                       className="h-full rounded-full bg-slate-900"
-                       style={{ width: `${(count / total) * 100}%` }}
+                       className={`h-full rounded-full ${getTypeColor(type)}`}
+                       style={{ width: `${total ? (count / total) * 100 : 0}%` }}
                     />
                  </div>
                  <span className="w-4 text-right text-xs font-semibold text-slate-900">{count}</span>
