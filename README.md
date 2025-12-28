@@ -37,49 +37,6 @@ Boardify is a minimal-footprint, yet powerful task-management board built with *
 - **Database**: PostgreSQL (via Docker)
 - **Primary State Management**: React Hooks (`useState`, `useReducer`, `useContext`)
 
-## Project Structure
-
-```
-.
-├── boardify-backend/
-│   ├── docker-compose.yml
-│   ├── package.json
-│   └── server.js
-├── public/
-│   └── assets/
-│       └── readme-page.png
-├── src/
-│   ├── components/
-│   │   ├── board/
-│   │   │   ├── BoardCreateForm.jsx
-│   │   │   ├── BoardHeader.jsx
-│   │   │   ├── BoardSwitcher.jsx
-│   │   │   ├── Column.jsx
-│   │   │   ├── ColumnForm.jsx
-│   │   │   ├── ColumnList.jsx
-│   │   │   ├── DeveloperHoursChart.jsx
-│   │   │   ├── OverdueTrendChart.jsx
-│   │   │   ├── ProgressBar.jsx
-│   │   │   ├── TaskCard.jsx
-│   │   │   ├── TaskForm.jsx
-│   │   │   └── TaskSummary.jsx
-│   │   └── mentions/
-│   │       └── MentionTextarea.jsx
-│   ├── data/
-│   │   └── boardData.js
-│   ├── hooks/
-│   │   └── useBoardState.js
-│   ├── utils/
-│   │   └── date.js
-│   ├── App.jsx
-│   ├── index.css
-│   └── main.jsx
-├── .gitignore
-├── index.html
-├── package.json
-└── README.md
-```
-
 ## Getting Started
 
 ### Prerequisites
