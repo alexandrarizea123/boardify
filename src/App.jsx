@@ -106,23 +106,11 @@ function App() {
             <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
               <div className="flex min-w-[260px] max-w-md flex-1 flex-col gap-3">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-slate-900 text-white shadow-sm">
-                    <svg
-                      width="20"
-                      height="20"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="1.8"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <rect x="3" y="3" width="7" height="7" rx="2" />
-                      <rect x="14" y="3" width="7" height="7" rx="2" />
-                      <rect x="3" y="14" width="7" height="7" rx="2" />
-                      <rect x="14" y="14" width="7" height="7" rx="2" />
-                    </svg>
-                  </div>
+                  <img
+                    src="/assets/favicon.ico"
+                    alt="Boardify logo"
+                    className="h-11 w-11 rounded-2xl shadow-sm"
+                  />
                   <div>
                     <h1 className="text-xl font-semibold text-slate-900">
                       {activeBoard.name}
