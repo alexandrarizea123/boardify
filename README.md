@@ -2,6 +2,8 @@
 
 Boardify is a minimal task management board built with React + Vite and Tailwind CSS. It supports multiple boards (up to 3), custom columns, task creation, editing, and a progress indicator based on To Do vs Done. It features optional backend persistence using PostgreSQL.
 
+![Board preview](public/assets/readme-page.png)
+
 ## Features
 - **Multiple Boards**: Create up to 3 boards with name and description.
 - **Persistent Storage**: Save boards and tasks to a PostgreSQL database (optional).
