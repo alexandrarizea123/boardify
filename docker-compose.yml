@@ -6,8 +6,10 @@ services:
       POSTGRES_USER: myuser
       POSTGRES_PASSWORD: mypassword
       POSTGRES_DB: mydb
-    ports:
-      - "5433:5432"
+    # Intentionally not exposed to host by default to avoid port collisions.
+    # If you want host access (DBeaver/psql), add:
+    # ports:
+    #   - "5433:5432"
     volumes:
       - db-data:/var/lib/postgresql/data
 
@@ -30,6 +32,7 @@ services:
     volumes:
       - ./boardify-backend:/app
       - backend-node-modules:/app/node_modules
+    command: sh -c "npm ci && npm run dev"
 
   frontend:
     build:
@@ -46,6 +49,7 @@ services:
     volumes:
       - ./:/app
       - frontend-node-modules:/app/node_modules
+    command: sh -c "npm ci && npm run dev -- --host 0.0.0.0 --port 5173"
 
 volumes:
   db-data:

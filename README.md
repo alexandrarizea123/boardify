@@ -55,9 +55,11 @@ docker compose up --build
 
 - Frontend: `http://localhost:5173`
 - Backend: `http://localhost:3000`
-- Postgres (host): `localhost:5433`
+- Postgres: runs inside Docker (not exposed to host by default to avoid port conflicts)
 
-Optional: copy `/.env.example` to `/.env` to document local env vars (Docker Compose already sets sensible defaults).
+Optional: if you want to connect to Postgres from your host (psql/DBeaver), add a port mapping to `docker-compose.yml` (example: `5433:5432`).
+
+Optional: copy `/.env.example` to `/.env` to document local env vars (Docker Compose already sets defaults for Docker).
 
 #### Option B: Local (npm)
 
