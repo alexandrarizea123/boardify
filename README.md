@@ -40,7 +40,7 @@ Boardify is a minimal-footprint, yet powerful task-management board built with *
 ## Getting Started
 
 ### Prerequisites
-- Node.js (v18 or higher)
+- Node.js (v20.19+ recommended)
 - npm
 - Docker (for backend)
 
