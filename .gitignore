@@ -12,7 +12,7 @@ dist
 dist-ssr
 *.local
 todos
-ideas.md
+ideas
 
 # Editor directories and files
 .vscode/*
