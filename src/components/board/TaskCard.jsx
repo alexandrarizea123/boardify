@@ -700,7 +700,7 @@ function TaskCard({
 
   return (
     <article
-      className={`group relative flex flex-col gap-3 rounded-2xl border p-4 shadow-sm transition-all duration-200 cursor-pointer ${isExpanded
+      className={`group relative flex flex-col gap-3 rounded-2xl border p-4 pr-10 shadow-sm transition-all duration-200 cursor-pointer ${isExpanded
         ? surfaceClasses.expanded
         : `${surfaceClasses.base} ${surfaceClasses.hover} hover:-translate-y-0.5 hover:shadow-md`
         }`}
@@ -735,16 +735,6 @@ function TaskCard({
           : undefined
       }
     >
-      {/* Avatar Overlap */}
-      {task.assignee ? (
-        <div
-          className={`absolute right-3 top-3 z-10 flex h-7 w-7 items-center justify-center rounded-full text-[10px] font-bold shadow-sm ring-2 ring-white ${getAvatarColor(task.assignee)}`}
-          title={task.assignee}
-        >
-          {getInitials(task.assignee)}
-        </div>
-      ) : null}
-
       <div className="flex flex-col gap-2.5">
         {/* Title & Expand Icon */}
         <div className="flex items-start gap-2">
@@ -765,6 +755,43 @@ function TaskCard({
           <h3 className="wrap-break-word text-[15px] font-semibold tracking-tight text-slate-900 leading-snug">
             {task.name}
           </h3>
+          <div className="ml-auto flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+            <button
+              className="rounded-md p-1 text-slate-400 hover:bg-blue-50 hover:text-blue-600 bg-white/80 backdrop-blur-sm shadow-sm ring-1 ring-slate-200"
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                setDraft(buildDraft(task));
+                setIsEditing(true);
+              }}
+              aria-label="Edit"
+            >
+              <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+              </svg>
+            </button>
+            <button
+              className="rounded-md p-1 text-slate-400 hover:bg-red-50 hover:text-red-600 bg-white/80 backdrop-blur-sm shadow-sm ring-1 ring-slate-200"
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                onDeleteTask(task.id, columnId);
+              }}
+              aria-label="Delete"
+            >
+              <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+            </button>
+            {task.assignee ? (
+              <div
+                className={`flex h-7 w-7 items-center justify-center rounded-full text-[10px] font-bold shadow-sm ring-2 ring-white ${getAvatarColor(task.assignee)}`}
+                title={task.assignee}
+              >
+                {getInitials(task.assignee)}
+              </div>
+            ) : null}
+          </div>
         </div>
 
         {/* Badges Row */}
@@ -899,36 +926,6 @@ function TaskCard({
         </div>
       </div>
 
-      {/* Hover Actions */}
-      <div className="absolute top-3 right-8 z-10 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">
-        <button
-          className="rounded-md p-1 text-slate-400 hover:bg-blue-50 hover:text-blue-600 bg-white/80 backdrop-blur-sm shadow-sm ring-1 ring-slate-200"
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            setDraft(buildDraft(task));
-            setIsEditing(true);
-          }}
-          aria-label="Edit"
-        >
-          <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-          </svg>
-        </button>
-        <button
-          className="rounded-md p-1 text-slate-400 hover:bg-red-50 hover:text-red-600 bg-white/80 backdrop-blur-sm shadow-sm ring-1 ring-slate-200"
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            onDeleteTask(task.id, columnId);
-          }}
-          aria-label="Delete"
-        >
-          <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-          </svg>
-        </button>
-      </div>
     </article>
   )
 }
