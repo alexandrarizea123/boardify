@@ -148,11 +148,11 @@ function BoardHeader({
             value={sprintFilter}
             onChange={(e) => onSprintFilterChange(e.target.value)}
           >
-            {sprintOptions.map((sprint) => (
-              <option key={sprint} value={sprint}>
-                {sprint === 'None' ? 'No Sprint' : sprint}
-              </option>
-            ))}
+            {sprintOptions.map((sprint) => {
+              if (sprint === 'All') return <option key={sprint} value={sprint}>All Sprints</option>
+              if (sprint === 'None') return <option key={sprint} value={sprint}>No Sprint</option>
+              return <option key={sprint} value={sprint}>{sprint}</option>
+            })}
           </select>
           <select
             className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-[11px] font-semibold text-slate-700 outline-none transition focus:border-slate-400 focus:bg-white"
