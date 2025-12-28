@@ -1,112 +1,145 @@
-# Boardify
+# Boardify: A Lightweight, Feature-Rich Kanban Board
 
-Boardify is a minimal task management board built with React + Vite and Tailwind CSS. It supports multiple boards (up to 3), custom columns, task creation, editing, and a progress indicator based on To Do vs Done. It features optional backend persistence using PostgreSQL.
+Boardify is a minimal-footprint, yet powerful task-management board built with **React + Vite** and styled with **Tailwind CSS**. It supports multiple boards, custom columns, and a rich set of features for seamless task tracking. An optional backend service using **Node.js, Express, and PostgreSQL** provides persistent storage.
 
-![Board preview](public/assets/readme-page.png)
+<br>
+
+<p align="center">
+  <img alt="Board preview" src="public/assets/readme-page.png" width="80%">
+</p>
 
 ## Features
-- **Multiple Boards**: Create up to 3 boards with name and description.
-- **Persistent Storage**: Save boards and tasks to a PostgreSQL database (optional).
-- **Custom Columns**: Default columns (To Do, In Progress, Done).
-- **Rich Task Creation**: Create tasks with name, description, assignee, type, priority, **difficulty**, **estimated time**, due date, sprint, project tags, dependencies, and subtasks.
-- **Task Summary**: Sidebar showing real-time counts of tasks by type.
-- **Filtering**: Filter tasks by type, assignee, priority, difficulty, sprint, project tag, and subtask presence.
-- **Inline Editing**: Quick editing for task details and board names/descriptions.
-- **Drag-and-Drop**: Move tasks between columns intuitively.
-- **Progress Tracking**: Visual progress bar showing completion rate (Done vs To Do).
-- **Subtask Progress**: Checklist-style subtasks with per-task completion progress.
-- **Mention Tagging**: `@` mention autocomplete in task descriptions for team members.
-- **Due Date Status**: Badges for overdue, due soon, and upcoming tasks.
-- **Analytics Sidebar**: Task distribution, developer workload (estimated hours), and overdue trend chart.
-- **Responsive Design**: Fully compatible with desktop and mobile views, with an adaptive layout for different screen sizes and zoom levels.
-- **Refined UI Layout**: Board switcher now lives with the board title/description, and task badges (type/priority plus sprint, tags, dependencies) sit beneath descriptions so titles span the full width.
+
+### Core Functionality
+- **Multiple Boards**: Create and manage up to 3 distinct boards.
+- **Custom Columns**: Organize tasks in default columns (`To Do`, `In Progress`, `Done`) or add your own.
+- **Drag-and-Drop**: Intuitively move tasks between columns.
+- **Persistent Storage**: Optional backend saves all boards, columns, and tasks to a PostgreSQL database.
+
+### Rich Task Management
+- **Detailed Task Creation**: Add tasks with assignees, types, priorities, difficulty, time estimates, due dates, and more.
+- **Subtasks**: Break down complex tasks into a checklist of smaller items with its own progress bar.
+- **Filtering**: Quickly find tasks by type, assignee, priority, sprint, or other attributes.
+- **Inline Editing**: Click any task or board title to edit it on the fly.
+- **Due Date Status**: See visual badges for tasks that are `Overdue`, `Due Soon`, or `Upcoming`.
+- **Mentions**: Use `@` to tag team members in task descriptions with autocomplete support.
+
+### Analytics & UI
+- **Task Summary**: A real-time sidebar count of tasks organized by type.
+- **Analytics Dashboard**: Visualize task distribution, developer workload (by estimated hours), and overdue trends.
+- **Progress Bars**: Track overall project completion (`To Do` vs. `Done`) and subtask progress.
+- **Responsive Design**: Enjoy a seamless experience on both desktop and mobile, with an adaptive layout.
+
+## Tech Stack
+
+- **Frontend**: React, Vite, Tailwind CSS
+- **Backend**: Node.js, Express.js
+- **Database**: PostgreSQL (via Docker)
+- **Primary State Management**: React Hooks (`useState`, `useReducer`, `useContext`)
 
 ## Project Structure
+
 ```
-src/
-  App.jsx
-  components/
-    board/
-      BoardCreateForm.jsx
-      BoardHeader.jsx
-      BoardSwitcher.jsx
-    Column.jsx
-    ColumnForm.jsx
-    ColumnList.jsx
-    DeveloperHoursChart.jsx
-    OverdueTrendChart.jsx
-    ProgressBar.jsx
-    TaskCard.jsx
-    TaskForm.jsx
-    TaskSummary.jsx
-      index.js
-    mentions/
-      MentionTextarea.jsx
-  data/
-    boardData.js
-  hooks/
-    useBoardState.js
-  utils/
-    date.js
-```
-
-## Key Files
-- `src/hooks/useBoardState.js` — Central state manager for boards, columns, tasks, drafts, and actions.
-- `src/components/board/*` — UI for the board, columns, tasks, and controls.
-- `src/components/mentions/MentionTextarea.jsx` — `@` mention autocomplete for task descriptions.
-- `src/data/boardData.js` — Shared constants (users, priorities, types, difficulties) and helpers.
-
-## State Model
-- **Board**: `{ id, name, description, columns[] }`
-- **Column**: `{ id, name, tasks[] }`
-- **Task**: `{ id, name, description, assignee, type, priority, difficulty, estimatedTime, dueDate, sprint, projectTags, dependencies, subtasks, createdAt, updatedAt }`
-
-## Running the App
-
-### Frontend
-```
-npm install
-npm run dev
+.
+├── boardify-backend/
+│   ├── docker-compose.yml
+│   ├── package.json
+│   └── server.js
+├── public/
+│   └── assets/
+│       └── readme-page.png
+├── src/
+│   ├── components/
+│   │   ├── board/
+│   │   │   ├── BoardCreateForm.jsx
+│   │   │   ├── BoardHeader.jsx
+│   │   │   ├── BoardSwitcher.jsx
+│   │   │   ├── Column.jsx
+│   │   │   ├── ColumnForm.jsx
+│   │   │   ├── ColumnList.jsx
+│   │   │   ├── DeveloperHoursChart.jsx
+│   │   │   ├── OverdueTrendChart.jsx
+│   │   │   ├── ProgressBar.jsx
+│   │   │   ├── TaskCard.jsx
+│   │   │   ├── TaskForm.jsx
+│   │   │   └── TaskSummary.jsx
+│   │   └── mentions/
+│   │       └── MentionTextarea.jsx
+│   ├── data/
+│   │   └── boardData.js
+│   ├── hooks/
+│   │   └── useBoardState.js
+│   ├── utils/
+│   │   └── date.js
+│   ├── App.jsx
+│   ├── index.css
+│   └── main.jsx
+├── .gitignore
+├── index.html
+├── package.json
+└── README.md
 ```
 
-### Backend (Optional)
-The backend requires Docker (for PostgreSQL) and Node.js.
+## Getting Started
 
-1. Navigate to the backend directory:
-   ```
-   cd boardify-backend
-   ```
-2. Start the database:
-   ```
-   docker-compose up -d
-   ```
-3. Install dependencies and start the server:
-   ```
+### Prerequisites
+- Node.js (v18 or higher)
+- npm
+- Docker (for backend)
+
+### Installation & Setup
+
+1. **Clone and install frontend dependencies**:
+   ```bash
+   git clone <repository-url>
+   cd boardify
    npm install
-   npm start
    ```
 
-The frontend (running on port 5173 by default) is configured to communicate with the backend on `http://localhost:3000`.
+2. **Run the frontend**:
+   The development server will start on `http://localhost:5173`.
+   ```bash
+   npm run dev
+   ```
 
-## Backend API
-Base URL: `http://localhost:3000/api`
+3. **(Optional) Set up the backend**:
+   The backend provides data persistence.
+   
+   - Navigate to the backend directory:
+     ```bash
+     cd boardify-backend
+     ```
+   - Start the PostgreSQL database using Docker:
+     ```bash
+     docker-compose up -d
+     ```
+   - Install dependencies and start the server on `http://localhost:3000`:
+     ```bash
+     npm install
+     npm start
+     ```
 
-### Boards
-- `GET /boards` — List all boards.
-- `GET /boards/:id` — Retrieve a single board.
-- `POST /boards` — Create a board. Body must include `{ id: string, name: string, description?: string, columns: Column[] }`.
-- `PUT /boards/:id` — Replace an existing board. Body must include the same `id`.
-- `DELETE /boards/:id` — Remove a board. Returns 204 on success.
+## API Endpoints
+The backend exposes the following RESTful endpoints.
 
-`Column`: `{ id: string, name: string, tasks: Task[] }`  
-`Task`: `{ id, name, description?, assignee?, type?, priority?, difficulty?, estimatedTime?, dueDate?, subtasks?, projectTags?, sprint?, dependencies? }`
+| Method | Endpoint      | Description                                                 |
+|--------|---------------|-------------------------------------------------------------|
+| `GET`  | `/api/boards` | Retrieves all boards.                                       |
+| `GET`  | `/api/boards/:id` | Retrieves a single board by its ID.                       |
+| `POST` | `/api/boards`     | Creates a new board.                                      |
+| `PUT`  | `/api/boards/:id` | Updates an existing board.                                  |
+| `DELETE`| `/api/boards/:id` | Deletes a board by its ID.                                  |
+| `GET`   | `/api/task-types` | Retrieves all available task types.                       |
+| `POST`  | `/api/task-types` | Adds a new task type.                                     |
 
-### Task Types
-- `GET /task-types` — List all task types.
-- `POST /task-types` — Add a task type. Body: `{ name: string }`. Returns 201 on create, 200 if it already existed.
+## Contributing
+Contributions are welcome! Please feel free to submit a pull request or open an issue for any bugs or feature requests.
 
-## Development Notes
-- **State Management**: The app uses `useBoardState.js` to manage state. It attempts to sync with the backend API on load and on every change. If the backend is unavailable, it may fall back to local state (though persistence is not guaranteed without the backend).
-- **Board Limit**: Restricted to 3 boards in `useBoardState.js`.
-- **Mentions**: Autocomplete filters on `@` and supports keyboard navigation.
-- **Responsiveness**: Uses CSS Grid and Flexbox with Tailwind's breakpoint system.
+1. Fork the repository.
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`).
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`).
+4. Push to the branch (`git push origin feature/AmazingFeature`).
+5. Open a Pull Request.
+
+## License
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
