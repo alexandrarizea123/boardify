@@ -78,7 +78,7 @@ function Column({
 
   return (
     <section
-      className="flex min-w-[280px] flex-1 flex-col gap-3"
+      className="flex flex-col gap-3 min-w-0"
       onDragOver={(event) => {
         event.preventDefault()
         event.currentTarget.classList.add('bg-blue-50/80')
@@ -109,7 +109,9 @@ function Column({
           >
             +
           </button>
-        ) : null}
+        ) : (
+          <span className="h-7 w-7 shrink-0" aria-hidden />
+        )}
       </div>
 
       <div className="flex flex-1 flex-col gap-3">
