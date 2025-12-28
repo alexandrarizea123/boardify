@@ -61,38 +61,6 @@ Optional: if you want to connect to Postgres from your host (psql/DBeaver), add 
 
 Optional: copy `/.env.example` to `/.env` to document local env vars (Docker Compose already sets defaults for Docker).
 
-#### Option B: Local (npm)
-
-1. **Clone and install frontend dependencies**:
-   ```bash
-   git clone <repository-url>
-   cd boardify
-   npm install
-   ```
-
-2. **Run the frontend**:
-   The development server will start on `http://localhost:5173`.
-   ```bash
-   npm run dev
-   ```
-
-3. **(Optional) Set up the backend**:
-   The backend provides data persistence.
-   
-   - Navigate to the backend directory:
-     ```bash
-     cd boardify-backend
-     ```
-   - Start the PostgreSQL database using Docker:
-     ```bash
-     docker-compose up -d
-     ```
-   - Install dependencies and start the server on `http://localhost:3000`:
-     ```bash
-     npm install
-   npm start
-   ```
-
 ## API Endpoints
 The backend exposes the following RESTful endpoints.
 
