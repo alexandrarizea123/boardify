@@ -14,8 +14,16 @@ function ColumnList({
   onOpenTaskForm,
   onUpdateTask,
 }) {
+  const minColumnWidth = 280
+
   return (
-    <main className="grid w-full grid-flow-col auto-cols-[minmax(280px,1fr)] gap-4 overflow-x-auto pb-4">
+    <main
+      className="grid w-full gap-4 overflow-x-auto pb-4"
+      style={{
+        gridTemplateColumns: `repeat(${columns.length}, minmax(0, 1fr))`,
+        minWidth: `${columns.length * minColumnWidth}px`,
+      }}
+    >
       {columns.map((column) => (
         <Column
           key={column.id}
