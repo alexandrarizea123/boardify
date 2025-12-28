@@ -17,6 +17,7 @@ Boardify is a minimal task management board built with React + Vite and Tailwind
 - **Due Date Status**: Badges for overdue, due soon, and upcoming tasks.
 - **Analytics Sidebar**: Task distribution, developer workload (estimated hours), and overdue trend chart.
 - **Responsive Design**: Fully compatible with desktop and mobile views, with an adaptive layout for different screen sizes and zoom levels.
+- **Refined UI Layout**: Board switcher now lives with the board title/description, and task badges sit beneath descriptions so titles span the full width.
 
 ## Project Structure
 ```
@@ -84,6 +85,23 @@ The backend requires Docker (for PostgreSQL) and Node.js.
    ```
 
 The frontend (running on port 5173 by default) is configured to communicate with the backend on `http://localhost:3000`.
+
+## Backend API
+Base URL: `http://localhost:3000/api`
+
+### Boards
+- `GET /boards` — List all boards.
+- `GET /boards/:id` — Retrieve a single board.
+- `POST /boards` — Create a board. Body must include `{ id: string, name: string, description?: string, columns: Column[] }`.
+- `PUT /boards/:id` — Replace an existing board. Body must include the same `id`.
+- `DELETE /boards/:id` — Remove a board. Returns 204 on success.
+
+`Column`: `{ id: string, name: string, tasks: Task[] }`  
+`Task`: `{ id, name, description?, assignee?, type?, priority?, difficulty?, estimatedTime?, dueDate?, subtasks?, projectTags?, sprint?, dependencies? }`
+
+### Task Types
+- `GET /task-types` — List all task types.
+- `POST /task-types` — Add a task type. Body: `{ name: string }`. Returns 201 on create, 200 if it already existed.
 
 ## Development Notes
 - **State Management**: The app uses `useBoardState.js` to manage state. It attempts to sync with the backend API on load and on every change. If the backend is unavailable, it may fall back to local state (though persistence is not guaranteed without the backend).
