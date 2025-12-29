@@ -1,6 +1,6 @@
 # Boardify: A Lightweight, Feature-Rich Kanban Board
 
-Boardify is a minimal-footprint, yet powerful task-management board built with **React + Vite** and styled with **Tailwind CSS**. It supports multiple boards, custom columns, and a rich set of features for seamless task tracking. An optional backend service using **Node.js, Express, and PostgreSQL** provides persistent storage.
+Boardify is a minimal-footprint, yet powerful task-management board built with **Next.js (React)** and styled with **Tailwind CSS**. It supports multiple boards, custom columns, and a rich set of features for seamless task tracking. An optional backend service using **Node.js, Express, and PostgreSQL** provides persistent storage and user authentication.
 
 <br>
 
@@ -15,6 +15,7 @@ Boardify is a minimal-footprint, yet powerful task-management board built with *
 - **Custom Columns**: Organize tasks in default columns (`To Do`, `In Progress`, `Done`) or add your own.
 - **Drag-and-Drop**: Intuitively move tasks between columns.
 - **Persistent Storage**: Optional backend saves all boards, columns, and tasks to a PostgreSQL database.
+- **Authentication**: Sign up / log in with accounts stored in Postgres (sessions via httpOnly cookies).
 
 ### Rich Task Management
 - **Detailed Task Creation**: Add tasks with assignees, types, priorities, difficulty, time estimates, due dates, and more.
@@ -32,7 +33,7 @@ Boardify is a minimal-footprint, yet powerful task-management board built with *
 
 ## Tech Stack
 
-- **Frontend**: React, Vite, Tailwind CSS
+- **Frontend**: Next.js, React, Tailwind CSS
 - **Backend**: Node.js, Express.js
 - **Database**: PostgreSQL (via Docker)
 - **Primary State Management**: React Hooks (`useState`, `useReducer`, `useContext`)
@@ -46,7 +47,7 @@ Boardify is a minimal-footprint, yet powerful task-management board built with *
 
 ### Installation & Setup
 
-#### Option A: Docker (recommended)
+#### Docker Configuration
 Runs Postgres + backend + frontend with one command.
 
 ```bash
@@ -57,11 +58,15 @@ docker compose up --build
 
 - Frontend: `http://localhost:5173`
 - Backend: `http://localhost:3000`
-- Postgres: runs inside Docker (not exposed to host by default to avoid port conflicts)
+- Postgres: `localhost:5433` (container port `5432`)
 
-Optional: if you want to connect to Postgres from your host (psql/DBeaver), add a port mapping to `docker-compose.yml` (example: `5433:5432`).
+Postgres credentials (defaults): database `mydb`, user `myuser`, password `mypassword`.
 
 Optional: copy `/.env.example` to `/.env` to document local env vars (Docker Compose already sets defaults for Docker).
+
+Notes:
+- The app routes are `/auth` (login/signup) and `/board` (the board UI). `/` redirects to `/auth`.
+- There is also a backend-only Postgres compose file at `boardify-backend/docker-compose.yml` (publishes `5434:5432`). Don’t run it alongside the main `docker-compose.yml`.
 
 ## API Endpoints
 The backend exposes the following RESTful endpoints.
@@ -75,6 +80,13 @@ The backend exposes the following RESTful endpoints.
 | `DELETE`| `/api/boards/:id` | Deletes a board by its ID.                                  |
 | `GET`   | `/api/task-types` | Retrieves all available task types.                       |
 | `POST`  | `/api/task-types` | Adds a new task type.                                     |
+| `GET`   | `/api/auth/me` | Returns the current authenticated user (cookie session). |
+| `POST`  | `/api/auth/signup` | Creates a user and starts a session.                  |
+| `POST`  | `/api/auth/login` | Logs a user in and starts a session.                  |
+| `POST`  | `/api/auth/logout` | Logs out (clears the session).                       |
+
+## Next steps
+- Add collaborative boards
 
 ## License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
