@@ -94,8 +94,6 @@ export default function AuthPage() {
     setConfirmPassword('')
   }
 
-  const handleContinue = () => router.push('/board')
-
   return (
     <main className="min-h-screen bg-white px-6 py-12 text-slate-900">
       <div className="mx-auto flex w-full max-w-md flex-col gap-6">
@@ -113,13 +111,6 @@ export default function AuthPage() {
               </p>
             </div>
           </div>
-          <button
-            type="button"
-            className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-600 transition hover:border-slate-300 hover:text-slate-900"
-            onClick={handleContinue}
-          >
-            Continue
-          </button>
         </header>
 
         <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
@@ -238,9 +229,7 @@ export default function AuthPage() {
           </form>
         </section>
 
-        <p className="text-center text-[11px] text-slate-500">
-          Accounts are stored in Postgres via the backend.
-        </p>
+        <span aria-hidden="true" />
       </div>
     </main>
   )
