@@ -9,7 +9,9 @@ const normalizeProxyTarget = (value) => {
 const nextConfig = {
   async rewrites() {
     const target = normalizeProxyTarget(
-      process.env.API_PROXY_TARGET || process.env.NEXT_PUBLIC_API_URL,
+      process.env.API_PROXY_TARGET ||
+        process.env.NEXT_PUBLIC_API_URL ||
+        'http://localhost:3000',
     )
     if (!target) return []
 

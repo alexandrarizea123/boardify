@@ -2,14 +2,16 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || ''
 const apiDisabled = process.env.NEXT_PUBLIC_API_DISABLED === 'true'
 
 const readErrorMessage = async (response) => {
+  const cloned = response.clone()
   try {
-    const data = await response.json()
+    const data = await cloned.json()
     if (data?.error) return String(data.error)
   } catch {
     // ignore
   }
   try {
     const text = await response.text()
+    if (text && text.length < 300) return text
     if (text) return text
   } catch {
     // ignore
