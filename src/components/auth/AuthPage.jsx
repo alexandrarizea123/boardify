@@ -1,8 +1,8 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { clearSession, loadSession, saveSession } from '../../auth/session'
+import { requestJson } from '../../api/requestJson'
 
 const emailLooksValid = (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
 
@@ -13,16 +13,34 @@ export default function AuthPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isChecking, setIsChecking] = useState(true)
   const [error, setError] = useState('')
-  const session = useMemo(() => loadSession(), [])
 
   useEffect(() => {
-    if (session?.email) router.replace('/board')
-  }, [router, session])
+    let isMounted = true
+
+    const loadMe = async () => {
+      try {
+        const result = await requestJson('/api/auth/me')
+        if (isMounted && result?.user?.email) router.replace('/board')
+      } catch {
+        // not authenticated
+      } finally {
+        if (isMounted) setIsChecking(false)
+      }
+    }
+
+    loadMe()
+
+    return () => {
+      isMounted = false
+    }
+  }, [router])
 
   const resetError = () => setError('')
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault()
     resetError()
 
@@ -50,13 +68,22 @@ export default function AuthPage() {
       }
     }
 
-    saveSession({
-      email: trimmedEmail,
-      name: mode === 'signup' ? trimmedName : null,
-      createdAt: new Date().toISOString(),
-    })
-
-    router.push('/board')
+    setIsSubmitting(true)
+    try {
+      await requestJson(mode === 'signup' ? '/api/auth/signup' : '/api/auth/login', {
+        method: 'POST',
+        body: JSON.stringify(
+          mode === 'signup'
+            ? { name: trimmedName, email: trimmedEmail, password }
+            : { email: trimmedEmail, password },
+        ),
+      })
+      router.push('/board')
+    } catch (err) {
+      setError(err?.message || 'Request failed')
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const handleModeChange = (nextMode) => {
@@ -197,33 +224,24 @@ export default function AuthPage() {
 
             <button
               type="submit"
-              className="rounded-xl bg-slate-900 px-3 py-2 text-sm font-semibold text-white transition hover:bg-slate-800"
+              className="rounded-xl bg-slate-900 px-3 py-2 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
+              disabled={isSubmitting || isChecking}
             >
               {mode === 'signup' ? 'Create account' : 'Log in'}
             </button>
 
-            <button
-              type="button"
-              className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-700 transition hover:border-slate-300 hover:text-slate-900"
-              onClick={() => {
-                clearSession()
-                resetError()
-                setName('')
-                setEmail('')
-                setPassword('')
-                setConfirmPassword('')
-              }}
-            >
-              Clear saved session
-            </button>
+            {isChecking && (
+              <p className="text-center text-[11px] text-slate-500">
+                Checking session…
+              </p>
+            )}
           </form>
         </section>
 
         <p className="text-center text-[11px] text-slate-500">
-          This is UI scaffolding only; server-side auth comes next.
+          Accounts are stored in Postgres via the backend.
         </p>
       </div>
     </main>
   )
 }
-

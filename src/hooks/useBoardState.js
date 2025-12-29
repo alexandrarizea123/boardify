@@ -11,36 +11,11 @@ import {
   sprints as defaultSprints,
   taskTypes as defaultTaskTypes,
 } from '../data/boardData'
+import { requestJson } from '../api/requestJson'
 
 const MAX_BOARDS = 3
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || ''
 const hasApi = API_BASE_URL.length > 0
-
-const requestJson = async (path, options = {}) => {
-  if (!hasApi) {
-    const error = new Error('API disabled')
-    error.status = 0
-    throw error
-  }
-
-  const response = await fetch(`${API_BASE_URL}${path}`, {
-    headers: {
-      'Content-Type': 'application/json',
-      ...(options.headers || {}),
-    },
-    ...options,
-  })
-
-  if (!response.ok) {
-    const message = await response.text()
-    const error = new Error(message || 'Request failed')
-    error.status = response.status
-    throw error
-  }
-
-  if (response.status === 204) return null
-  return response.json()
-}
 
 const buildDraftsForBoards = (boards) =>
   Object.fromEntries(
