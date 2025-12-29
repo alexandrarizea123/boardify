@@ -53,6 +53,8 @@ Runs Postgres + backend + frontend with one command.
 docker compose up --build
 ```
 
+- Note: this requires Docker Compose v2 (`docker compose`). The legacy v1 binary (`docker-compose`) can fail on newer Docker versions with errors like `KeyError: 'ContainerConfig'`.
+
 - Frontend: `http://localhost:5173`
 - Backend: `http://localhost:3000`
 - Postgres: runs inside Docker (not exposed to host by default to avoid port conflicts)

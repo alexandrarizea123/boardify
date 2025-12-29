@@ -1,3 +1,5 @@
+'use client'
+
 import { useBoardState } from './hooks/useBoardState'
 import { emptyTaskDraft } from './data/boardData'
 import {

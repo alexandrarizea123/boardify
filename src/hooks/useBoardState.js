@@ -13,9 +13,16 @@ import {
 } from '../data/boardData'
 
 const MAX_BOARDS = 3
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000'
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || ''
+const hasApi = API_BASE_URL.length > 0
 
 const requestJson = async (path, options = {}) => {
+  if (!hasApi) {
+    const error = new Error('API disabled')
+    error.status = 0
+    throw error
+  }
+
   const response = await fetch(`${API_BASE_URL}${path}`, {
     headers: {
       'Content-Type': 'application/json',
@@ -79,6 +86,7 @@ export const useBoardState = () => {
     let isMounted = true
 
     const loadData = async () => {
+      if (!hasApi) return
       try {
         const [boardsData, taskTypesData] = await Promise.all([
           requestJson('/api/boards'),
@@ -294,6 +302,7 @@ export const useBoardState = () => {
   const canAddBoard = boards.length < MAX_BOARDS
 
   const saveBoard = async (board) => {
+    if (!hasApi) return
     try {
       await requestJson(`/api/boards/${board.id}`, {
         method: 'PUT',
@@ -312,6 +321,7 @@ export const useBoardState = () => {
   }
 
   const deleteBoardFromApi = async (boardId) => {
+    if (!hasApi) return
     try {
       await requestJson(`/api/boards/${boardId}`, { method: 'DELETE' })
     } catch (err) {
@@ -320,6 +330,7 @@ export const useBoardState = () => {
   }
 
   const persistTaskType = async (type) => {
+    if (!hasApi) return
     try {
       await requestJson('/api/task-types', {
         method: 'POST',
