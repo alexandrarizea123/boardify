@@ -42,8 +42,32 @@ const initializeDatabase = async () => {
 }
 
 const app = express()
-const corsOrigin = process.env.CORS_ORIGIN
-app.use(cors(corsOrigin ? { origin: corsOrigin } : undefined))
+const parseCorsOrigins = (value) =>
+  (value ?? '')
+    .split(',')
+    .map((origin) => origin.trim())
+    .filter(Boolean)
+
+const configuredOrigins = parseCorsOrigins(process.env.CORS_ORIGIN)
+const allowAllOrigins = configuredOrigins.includes('*')
+const corsOrigins =
+  allowAllOrigins || configuredOrigins.length > 0
+    ? configuredOrigins.filter((origin) => origin !== '*')
+    : ['http://localhost:5173', 'http://127.0.0.1:5173', 'http://0.0.0.0:5173']
+
+app.use(
+  cors(
+    allowAllOrigins
+      ? { origin: true }
+      : {
+          origin: (origin, callback) => {
+            if (!origin) return callback(null, true)
+            if (corsOrigins.includes(origin)) return callback(null, true)
+            return callback(new Error(`Not allowed by CORS: ${origin}`))
+          },
+        },
+  ),
+)
 app.use(express.json({ limit: '2mb' }))
 
 const PORT = Number(process.env.PORT) || 3000
