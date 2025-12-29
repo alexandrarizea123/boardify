@@ -47,7 +47,7 @@ Boardify is a minimal-footprint, yet powerful task-management board built with *
 
 ### Installation & Setup
 
-#### Option A: Docker (recommended)
+#### Docker Configuration
 Runs Postgres + backend + frontend with one command.
 
 ```bash
@@ -84,6 +84,9 @@ The backend exposes the following RESTful endpoints.
 | `POST`  | `/api/auth/signup` | Creates a user and starts a session.                  |
 | `POST`  | `/api/auth/login` | Logs a user in and starts a session.                  |
 | `POST`  | `/api/auth/logout` | Logs out (clears the session).                       |
+
+## Next steps
+- Add collaborative boards
 
 ## License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
