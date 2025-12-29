@@ -1,5 +1,5 @@
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || ''
-const hasApi = API_BASE_URL.length > 0
+const apiDisabled = process.env.NEXT_PUBLIC_API_DISABLED === 'true'
 
 const readErrorMessage = async (response) => {
   try {
@@ -18,13 +18,14 @@ const readErrorMessage = async (response) => {
 }
 
 export const requestJson = async (path, options = {}) => {
-  if (!hasApi) {
+  if (apiDisabled) {
     const error = new Error('API disabled')
     error.status = 0
     throw error
   }
 
-  const response = await fetch(`${API_BASE_URL}${path}`, {
+  const url = API_BASE_URL ? `${API_BASE_URL}${path}` : path
+  const response = await fetch(url, {
     credentials: 'include',
     headers: {
       'Content-Type': 'application/json',
@@ -43,4 +44,3 @@ export const requestJson = async (path, options = {}) => {
   if (response.status === 204) return null
   return response.json()
 }
-
