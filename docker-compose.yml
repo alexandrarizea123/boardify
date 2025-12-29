@@ -49,9 +49,11 @@ services:
     volumes:
       - ./:/app
       - frontend-node-modules:/app/node_modules
+      - frontend-next-cache:/app/.next
     command: sh -c "npm ci && npm run dev"
 
 volumes:
   db-data:
   backend-node-modules:
   frontend-node-modules:
+  frontend-next-cache:
