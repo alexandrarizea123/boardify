@@ -238,9 +238,7 @@ export default function AuthPage() {
           </form>
         </section>
 
-        <p className="text-center text-[11px] text-slate-500">
-          Accounts are stored in Postgres via the backend.
-        </p>
+        <span aria-hidden="true" />
       </div>
     </main>
   )
