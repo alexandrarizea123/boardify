@@ -11,36 +11,10 @@ import {
   sprints as defaultSprints,
   taskTypes as defaultTaskTypes,
 } from '../data/boardData'
+import { requestJson } from '../api/requestJson'
 
 const MAX_BOARDS = 3
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || ''
-const hasApi = API_BASE_URL.length > 0
-
-const requestJson = async (path, options = {}) => {
-  if (!hasApi) {
-    const error = new Error('API disabled')
-    error.status = 0
-    throw error
-  }
-
-  const response = await fetch(`${API_BASE_URL}${path}`, {
-    headers: {
-      'Content-Type': 'application/json',
-      ...(options.headers || {}),
-    },
-    ...options,
-  })
-
-  if (!response.ok) {
-    const message = await response.text()
-    const error = new Error(message || 'Request failed')
-    error.status = response.status
-    throw error
-  }
-
-  if (response.status === 204) return null
-  return response.json()
-}
+const apiDisabled = process.env.NEXT_PUBLIC_API_DISABLED === 'true'
 
 const buildDraftsForBoards = (boards) =>
   Object.fromEntries(
@@ -86,7 +60,7 @@ export const useBoardState = () => {
     let isMounted = true
 
     const loadData = async () => {
-      if (!hasApi) return
+      if (apiDisabled) return
       try {
         const [boardsData, taskTypesData] = await Promise.all([
           requestJson('/api/boards'),
@@ -302,7 +276,7 @@ export const useBoardState = () => {
   const canAddBoard = boards.length < MAX_BOARDS
 
   const saveBoard = async (board) => {
-    if (!hasApi) return
+    if (apiDisabled) return
     try {
       await requestJson(`/api/boards/${board.id}`, {
         method: 'PUT',
@@ -321,7 +295,7 @@ export const useBoardState = () => {
   }
 
   const deleteBoardFromApi = async (boardId) => {
-    if (!hasApi) return
+    if (apiDisabled) return
     try {
       await requestJson(`/api/boards/${boardId}`, { method: 'DELETE' })
     } catch (err) {
@@ -330,7 +304,7 @@ export const useBoardState = () => {
   }
 
   const persistTaskType = async (type) => {
-    if (!hasApi) return
+    if (apiDisabled) return
     try {
       await requestJson('/api/task-types', {
         method: 'POST',

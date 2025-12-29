@@ -42,16 +42,19 @@ services:
     depends_on:
       - backend
     environment:
-      NEXT_PUBLIC_API_URL: http://localhost:3000
+      API_PROXY_TARGET: http://backend:3000
+      NEXT_PUBLIC_API_URL: ""
       CHOKIDAR_USEPOLLING: "true"
     ports:
       - "5173:5173"
     volumes:
       - ./:/app
       - frontend-node-modules:/app/node_modules
-    command: sh -c "npm ci && npm run dev"
+      - frontend-next-cache:/app/.next
+    command: sh -c "mkdir -p .next && find .next -mindepth 1 -maxdepth 1 -exec rm -rf {} + || true; npm ci && npm run dev"
 
 volumes:
   db-data:
   backend-node-modules:
   frontend-node-modules:
+  frontend-next-cache:

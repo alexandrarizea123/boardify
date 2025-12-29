@@ -1,6 +1,5 @@
-import App from '../src/App'
+import { redirect } from 'next/navigation'
 
 export default function HomePage() {
-  return <App />
+  redirect('/auth')
 }
-
