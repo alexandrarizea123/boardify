@@ -1,12 +1,14 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useEffect, useMemo, useState } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import App from '../../App'
 import { requestJson } from '../../api/requestJson'
 
-export default function BoardGate() {
+export default function CollabGate() {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const preferredBoardId = useMemo(() => searchParams?.get('board') || '', [searchParams])
   const [user, setUser] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
 
@@ -42,7 +44,7 @@ export default function BoardGate() {
           <div className="flex items-center gap-2">
             <button
               type="button"
-              className="rounded-full border border-slate-200 bg-slate-900 px-3 py-1 text-xs font-semibold text-white transition hover:bg-slate-800"
+              className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-700 transition hover:border-slate-300 hover:text-slate-900"
               onClick={() => router.push('/board')}
             >
               My boards
@@ -77,7 +79,7 @@ export default function BoardGate() {
         </div>
       </header>
 
-      <App />
+      <App mode="collab" preferredBoardId={preferredBoardId} />
     </div>
   )
 }

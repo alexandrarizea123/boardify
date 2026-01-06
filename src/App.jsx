@@ -14,7 +14,7 @@ import {
   TaskForm,
 } from './components/board'
 
-function App() {
+function App({ mode, preferredBoardId } = {}) {
   const {
     boards,
     activeBoard,
@@ -67,7 +67,7 @@ function App() {
     handleUpdateTask,
     isTaskFormOpen,
     setIsTaskFormOpen,
-  } = useBoardState()
+  } = useBoardState({ mode, preferredBoardId })
 
   const todoColumn = activeBoard?.columns.find(
     (c) => c.name.toLowerCase() === 'to do',
@@ -127,8 +127,8 @@ function App() {
                   boards={boards}
                   activeBoardId={activeBoard.id}
                   onSelect={handleSelectBoard}
-                  onAdd={startCreateBoard}
-                  canAdd={canAddBoard}
+                  onAdd={mode === 'collab' ? null : startCreateBoard}
+                  canAdd={mode === 'collab' ? false : canAddBoard}
                 />
               </div>
 

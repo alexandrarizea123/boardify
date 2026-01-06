@@ -21,9 +21,13 @@ const buildDraftsForBoards = (boards) =>
     boards.map((board) => [board.id, buildDrafts(board.columns)]),
   )
 
-export const useBoardState = () => {
+export const useBoardState = ({ mode = 'personal', preferredBoardId } = {}) => {
+  const isCollaborative = mode === 'collab'
+  const boardsEndpoint = isCollaborative ? '/api/collab-boards' : '/api/boards'
+  const maxBoards = isCollaborative ? Number.POSITIVE_INFINITY : MAX_BOARDS
+
   const initialBoardRef = useRef(null)
-  if (!initialBoardRef.current) {
+  if (!initialBoardRef.current && !isCollaborative) {
     const columns = buildDefaultColumns()
     initialBoardRef.current = {
       id: createId(),
@@ -35,15 +39,15 @@ export const useBoardState = () => {
 
   const initialBoard = initialBoardRef.current
 
-  const [boards, setBoards] = useState(() => [initialBoard])
-  const boardsRef = useRef([initialBoard])
-  const [activeBoardId, setActiveBoardId] = useState(() => initialBoard.id)
+  const [boards, setBoards] = useState(() => (initialBoard ? [initialBoard] : []))
+  const boardsRef = useRef(initialBoard ? [initialBoard] : [])
+  const [activeBoardId, setActiveBoardId] = useState(() => initialBoard?.id ?? null)
   const [isCreatingBoard, setIsCreatingBoard] = useState(false)
   const [boardName, setBoardName] = useState('')
   const [boardDescription, setBoardDescription] = useState('')
-  const [taskDraftsByBoard, setTaskDraftsByBoard] = useState(() => ({
-    [initialBoard.id]: buildDrafts(initialBoard.columns),
-  }))
+  const [taskDraftsByBoard, setTaskDraftsByBoard] = useState(() =>
+    initialBoard ? { [initialBoard.id]: buildDrafts(initialBoard.columns) } : {},
+  )
   const [taskTypes, setTaskTypes] = useState(defaultTaskTypes)
   const [sprints, setSprints] = useState(defaultSprints)
   const [filterType, setFilterType] = useState('All')
@@ -63,7 +67,7 @@ export const useBoardState = () => {
       if (apiDisabled) return
       try {
         const [boardsData, taskTypesData] = await Promise.all([
-          requestJson('/api/boards'),
+          requestJson(boardsEndpoint),
           requestJson('/api/task-types'),
         ])
 
@@ -72,19 +76,24 @@ export const useBoardState = () => {
         const nextBoards =
           Array.isArray(boardsData) && boardsData.length > 0
             ? boardsData
-            : [initialBoardRef.current]
+            : initialBoardRef.current
+              ? [initialBoardRef.current]
+              : []
         setBoards(nextBoards)
-        setActiveBoardId(nextBoards[0]?.id ?? null)
+        const preferredMatch =
+          preferredBoardId &&
+          nextBoards.find((board) => board.id === preferredBoardId)
+        setActiveBoardId(preferredMatch?.id ?? nextBoards[0]?.id ?? null)
         setTaskDraftsByBoard(buildDraftsForBoards(nextBoards))
 
         const nextTypes =
           Array.isArray(taskTypesData) && taskTypesData.length > 0
-            ? taskTypesData
-            : defaultTaskTypes
+          ? taskTypesData
+          : defaultTaskTypes
         setTaskTypes(nextTypes)
 
-        if (!boardsData || boardsData.length === 0) {
-          await requestJson('/api/boards', {
+        if (!isCollaborative && (!boardsData || boardsData.length === 0)) {
+          await requestJson(boardsEndpoint, {
             method: 'POST',
             body: JSON.stringify(initialBoardRef.current),
           })
@@ -110,7 +119,7 @@ export const useBoardState = () => {
     return () => {
       isMounted = false
     }
-  }, [])
+  }, [boardsEndpoint, isCollaborative, preferredBoardId])
 
   useEffect(() => {
     boardsRef.current = boards
@@ -273,20 +282,26 @@ export const useBoardState = () => {
     return stats
   }, [activeBoard])
 
-  const canAddBoard = boards.length < MAX_BOARDS
+  const canAddBoard = boards.length < maxBoards
+
+  const sanitizeBoardPayload = (board) => {
+    if (!isCollaborative) return board
+    const { _collabRole, ...rest } = board || {}
+    return rest
+  }
 
   const saveBoard = async (board) => {
     if (apiDisabled) return
     try {
-      await requestJson(`/api/boards/${board.id}`, {
+      await requestJson(`${boardsEndpoint}/${board.id}`, {
         method: 'PUT',
-        body: JSON.stringify(board),
+        body: JSON.stringify(sanitizeBoardPayload(board)),
       })
     } catch (err) {
-      if (err.status === 404) {
-        await requestJson('/api/boards', {
+      if (!isCollaborative && err.status === 404) {
+        await requestJson(boardsEndpoint, {
           method: 'POST',
-          body: JSON.stringify(board),
+          body: JSON.stringify(sanitizeBoardPayload(board)),
         })
       } else {
         console.error('Failed to save board:', err)
@@ -297,7 +312,7 @@ export const useBoardState = () => {
   const deleteBoardFromApi = async (boardId) => {
     if (apiDisabled) return
     try {
-      await requestJson(`/api/boards/${boardId}`, { method: 'DELETE' })
+      await requestJson(`${boardsEndpoint}/${boardId}`, { method: 'DELETE' })
     } catch (err) {
       console.error('Failed to delete board:', err)
     }
@@ -328,12 +343,39 @@ export const useBoardState = () => {
     setBoardDescription('')
   }
 
-  const handleCreateBoard = (event) => {
+  const handleCreateBoard = async (event) => {
     event.preventDefault()
     if (!canAddBoard) return
 
     const trimmedName = boardName.trim()
     if (!trimmedName) return
+
+    if (isCollaborative) {
+      try {
+        const createdBoard = await requestJson(boardsEndpoint, {
+          method: 'POST',
+          body: JSON.stringify({
+            name: trimmedName,
+            description: boardDescription.trim(),
+          }),
+        })
+
+        const columns = Array.isArray(createdBoard?.columns) ? createdBoard.columns : []
+
+        setBoards((current) => [...current, createdBoard])
+        setActiveBoardId(createdBoard.id)
+        setTaskDraftsByBoard((current) => ({
+          ...current,
+          [createdBoard.id]: buildDrafts(columns),
+        }))
+        setBoardName('')
+        setBoardDescription('')
+        setIsCreatingBoard(false)
+      } catch (err) {
+        console.error('Failed to create collaborative board:', err)
+      }
+      return
+    }
 
     const columns = buildDefaultColumns()
     const newBoard = {
@@ -370,6 +412,15 @@ export const useBoardState = () => {
   const handleDeleteBoard = (boardId) => {
     const remaining = boards.filter((board) => board.id !== boardId)
     if (remaining.length === 0) {
+      if (isCollaborative) {
+        setBoards([])
+        setActiveBoardId(null)
+        setTaskDraftsByBoard({})
+        setIsCreatingBoard(false)
+        void deleteBoardFromApi(boardId)
+        return
+      }
+
       const columns = buildDefaultColumns()
       const fallbackBoard = {
         id: createId(),
