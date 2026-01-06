@@ -25,6 +25,12 @@ Boardify is a minimal-footprint, yet powerful task-management board built with *
 - **Due Date Status**: See visual badges for tasks that are `Overdue`, `Due Soon`, or `Upcoming`.
 - **Mentions**: Use `@` to tag team members in task descriptions with autocomplete support.
 
+### Collaborative Features
+- **Shared Boards**: Create boards that can be shared with other users for real-time collaboration.
+- **Role-Based Access**: Assign roles (`Admin` or `Member`) to control permissions (e.g., only admins can delete boards or invite others).
+- **Email Invitations**: Invite users by email. If they don't have an account, the invite waits until they sign up.
+- **Invite Management**: Secure token-based invite acceptance with expiration (configurable via `COLLAB_INVITE_TTL_DAYS`).
+
 ### Analytics & UI
 - **Task Summary**: A real-time sidebar count of tasks organized by type.
 - **Analytics Dashboard**: Visualize task distribution, developer workload (by estimated hours), and overdue trends.
@@ -65,7 +71,7 @@ Postgres credentials (defaults): database `mydb`, user `myuser`, password `mypas
 Optional: copy `/.env.example` to `/.env` to document local env vars (Docker Compose already sets defaults for Docker).
 
 Notes:
-- The app routes are `/auth` (login/signup) and `/board` (the board UI). `/` redirects to `/auth`.
+- The app routes are `/auth` (login/signup), `/board` (personal boards), `/collab` (collaborative boards), and `/profile` (user profile).
 - There is also a backend-only Postgres compose file at `boardify-backend/docker-compose.yml` (publishes `5434:5432`). Don’t run it alongside the main `docker-compose.yml`.
 
 ## API Endpoints
@@ -73,11 +79,18 @@ The backend exposes the following RESTful endpoints.
 
 | Method | Endpoint      | Description                                                 |
 |--------|---------------|-------------------------------------------------------------|
-| `GET`  | `/api/boards` | Retrieves all boards.                                       |
-| `GET`  | `/api/boards/:id` | Retrieves a single board by its ID.                       |
-| `POST` | `/api/boards`     | Creates a new board.                                      |
-| `PUT`  | `/api/boards/:id` | Updates an existing board.                                  |
-| `DELETE`| `/api/boards/:id` | Deletes a board by its ID.                                  |
+| `GET`  | `/api/boards` | Retrieves all personal boards.                              |
+| `GET`  | `/api/boards/:id` | Retrieves a single personal board by its ID.            |
+| `POST` | `/api/boards`     | Creates a new personal board.                           |
+| `PUT`  | `/api/boards/:id` | Updates an existing personal board.                     |
+| `DELETE`| `/api/boards/:id` | Deletes a personal board by its ID.                     |
+| `GET`  | `/api/collab-boards` | Retrieves authenticated user's collaborative boards. |
+| `POST` | `/api/collab-boards` | Creates a new collaborative board.                   |
+| `GET`  | `/api/collab-boards/:id` | Retrieves a specific collaborative board.        |
+| `PUT`  | `/api/collab-boards/:id` | Updates a collaborative board.                   |
+| `DELETE`| `/api/collab-boards/:id` | Deletes a collaborative board (Admin only).     |
+| `POST` | `/api/collab-boards/:id/invite` | Invites a user by email (Admin only).     |
+| `POST` | `/api/collab-invites/accept` | Accepts an invite via token.                 |
 | `GET`   | `/api/task-types` | Retrieves all available task types.                       |
 | `POST`  | `/api/task-types` | Adds a new task type.                                     |
 | `GET`   | `/api/auth/me` | Returns the current authenticated user (cookie session). |
@@ -86,7 +99,7 @@ The backend exposes the following RESTful endpoints.
 | `POST`  | `/api/auth/logout` | Logs out (clears the session).                       |
 
 ## Next steps
-- Add collaborative boards
+- Add real-time WebSocket updates for collaborative boards
 
 ## License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
