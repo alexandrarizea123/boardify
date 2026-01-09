@@ -17,7 +17,7 @@ const buildDraft = (task) => ({
   name: task.name,
   description: task.description,
   assignee: task.assignee,
-  type: task.type || 'task',
+  type: task.type || 'Feature',
   sprint: task.sprint || '',
   priority: task.priority || '',
   difficulty: task.difficulty || '',
@@ -46,11 +46,6 @@ const getTypeContent = (type) => {
       return {
         icon: BugAntIcon,
         style: 'bg-slate-100 text-slate-700 border-slate-200',
-      }
-    case 'Chore':
-      return {
-        icon: TagIcon,
-        style: 'bg-slate-50 text-slate-600 border-slate-200',
       }
     case 'Research':
       return {
@@ -688,15 +683,15 @@ function TaskCard({
   const PriorityIcon = priorityIcon?.icon
   const surfaceClasses = isDone
     ? {
-        base: 'bg-emerald-50/50 border-emerald-200/70',
-        expanded: 'bg-emerald-50 border-emerald-300/60 shadow-md',
-        hover: 'hover:bg-emerald-50',
-      }
+      base: 'bg-emerald-50/50 border-emerald-200/70',
+      expanded: 'bg-emerald-50 border-emerald-300/60 shadow-md',
+      hover: 'hover:bg-emerald-50',
+    }
     : {
-        base: 'bg-white border-slate-200',
-        expanded: 'bg-white border-slate-300 shadow-md',
-        hover: 'hover:border-slate-300',
-      }
+      base: 'bg-white border-slate-200',
+      expanded: 'bg-white border-slate-300 shadow-md',
+      hover: 'hover:border-slate-300',
+    }
 
   return (
     <article
@@ -878,7 +873,7 @@ function TaskCard({
               className="h-full rounded-full bg-blue-500 transition-all duration-300"
               style={{
                 width: `${(task.subtasks.filter((t) => t?.isCompleted).length /
-                    task.subtasks.length) *
+                  task.subtasks.length) *
                   100
                   }%`,
               }}

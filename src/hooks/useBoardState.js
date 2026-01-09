@@ -88,8 +88,8 @@ export const useBoardState = ({ mode = 'personal', preferredBoardId } = {}) => {
 
         const nextTypes =
           Array.isArray(taskTypesData) && taskTypesData.length > 0
-          ? taskTypesData
-          : defaultTaskTypes
+            ? taskTypesData
+            : defaultTaskTypes
         setTaskTypes(nextTypes)
 
         if (!isCollaborative && (!boardsData || boardsData.length === 0)) {
@@ -522,7 +522,7 @@ export const useBoardState = ({ mode = 'personal', preferredBoardId } = {}) => {
       name: draft.name.trim(),
       description: draft.description.trim(),
       assignee: draft.assignee || '',
-      type: typeValue || 'task',
+      type: typeValue || 'Feature',
       ...(sprintValue ? { sprint: sprintValue } : {}),
       ...(projectTags.length ? { projectTags } : {}),
       ...(dependencies.length ? { dependencies } : {}),
@@ -590,9 +590,9 @@ export const useBoardState = ({ mode = 'personal', preferredBoardId } = {}) => {
       columns: board.columns.map((column) =>
         column.id === columnId
           ? {
-              ...column,
-              tasks: column.tasks.filter((task) => task.id !== taskId),
-            }
+            ...column,
+            tasks: column.tasks.filter((task) => task.id !== taskId),
+          }
           : column,
       ),
     }))
@@ -607,7 +607,7 @@ export const useBoardState = ({ mode = 'personal', preferredBoardId } = {}) => {
       const doneColumnId = doneColumn?.id
 
       let shouldMoveToDone = false
-      
+
       // Calculate if we should move based on updates
       if (updates.subtasks && doneColumnId && columnId !== doneColumnId) {
         // If we are updating subtasks, check if ALL are now completed
@@ -621,17 +621,17 @@ export const useBoardState = ({ mode = 'personal', preferredBoardId } = {}) => {
       const updatedColumns = board.columns.map((column) =>
         column.id === columnId
           ? {
-              ...column,
-              tasks: column.tasks.map((task) =>
-                task.id === taskId
-                  ? {
-                      ...task,
-                      ...updates,
-                      updatedAt: new Date().toISOString(),
-                    }
-                  : task,
-              ),
-            }
+            ...column,
+            tasks: column.tasks.map((task) =>
+              task.id === taskId
+                ? {
+                  ...task,
+                  ...updates,
+                  updatedAt: new Date().toISOString(),
+                }
+                : task,
+            ),
+          }
           : column,
       )
 
