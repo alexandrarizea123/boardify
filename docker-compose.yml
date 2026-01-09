@@ -15,7 +15,7 @@ services:
 
   backend:
     build:
-      context: ./boardify-backend
+      context: ./backend
     restart: unless-stopped
     depends_on:
       - db
@@ -30,14 +30,14 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - ./boardify-backend:/app
+      - ./backend:/app
       - backend-node-modules:/app/node_modules
     command: sh -c "npm ci && npm run dev"
 
   frontend:
     build:
-      context: .
-      dockerfile: Dockerfile.frontend
+      context: ./frontend
+      dockerfile: Dockerfile
     restart: unless-stopped
     depends_on:
       - backend
@@ -48,7 +48,7 @@ services:
     ports:
       - "5173:5173"
     volumes:
-      - ./:/app
+      - ./frontend:/app
       - frontend-node-modules:/app/node_modules
       - frontend-next-cache:/app/.next
     command: sh -c "mkdir -p .next && find .next -mindepth 1 -maxdepth 1 -exec rm -rf {} + || true; npm ci && npm run dev"

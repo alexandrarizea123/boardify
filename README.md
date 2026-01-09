@@ -68,11 +68,27 @@ docker compose up --build
 
 Postgres credentials (defaults): database `mydb`, user `myuser`, password `mypassword`.
 
-Optional: copy `/.env.example` to `/.env` to document local env vars (Docker Compose already sets defaults for Docker).
+Optional: copy `frontend/.env.example` to `frontend/.env` to document local env vars (Docker Compose already sets defaults for Docker).
 
 Notes:
 - The app routes are `/auth` (login/signup), `/board` (personal boards), `/collab` (collaborative boards), and `/profile` (user profile).
-- There is also a backend-only Postgres compose file at `boardify-backend/docker-compose.yml` (publishes `5434:5432`). Don’t run it alongside the main `docker-compose.yml`.
+- There is also a backend-only Postgres compose file at `backend/docker-compose.yml` (publishes `5434:5432`). Don’t run it alongside the main `docker-compose.yml`.
+
+### Local Development
+
+1.  **Frontend**:
+    ```bash
+    cd frontend
+    npm install
+    npm run dev
+    ```
+
+2.  **Backend**:
+    ```bash
+    cd backend
+    npm install
+    npm start
+    ```
 
 ## API Endpoints
 The backend exposes the following RESTful endpoints.
