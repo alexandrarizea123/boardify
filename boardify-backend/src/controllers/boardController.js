@@ -1,17 +1,22 @@
 import pool from '../config/db.js'
 import { isValidBoardPayload } from '../utils/validation.js'
 import { requestError } from '../utils/response.js'
+import { requireAuthenticatedUser } from '../middleware/auth.js'
 
-export const getBoards = async (_req, res) => {
+export const getBoards = async (req, res) => {
     try {
+        const user = await requireAuthenticatedUser(req, res)
+        if (!user) return
+
         const { rows } = await pool.query(
             `
         SELECT b.data
         FROM boards b
         LEFT JOIN collaborative_boards cb ON cb.board_id = b.id
-        WHERE cb.board_id IS NULL
+        WHERE b.user_id = $1 AND cb.board_id IS NULL
         ORDER BY b.created_at ASC
       `,
+            [user.id],
         )
         res.json(rows.map((row) => row.data))
     } catch (err) {
@@ -21,15 +26,18 @@ export const getBoards = async (_req, res) => {
 
 export const getBoard = async (req, res) => {
     try {
+        const user = await requireAuthenticatedUser(req, res)
+        if (!user) return
+
         const { id } = req.params
         const { rows } = await pool.query(
             `
         SELECT b.data
         FROM boards b
         LEFT JOIN collaborative_boards cb ON cb.board_id = b.id
-        WHERE b.id = $1 AND cb.board_id IS NULL
+        WHERE b.id = $1 AND b.user_id = $2 AND cb.board_id IS NULL
       `,
-            [id],
+            [id, user.id],
         )
         if (rows.length === 0) {
             return requestError(res, 404, 'Board not found')
@@ -42,14 +50,17 @@ export const getBoard = async (req, res) => {
 
 export const createBoard = async (req, res) => {
     try {
+        const user = await requireAuthenticatedUser(req, res)
+        if (!user) return
+
         const board = req.body
         if (!isValidBoardPayload(board)) {
             return requestError(res, 400, 'Invalid board payload')
         }
 
         const { rowCount } = await pool.query(
-            'INSERT INTO boards (id, data) VALUES ($1, $2) ON CONFLICT (id) DO NOTHING',
-            [board.id, board],
+            'INSERT INTO boards (id, user_id, data) VALUES ($1, $2, $3) ON CONFLICT (id) DO NOTHING',
+            [board.id, user.id, board],
         )
 
         if (rowCount === 0) {
@@ -64,6 +75,9 @@ export const createBoard = async (req, res) => {
 
 export const updateBoard = async (req, res) => {
     try {
+        const user = await requireAuthenticatedUser(req, res)
+        if (!user) return
+
         const board = req.body
         if (!isValidBoardPayload(board)) {
             return requestError(res, 400, 'Invalid board payload')
@@ -78,9 +92,9 @@ export const updateBoard = async (req, res) => {
             `
         UPDATE boards
         SET data = $2, updated_at = NOW()
-        WHERE id = $1 AND id NOT IN (SELECT board_id FROM collaborative_boards)
+        WHERE id = $1 AND user_id = $3 AND id NOT IN (SELECT board_id FROM collaborative_boards)
       `,
-            [id, board],
+            [id, board, user.id],
         )
 
         if (rowCount === 0) {
@@ -95,13 +109,16 @@ export const updateBoard = async (req, res) => {
 
 export const deleteBoard = async (req, res) => {
     try {
+        const user = await requireAuthenticatedUser(req, res)
+        if (!user) return
+
         const { id } = req.params
         const { rowCount } = await pool.query(
             `
         DELETE FROM boards
-        WHERE id = $1 AND id NOT IN (SELECT board_id FROM collaborative_boards)
+        WHERE id = $1 AND user_id = $2 AND id NOT IN (SELECT board_id FROM collaborative_boards)
       `,
-            [id],
+            [id, user.id],
         )
         if (rowCount === 0) {
             return requestError(res, 404, 'Board not found')
