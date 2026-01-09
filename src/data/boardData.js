@@ -1,7 +1,7 @@
 export const taskTypes = ['task', 'Feature', 'Bug', 'Chore', 'Research']
 export const priorities = ['Highest', 'High', 'Medium', 'Low']
 export const difficulties = ['Easy', 'Medium', 'Hard']
-export const boardUsers = ['Me', 'Alex']
+export const boardUsers = ['Me']
 export const sprints = ['Backlog', 'Sprint 1', 'Sprint 2']
 
 export const createId = () =>
