@@ -5,7 +5,7 @@ Boardify is a minimal-footprint, yet powerful task-management board built with *
 <br>
 
 <p align="center">
-  <img alt="Board preview" src="frontend/public/assets/readme-page.png" width="80%">
+  <img alt="Board preview" src="images/readme-page.png" width="80%">
 </p>
 
 ## Features
