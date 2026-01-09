@@ -73,12 +73,27 @@ export const useBoardState = ({ mode = 'personal', preferredBoardId } = {}) => {
 
         if (!isMounted) return
 
-        const nextBoards =
-          Array.isArray(boardsData) && boardsData.length > 0
-            ? boardsData
-            : initialBoardRef.current
-              ? [initialBoardRef.current]
-              : []
+        let nextBoards = []
+        if (Array.isArray(boardsData) && boardsData.length > 0) {
+          nextBoards = boardsData
+        } else if (!isCollaborative) {
+          // Generate a fresh board for the new user instead of reusing the stale ref
+          const columns = buildDefaultColumns()
+          const freshBoard = {
+            id: createId(),
+            name: 'Default Board',
+            description: '',
+            columns,
+          }
+          nextBoards = [freshBoard]
+
+          // Immediately persist it
+          await requestJson(boardsEndpoint, {
+            method: 'POST',
+            body: JSON.stringify(freshBoard),
+          })
+        }
+
         setBoards(nextBoards)
         const preferredMatch =
           preferredBoardId &&
@@ -91,13 +106,6 @@ export const useBoardState = ({ mode = 'personal', preferredBoardId } = {}) => {
             ? taskTypesData
             : defaultTaskTypes
         setTaskTypes(nextTypes)
-
-        if (!isCollaborative && (!boardsData || boardsData.length === 0)) {
-          await requestJson(boardsEndpoint, {
-            method: 'POST',
-            body: JSON.stringify(initialBoardRef.current),
-          })
-        }
 
         if (!taskTypesData || taskTypesData.length === 0) {
           await Promise.all(
