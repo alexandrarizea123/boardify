@@ -5,12 +5,17 @@ Boardify is a minimal-footprint, yet powerful task-management board built with *
 <br>
 
 <p align="center">
-  <img alt="Board preview" src="images/readme-page.png" width="80%">
+  <img alt="Board preview" src="images/board.png" width="80%">
+</p>
+
+<p align="center">
+  <img alt="Create new task preview" src="images/create-task.png" width="80%">
 </p>
 
 ## Features
 
 ### Core Functionality
+
 - **Multiple Boards**: Create and manage up to 3 distinct boards.
 - **Custom Columns**: Organize tasks in default columns (`To Do`, `In Progress`, `Done`) or add your own.
 - **Drag-and-Drop**: Intuitively move tasks between columns.
@@ -18,6 +23,7 @@ Boardify is a minimal-footprint, yet powerful task-management board built with *
 - **Authentication**: Sign up / log in with accounts stored in Postgres (sessions via httpOnly cookies).
 
 ### Rich Task Management
+
 - **Detailed Task Creation**: Add tasks with assignees, types, priorities, difficulty, time estimates, due dates, and more.
 - **Subtasks**: Break down complex tasks into a checklist of smaller items with its own progress bar.
 - **Filtering**: Quickly find tasks by type, assignee, priority, sprint, or other attributes.
@@ -26,12 +32,14 @@ Boardify is a minimal-footprint, yet powerful task-management board built with *
 - **Mentions**: Use `@` to tag team members in task descriptions with autocomplete support.
 
 ### Collaborative Features
+
 - **Shared Boards**: Create boards that can be shared with other users for real-time collaboration.
 - **Role-Based Access**: Assign roles (`Admin` or `Member`) to control permissions (e.g., only admins can delete boards or invite others).
 - **Email Invitations**: Invite users by email. If they don't have an account, the invite waits until they sign up.
 - **Invite Management**: Secure token-based invite acceptance with expiration (configurable via `COLLAB_INVITE_TTL_DAYS`).
 
 ### Analytics & UI
+
 - **Task Summary**: A real-time sidebar count of tasks organized by type.
 - **Analytics Dashboard**: Visualize task distribution, developer workload (by estimated hours), and overdue trends.
 - **Progress Bars**: Track overall project completion (`To Do` vs. `Done`) and subtask progress.
@@ -47,6 +55,7 @@ Boardify is a minimal-footprint, yet powerful task-management board built with *
 ## Getting Started
 
 ### Prerequisites
+
 - Node.js (v20.19+ recommended)
 - npm
 - Docker (for backend)
@@ -54,6 +63,7 @@ Boardify is a minimal-footprint, yet powerful task-management board built with *
 ### Installation & Setup
 
 #### Docker Configuration
+
 Runs Postgres + backend + frontend with one command.
 
 ```bash
@@ -71,19 +81,22 @@ Postgres credentials (defaults): database `mydb`, user `myuser`, password `mypas
 Optional: copy `frontend/.env.example` to `frontend/.env` to document local env vars (Docker Compose already sets defaults for Docker).
 
 Notes:
+
 - The app routes are `/auth` (login/signup), `/board` (personal boards), `/collab` (collaborative boards), and `/profile` (user profile).
 - There is also a backend-only Postgres compose file at `backend/docker-compose.yml` (publishes `5434:5432`). Don’t run it alongside the main `docker-compose.yml`.
 
 ### Local Development
 
-1.  **Frontend**:
+1. **Frontend**:
+
     ```bash
     cd frontend
     npm install
     npm run dev
     ```
 
-2.  **Backend**:
+2. **Backend**:
+
     ```bash
     cd backend
     npm install
@@ -91,6 +104,7 @@ Notes:
     ```
 
 ## API Endpoints
+
 The backend exposes the following RESTful endpoints.
 
 | Method | Endpoint      | Description                                                 |
@@ -115,7 +129,9 @@ The backend exposes the following RESTful endpoints.
 | `POST`  | `/api/auth/logout` | Logs out (clears the session).                       |
 
 ## Next steps
+
 - Add real-time WebSocket updates for collaborative boards
 
 ## License
+
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
