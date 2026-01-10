@@ -1,2 +1,44 @@
 @import "tailwindcss";
+@config "../tailwind.config.mjs";
 
+@layer base {
+    body {
+        @apply bg-[#f8fafc] text-slate-800 font-sans antialiased;
+        /* Soft grid background */
+        background-image: linear-gradient(to right, #f1f5f9 1px, transparent 1px), linear-gradient(to bottom, #f1f5f9 1px, transparent 1px);
+        background-size: 4rem 4rem;
+        background-position: center top;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        @apply tracking-tight font-bold text-slate-900;
+    }
+}
+
+@layer components {
+    .glass-panel {
+        @apply bg-white/70 backdrop-blur-xl border border-white/50 shadow-glass;
+    }
+
+    .glass-card {
+        @apply bg-white border border-slate-200 shadow-card transition-all duration-300;
+    }
+}
+
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    @apply bg-slate-200 rounded-full hover:bg-slate-300 transition-colors;
+}

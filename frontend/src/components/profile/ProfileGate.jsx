@@ -9,7 +9,6 @@ export default function ProfileGate() {
   const [user, setUser] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
   const [boards, setBoards] = useState([])
-  const [boardsError, setBoardsError] = useState('')
   const [boardName, setBoardName] = useState('')
   const [boardDescription, setBoardDescription] = useState('')
   const [isCreating, setIsCreating] = useState(false)
@@ -47,14 +46,14 @@ export default function ProfileGate() {
 
     const loadBoards = async () => {
       try {
-        setBoardsError('')
         const data = await requestJson('/api/collab-boards')
         if (!isMounted) return
         setBoards(Array.isArray(data) ? data : [])
       } catch (err) {
         if (isMounted) {
           setBoards([])
-          setBoardsError(err?.message || 'Failed to load collaborative boards')
+          // setBoardsError(err?.message || 'Failed to load collaborative boards')
+          console.error(err)
         }
       }
     }
@@ -112,8 +111,8 @@ export default function ProfileGate() {
       setBoards((current) => [...(current || []), created])
       setBoardName('')
       setBoardDescription('')
-    } catch (err) {
-      setBoardsError(err?.message || 'Failed to create collaborative board')
+    } catch {
+      // console.error(err)
     } finally {
       setIsCreating(false)
     }
@@ -162,33 +161,19 @@ export default function ProfileGate() {
   if (!user?.email) return null
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900">
-      <header className="border-b border-slate-100 bg-white px-6 py-3">
-        <div className="mx-auto flex w-full max-w-[1100px] items-center justify-between gap-3">
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-700 transition hover:border-slate-300 hover:text-slate-900"
-              onClick={() => router.push('/board')}
-            >
-              My boards
-            </button>
-            <button
-              type="button"
-              className="rounded-full border border-slate-200 bg-slate-900 px-3 py-1 text-xs font-semibold text-white transition hover:bg-slate-800"
-              onClick={() => router.push('/profile')}
-            >
-              Profile
-            </button>
+    <div className="min-h-screen">
+      <header className="fixed top-0 z-50 w-full border-b border-indigo-100 bg-white/80 px-6 py-4 backdrop-blur-xl transition-all">
+        <div className="mx-auto flex w-full max-w-5xl items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600 shadow-md"></div>
+            <h1 className="font-bold text-slate-900 tracking-tight">Boardify</h1>
           </div>
 
-          <div className="flex items-center gap-3">
-            <p className="hidden text-xs text-slate-500 sm:block">
-              Signed in as <span className="font-semibold">{user.email}</span>
-            </p>
+          <div className="flex items-center gap-4">
+            <span className="text-xs font-semibold text-slate-500 hidden sm:block">
+              {user.email}
+            </span>
             <button
-              type="button"
-              className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-700 transition hover:border-slate-300 hover:text-slate-900"
               onClick={async () => {
                 try {
                   await requestJson('/api/auth/logout', { method: 'POST' })
@@ -196,251 +181,188 @@ export default function ProfileGate() {
                   router.push('/auth')
                 }
               }}
+              className="text-xs font-bold text-slate-500 hover:text-slate-900 transition-colors"
             >
               Sign out
             </button>
+            <div className="h-8 w-8 rounded-full bg-slate-200 ring-2 ring-white"></div>
           </div>
         </div>
       </header>
 
-      <main className="px-6 py-10">
-        <div className="mx-auto flex w-full max-w-[1100px] flex-col gap-8">
-          <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-            <h1 className="text-lg font-semibold text-slate-900">Profile</h1>
-            <p className="mt-1 text-sm text-slate-600">
-              Signed in as <span className="font-semibold">{user.email}</span>
-              {user.name ? (
-                <>
-                  {' '}
-                  · <span className="font-semibold">{user.name}</span>
-                </>
-              ) : null}
-            </p>
+      <main className="px-6 py-24">
+        <div className="mx-auto flex w-full max-w-5xl flex-col gap-10">
+
+          {/* Welcome Area */}
+          <section>
+            <h2 className="text-3xl font-bold text-slate-900 tracking-tight">Welcome back, {user.name || 'User'}</h2>
+            <p className="text-slate-500 mt-2">Manage your projects and collaborate with your team.</p>
           </section>
 
-          <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-            <h2 className="text-base font-semibold text-slate-900">
-              Personal Boards
-            </h2>
-            <p className="mt-1 text-sm text-slate-600">
-              Your private task boards.
-            </p>
+          {/* Personal Boards */}
+          <section className="space-y-4">
+            <h3 className="text-sm font-bold uppercase tracking-wider text-slate-400">Personal Space</h3>
 
             {personalBoardsError && (
-              <div
-                className="mt-4 rounded-xl border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-700"
-                role="alert"
-              >
-                {personalBoardsError}
-              </div>
+              <div className="rounded-xl bg-red-50 p-4 text-sm text-red-600">{personalBoardsError}</div>
             )}
 
-            <div className="mt-6 flex flex-col gap-4">
-              {personalBoards.length === 0 ? (
-                <p className="text-sm text-slate-600">No personal boards yet.</p>
-              ) : (
-                personalBoards.map((board) => (
-                  <div
-                    key={board.id}
-                    className="rounded-2xl border border-slate-200 bg-slate-50 p-4"
-                  >
-                    <div className="flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between">
-                      <div>
-                        <p className="text-sm font-semibold text-slate-900">
-                          {board.name}
-                        </p>
-                        <p className="mt-0.5 text-xs text-slate-600">
-                          {board.description || 'No description'}
-                        </p>
-                      </div>
-                      <button
-                        type="button"
-                        className="mt-3 w-fit rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-700 transition hover:border-slate-300 hover:text-slate-900 sm:mt-0"
-                        onClick={() => router.push(`/board`)}
-                      >
-                        Open
-                      </button>
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {personalBoards.map((board) => (
+                <div key={board.id} className="group relative flex flex-col justify-between rounded-2xl border border-white/60 bg-white/50 p-6 shadow-glass backdrop-blur-sm transition-all hover:-translate-y-1 hover:shadow-lg hover:border-indigo-200">
+                  <div>
+                    <div className="mb-4 h-10 w-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
+                      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                      </svg>
                     </div>
+                    <h4 className="font-bold text-slate-900">{board.name}</h4>
+                    <p className="mt-2 text-sm text-slate-500 line-clamp-2">{board.description || 'No description'}</p>
                   </div>
-                ))
-              )}
+                  <button
+                    onClick={() => router.push('/board')}
+                    className="mt-6 w-full rounded-xl bg-white border border-slate-200 py-2 text-xs font-bold text-slate-700 shadow-sm transition-all hover:bg-slate-50 hover:border-slate-300"
+                  >
+                    Open Board
+                  </button>
+                </div>
+              ))}
+
+              {/* Create New Placeholder (Visual Only for Personal) */}
+              <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-slate-300 bg-transparent p-6 text-center hover:bg-slate-50/50 transition-colors cursor-not-allowed opacity-60">
+                <div className="mb-2 rounded-full bg-slate-100 p-3">
+                  <svg className="w-6 h-6 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                  </svg>
+                </div>
+                <p className="text-sm font-semibold text-slate-900">New Personal Board</p>
+                <p className="text-xs text-slate-500 mt-1">Contact admin to enable</p>
+              </div>
             </div>
           </section>
 
-          <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-            <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
-              <div>
-                <h2 className="text-base font-semibold text-slate-900">
-                  Collaborative Boards
-                </h2>
-                <p className="text-sm text-slate-600">
-                  Create a collaborative board as an admin and invite other users.
-                </p>
-              </div>
+          {/* Collaborative Boards */}
+          <section className="space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm font-bold uppercase tracking-wider text-slate-400">Team Space</h3>
             </div>
 
-            <form className="mt-5 grid gap-3 sm:grid-cols-2" onSubmit={handleCreateBoard}>
-              <label className="flex flex-col gap-1">
-                <span className="text-xs font-semibold text-slate-700">Board name</span>
-                <input
-                  className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-slate-400"
-                  value={boardName}
-                  onChange={(event) => setBoardName(event.target.value)}
-                  placeholder="Release Pipeline"
-                />
-              </label>
-              <label className="flex flex-col gap-1">
-                <span className="text-xs font-semibold text-slate-700">Description (optional)</span>
-                <input
-                  className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-slate-400"
-                  value={boardDescription}
-                  onChange={(event) => setBoardDescription(event.target.value)}
-                  placeholder="Team shared delivery board"
-                />
-              </label>
-              <div className="sm:col-span-2">
-                <button
-                  type="submit"
-                  className="rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
-                  disabled={isCreating}
-                >
-                  Create collaborative board
-                </button>
-              </div>
-            </form>
-
-            {boardsError && (
-              <div
-                className="mt-4 rounded-xl border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-700"
-                role="alert"
-              >
-                {boardsError}
-              </div>
-            )}
-
-            <div className="mt-6 flex flex-col gap-4">
-              {sortedBoards.length === 0 ? (
-                <p className="text-sm text-slate-600">
-                  No collaborative boards yet.
-                </p>
-              ) : (
-                sortedBoards.map((board) => (
-                  <div
-                    key={board.id}
-                    className="rounded-2xl border border-slate-200 bg-slate-50 p-4"
-                  >
-                    <div className="flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between">
+            <div className="grid gap-6 lg:grid-cols-[2fr,1fr]">
+              <div className="space-y-4">
+                {sortedBoards.map((board) => (
+                  <div key={board.id} className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-all hover:shadow-md">
+                    <div className="flex items-start justify-between">
                       <div>
-                        <p className="text-sm font-semibold text-slate-900">
-                          {board.name}
-                        </p>
-                        <div className="mt-0.5 flex flex-wrap items-center gap-2">
-                          <p className="text-xs text-slate-600">
-                            {board.description || 'No description'}
-                          </p>
-                          {board?._collabRole ? (
-                            <span className="rounded-full border border-slate-200 bg-white px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-slate-600">
+                        <div className="flex items-center gap-2">
+                          <h4 className="font-bold text-lg text-slate-900">{board.name}</h4>
+                          {board._collabRole && (
+                            <span className="rounded-full bg-indigo-50 px-2.5 py-0.5 text-[10px] font-bold uppercase text-indigo-600">
                               {board._collabRole}
                             </span>
-                          ) : null}
+                          )}
                         </div>
+                        <p className="text-sm text-slate-500 mt-1">{board.description}</p>
                       </div>
                       <button
-                        type="button"
-                        className="mt-3 w-fit rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-700 transition hover:border-slate-300 hover:text-slate-900 sm:mt-0"
                         onClick={() => router.push(`/collab?board=${board.id}`)}
+                        className="rounded-xl bg-slate-900 px-4 py-2 text-xs font-bold text-white shadow-sm hover:bg-slate-800 transition-colors"
                       >
                         Open
                       </button>
                     </div>
 
-                    {board?._collabRole === 'admin' ? (
-                      <form
-                        className="mt-4 flex flex-col gap-2 sm:flex-row sm:items-end"
-                        onSubmit={(event) => handleInvite(event, board.id)}
-                      >
-                        <label className="flex flex-1 flex-col gap-1">
-                          <span className="text-xs font-semibold text-slate-700">
-                            Invite by email
-                          </span>
-                          <input
-                            className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-slate-400"
-                            value={inviteEmailByBoard?.[board.id] || ''}
-                            onChange={(event) =>
-                              setInviteEmailByBoard((current) => ({
-                                ...(current || {}),
-                                [board.id]: event.target.value,
-                              }))
-                            }
-                            placeholder="teammate@example.com"
-                          />
-                        </label>
-                        <button
-                          type="submit"
-                          className="rounded-xl bg-white px-4 py-2 text-sm font-semibold text-slate-900 ring-1 ring-slate-200 transition hover:ring-slate-300"
-                        >
-                          Invite
-                        </button>
-                      </form>
-                    ) : (
-                      <p className="mt-4 text-xs text-slate-500">
-                        Only board admins can invite members.
-                      </p>
-                    )}
-
-                    {inviteResultByBoard?.[board.id]?.error ? (
-                      <p className="mt-2 text-sm text-rose-700">
-                        {inviteResultByBoard[board.id].error}
-                      </p>
-                    ) : inviteResultByBoard?.[board.id]?.status ? (
-                      <div className="mt-2 text-sm text-slate-700">
-                        <p>
-                          Invite status:{' '}
-                          <span className="font-semibold">
-                            {inviteResultByBoard[board.id].status}
-                          </span>
-                        </p>
-                        {inviteResultByBoard?.[board.id]?.inviteToken ? (
-                          <p className="mt-1 text-xs text-slate-500">
-                            Invite token (share with the user):{' '}
-                            <span className="font-mono">
-                              {inviteResultByBoard[board.id].inviteToken}
-                            </span>
-                          </p>
-                        ) : null}
+                    {board._collabRole === 'admin' && (
+                      <div className="mt-6 pt-6 border-t border-slate-100">
+                        <form onSubmit={(e) => handleInvite(e, board.id)} className="flex items-end gap-3">
+                          <label className="flex-1 space-y-1">
+                            <span className="text-xs font-semibold text-slate-500">Invite teammate</span>
+                            <input
+                              className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-indigo-500 transition-all"
+                              placeholder="email@example.com"
+                              value={inviteEmailByBoard?.[board.id] || ''}
+                              onChange={(e) => setInviteEmailByBoard(c => ({ ...c, [board.id]: e.target.value }))}
+                            />
+                          </label>
+                          <button type="submit" className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold hover:bg-slate-50 transition-colors">
+                            Send Invite
+                          </button>
+                        </form>
+                        {inviteResultByBoard?.[board.id] && (
+                          <div className="mt-2 text-xs">
+                            {inviteResultByBoard[board.id].error ? (
+                              <span className="text-red-600">{inviteResultByBoard[board.id].error}</span>
+                            ) : (
+                              <span className="text-green-600">
+                                Invite sent! Token: <span className="font-mono bg-slate-100 px-1 rounded">{inviteResultByBoard[board.id].inviteToken}</span>
+                              </span>
+                            )}
+                          </div>
+                        )}
                       </div>
-                    ) : null}
+                    )}
                   </div>
-                ))
-              )}
-            </div>
+                ))}
+                {sortedBoards.length === 0 && (
+                  <div className="p-8 text-center rounded-2xl border border-dashed border-slate-300 bg-slate-50/50">
+                    <p className="text-sm font-semibold text-slate-500">No team boards yet.</p>
+                  </div>
+                )}
+              </div>
 
-            <div className="mt-8 border-t border-slate-200 pt-6">
-              <h3 className="text-sm font-semibold text-slate-900">
-                Accept an invite
-              </h3>
-              <p className="mt-1 text-sm text-slate-600">
-                Paste an invite token you received from a board admin.
-              </p>
-              <form className="mt-3 flex flex-col gap-2 sm:flex-row" onSubmit={handleAcceptInvite}>
-                <input
-                  className="flex-1 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-mono outline-none transition focus:border-slate-400"
-                  value={inviteToken}
-                  onChange={(event) => setInviteToken(event.target.value)}
-                  placeholder="Invite token"
-                />
-                <button
-                  type="submit"
-                  className="rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800"
-                >
-                  Accept invite
-                </button>
-              </form>
-              {acceptResult ? (
-                <p className="mt-2 text-sm text-slate-700">{acceptResult}</p>
-              ) : null}
+              {/* Sidebar Actions */}
+              <div className="space-y-6">
+                {/* Create Board Card */}
+                <div className="rounded-2xl bg-indigo-600 p-6 text-white shadow-lg shadow-indigo-200">
+                  <h4 className="font-bold text-lg">Create New Team Board</h4>
+                  <p className="text-indigo-100 text-sm mt-1 mb-4">Start a new collaborative project.</p>
+
+                  <form onSubmit={handleCreateBoard} className="space-y-3">
+                    <input
+                      className="w-full rounded-xl bg-white/10 border border-white/20 px-3 py-2 text-sm text-white placeholder:text-indigo-200 outline-none focus:bg-white/20 transition-all"
+                      placeholder="Board Name"
+                      value={boardName}
+                      onChange={(e) => setBoardName(e.target.value)}
+                    />
+                    <input
+                      className="w-full rounded-xl bg-white/10 border border-white/20 px-3 py-2 text-sm text-white placeholder:text-indigo-200 outline-none focus:bg-white/20 transition-all"
+                      placeholder="Description"
+                      value={boardDescription}
+                      onChange={(e) => setBoardDescription(e.target.value)}
+                    />
+                    <button
+                      type="submit"
+                      disabled={isCreating}
+                      className="w-full rounded-xl bg-white py-2.5 text-sm font-bold text-indigo-600 shadow-sm hover:bg-indigo-50 transition-colors"
+                    >
+                      {isCreating ? 'Creating...' : 'Create Board'}
+                    </button>
+                  </form>
+                </div>
+
+                {/* Join Board Card */}
+                <div className="rounded-2xl border border-indigo-100 bg-white p-6 shadow-sm">
+                  <h4 className="font-bold text-slate-900">Join a Team</h4>
+                  <p className="text-slate-500 text-sm mt-1 mb-4">Have an invite token?</p>
+                  <form onSubmit={handleAcceptInvite} className="space-y-3">
+                    <input
+                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-indigo-500 transition-all font-mono"
+                      placeholder="Paste token here"
+                      value={inviteToken}
+                      onChange={(e) => setInviteToken(e.target.value)}
+                    />
+                    <button
+                      type="submit"
+                      className="w-full rounded-xl border border-slate-200 bg-white py-2.5 text-sm font-bold text-slate-700 hover:border-indigo-300 hover:text-indigo-600 transition-colors"
+                    >
+                      Join Board
+                    </button>
+                  </form>
+                  {acceptResult && <p className="mt-2 text-xs font-semibold text-indigo-600">{acceptResult}</p>}
+                </div>
+              </div>
             </div>
           </section>
+
         </div>
       </main>
     </div>

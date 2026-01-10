@@ -8,6 +8,8 @@ import {
   MinusIcon,
   SparklesIcon,
   TagIcon,
+  CalendarIcon,
+  ClockIcon
 } from '@heroicons/react/24/outline'
 import { boardUsers, priorities, difficulties, createId } from '../../data/boardData'
 import MentionTextarea from '../mentions/MentionTextarea'
@@ -28,34 +30,27 @@ const buildDraft = (task) => ({
   dependencies: task.dependencies ? [...task.dependencies] : [],
 })
 
-const priorityStyles = {
-  Highest: 'bg-red-50 text-red-700 border-red-200 ring-red-200',
-  High: 'bg-orange-50 text-orange-700 border-orange-200 ring-orange-200',
-  Medium: 'bg-amber-50 text-amber-700 border-amber-200 ring-amber-200',
-  Low: 'bg-slate-50 text-slate-700 border-slate-200 ring-slate-200',
-}
-
 const getTypeContent = (type) => {
   switch (type) {
     case 'Feature':
       return {
         icon: SparklesIcon,
-        style: 'bg-indigo-50 text-indigo-700 border-indigo-200',
+        className: 'text-indigo-600 bg-indigo-50 border-indigo-100',
       }
     case 'Bug':
       return {
         icon: BugAntIcon,
-        style: 'bg-slate-100 text-slate-700 border-slate-200',
+        className: 'text-rose-600 bg-rose-50 border-rose-100',
       }
     case 'Research':
       return {
         icon: TagIcon,
-        style: 'bg-purple-50 text-purple-700 border-purple-200',
+        className: 'text-violet-600 bg-violet-50 border-violet-100',
       }
     default:
       return {
         icon: TagIcon,
-        style: 'bg-slate-50 text-slate-600 border-slate-200',
+        className: 'text-slate-600 bg-slate-50 border-slate-100',
       }
   }
 }
@@ -63,13 +58,13 @@ const getTypeContent = (type) => {
 const getPriorityIcon = (priority) => {
   switch (priority) {
     case 'Highest':
-      return { icon: ArrowUpIcon, className: 'text-red-600' }
+      return { icon: ArrowUpIcon, className: 'text-red-500' }
     case 'High':
-      return { icon: ArrowUpIcon, className: 'text-orange-600' }
+      return { icon: ArrowUpIcon, className: 'text-orange-500' }
     case 'Medium':
-      return { icon: MinusIcon, className: 'text-amber-600' }
+      return { icon: MinusIcon, className: 'text-amber-500' }
     case 'Low':
-      return { icon: ArrowDownIcon, className: 'text-slate-600' }
+      return { icon: ArrowDownIcon, className: 'text-slate-400' }
     default:
       return null
   }
@@ -313,7 +308,7 @@ function TaskCard({
         return (
           <span
             key={`${token}-${index}`}
-            className="inline-block max-w-full break-all rounded-md border border-slate-200 bg-slate-50 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-slate-700"
+            className="inline-block max-w-full break-all rounded-md bg-indigo-50 px-1.5 py-0.5 text-[10px] font-bold text-indigo-700"
           >
             {token}
           </span>
@@ -341,21 +336,16 @@ function TaskCard({
 
   const getAvatarColor = (name) => {
     const colors = [
-      'bg-red-100 text-red-600',
-      'bg-orange-100 text-orange-600',
-      'bg-amber-100 text-amber-600',
-      'bg-green-100 text-green-600',
-      'bg-emerald-100 text-emerald-600',
-      'bg-teal-100 text-teal-600',
-      'bg-cyan-100 text-cyan-600',
-      'bg-sky-100 text-sky-600',
-      'bg-blue-100 text-blue-600',
-      'bg-indigo-100 text-indigo-600',
-      'bg-violet-100 text-violet-600',
-      'bg-purple-100 text-purple-600',
-      'bg-fuchsia-100 text-fuchsia-600',
-      'bg-pink-100 text-pink-600',
-      'bg-rose-100 text-rose-600',
+      'bg-red-100 text-red-600 ring-red-50',
+      'bg-orange-100 text-orange-600 ring-orange-50',
+      'bg-amber-100 text-amber-600 ring-amber-50',
+      'bg-emerald-100 text-emerald-600 ring-emerald-50',
+      'bg-cyan-100 text-cyan-600 ring-cyan-50',
+      'bg-blue-100 text-blue-600 ring-blue-50',
+      'bg-indigo-100 text-indigo-600 ring-indigo-50',
+      'bg-violet-100 text-violet-600 ring-violet-50',
+      'bg-fuchsia-100 text-fuchsia-600 ring-fuchsia-50',
+      'bg-pink-100 text-pink-600 ring-pink-50',
     ]
     let hash = 0
     for (let i = 0; i < name.length; i++) {
@@ -372,29 +362,31 @@ function TaskCard({
 
   if (isEditing) {
     return (
-      <article className="flex flex-col gap-3 rounded-xl bg-white p-4 shadow-sm ring-1 ring-slate-200/50">
+      <article className="glass-card flex flex-col gap-4 rounded-xl p-4 animate-in zoom-in-95 duration-200">
         <div className="flex items-start justify-between gap-2">
-          <h3 className="text-sm font-semibold text-slate-900">Edit task</h3>
+          <h3 className="text-sm font-bold text-slate-900">Edit Task</h3>
         </div>
         <input
-          className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:bg-white focus:ring-1 focus:ring-blue-500 transition-all"
+          className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-medium outline-none transition-all focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-500/10"
           value={draft.name}
           onChange={(event) => handleDraftChange('name', event.target.value)}
           placeholder="Task name"
+          autoFocus
         />
         <MentionTextarea
-          className="min-h-20 resize-none rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:bg-white focus:ring-1 focus:ring-blue-500 transition-all"
+          className="min-h-20 resize-none rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none transition-all focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-500/10"
           value={draft.description}
           onChange={(value) => handleDraftChange('description', value)}
           users={boardUsers}
           placeholder="Add a description... (use @ to mention)"
         />
 
+        {/* Subtasks Edit */}
         <div className="space-y-2">
           {draft.subtasks.map((subtask) => (
             <div key={subtask.id} className="flex gap-2">
               <input
-                className="flex-1 rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs outline-none focus:border-blue-500 focus:bg-white transition-all"
+                className="flex-1 rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs outline-none transition-all focus:border-indigo-500 focus:bg-white"
                 value={subtask.title}
                 onChange={(e) =>
                   handleSubtaskNameChange(subtask.id, e.target.value)
@@ -412,7 +404,7 @@ function TaskCard({
           ))}
           <div className="flex gap-2">
             <input
-              className="flex-1 rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs outline-none focus:border-blue-500 focus:bg-white transition-all"
+              className="flex-1 rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs outline-none transition-all focus:border-indigo-500 focus:bg-white"
               value={newSubtaskName}
               onChange={(e) => setNewSubtaskName(e.target.value)}
               onKeyDown={(e) => {
@@ -425,7 +417,7 @@ function TaskCard({
             />
             <button
               type="button"
-              className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:border-slate-300 hover:text-slate-900 transition-colors"
+              className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 transition-colors hover:border-slate-300 hover:text-slate-900"
               onClick={handleAddSubtask}
             >
               Add
@@ -433,240 +425,17 @@ function TaskCard({
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-2">
-          {isAddingSprint ? (
-            <input
-              className="w-full min-w-0 rounded-lg border border-slate-200 bg-slate-50 px-2 py-1.5 text-xs outline-none focus:border-blue-500 focus:bg-white transition-all"
-              value={newSprintValue}
-              onChange={(event) => setNewSprintValue(event.target.value)}
-              onBlur={handleNewSprintSubmit}
-              onKeyDown={handleNewSprintKeyDown}
-              placeholder="Sprint..."
-              autoFocus
-            />
-          ) : (
-            <select
-              className="rounded-lg border border-slate-200 bg-slate-50 px-2 py-1.5 text-xs outline-none focus:border-blue-500 focus:bg-white transition-all"
-              value={draft.sprint || ''}
-              onChange={handleSprintChange}
-            >
-              <option value="">
-                Sprint
-              </option>
-              {sprints.map((sprint) => (
-                <option key={sprint} value={sprint}>
-                  {sprint}
-                </option>
-              ))}
-              <option value="__new__" className="font-semibold text-slate-500">
-                + New sprint
-              </option>
-            </select>
-          )}
-
-          <select
-            className="rounded-lg border border-slate-200 bg-slate-50 px-2 py-1.5 text-xs outline-none focus:border-blue-500 focus:bg-white transition-all"
-            value={draft.assignee}
-            onChange={(event) => handleDraftChange('assignee', event.target.value)}
-          >
-            <option value="">
-              Unassigned
-            </option>
-            {boardUsers.map((user) => (
-              <option key={user} value={user}>
-                {user}
-              </option>
-            ))}
-          </select>
-
-          {isAddingType ? (
-            <input
-              className="w-full min-w-0 rounded-lg border border-slate-200 bg-slate-50 px-2 py-1.5 text-xs outline-none focus:border-blue-500 focus:bg-white transition-all"
-              value={newTypeValue}
-              onChange={(e) => setNewTypeValue(e.target.value)}
-              onBlur={handleNewTypeSubmit}
-              onKeyDown={handleNewTypeKeyDown}
-              placeholder="Type..."
-              autoFocus
-            />
-          ) : (
-            <select
-              className="rounded-lg border border-slate-200 bg-slate-50 px-2 py-1.5 text-xs outline-none focus:border-blue-500 focus:bg-white transition-all"
-              value={draft.type}
-              onChange={handleTypeChange}
-            >
-              {taskTypes.map((type) => (
-                <option key={type} value={type}>
-                  {type}
-                </option>
-              ))}
-              <option value="__new__" className="font-semibold text-slate-500">
-                + New type
-              </option>
-            </select>
-          )}
-
-          <select
-            className="rounded-lg border border-slate-200 bg-slate-50 px-2 py-1.5 text-xs outline-none focus:border-blue-500 focus:bg-white transition-all"
-            value={draft.priority}
-            onChange={(event) =>
-              handleDraftChange('priority', event.target.value)
-            }
-          >
-            <option value="" disabled>
-              Select priority
-            </option>
-            {priorities.map((priority) => (
-              <option key={priority} value={priority}>
-                {priority}
-              </option>
-            ))}
-          </select>
-
-          <select
-            className="rounded-lg border border-slate-200 bg-slate-50 px-2 py-1.5 text-xs outline-none focus:border-blue-500 focus:bg-white transition-all"
-            value={draft.difficulty}
-            onChange={(event) =>
-              handleDraftChange('difficulty', event.target.value)
-            }
-          >
-            <option value="" disabled>
-              Select difficulty
-            </option>
-            {difficulties.map((difficulty) => (
-              <option key={difficulty} value={difficulty}>
-                {difficulty}
-              </option>
-            ))}
-          </select>
-
-          <input
-            className="min-w-0 rounded-lg border border-slate-200 bg-slate-50 px-2 py-1.5 text-xs outline-none focus:border-blue-500 focus:bg-white transition-all"
-            value={draft.estimatedTime}
-            onChange={(event) =>
-              handleDraftChange('estimatedTime', event.target.value)
-            }
-            placeholder="Est. time"
-          />
-          <input
-            type="date"
-            className="min-w-0 rounded-lg border border-slate-200 bg-slate-50 px-2 py-1.5 text-xs outline-none focus:border-blue-500 focus:bg-white transition-all"
-            value={draft.dueDate}
-            onChange={(event) => handleDraftChange('dueDate', event.target.value)}
-          />
-        </div>
-
-        <div className="space-y-1">
-          <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-500">
-            Project tags
-          </p>
-          {(draft.projectTags || []).length > 0 ? (
-            <div className="flex flex-wrap gap-1.5">
-              {(draft.projectTags || []).map((tag) => (
-                <span
-                  key={tag}
-                  className="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white px-2 py-0.5 text-[10px] font-semibold text-slate-600"
-                >
-                  #{tag}
-                  <button
-                    type="button"
-                    className="text-slate-400 hover:text-slate-600"
-                    onClick={() => handleRemoveProjectTag(tag)}
-                    aria-label={`Remove ${tag}`}
-                  >
-                    ✕
-                  </button>
-                </span>
-              ))}
-            </div>
-          ) : null}
-          <div className="flex items-center gap-2">
-            <input
-              className="flex-1 rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs outline-none transition-all focus:border-blue-500 focus:bg-white"
-              value={newProjectTag}
-              onChange={(event) => setNewProjectTag(event.target.value)}
-              onKeyDown={handleProjectTagKeyDown}
-              placeholder="Add project tag"
-              list={`project-tags-edit-${task.id}`}
-            />
-            <button
-              type="button"
-              className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-600 transition-colors hover:border-slate-300 hover:text-slate-900"
-              onClick={handleAddProjectTag}
-            >
-              Add
-            </button>
-          </div>
-          {projectTagOptions.length > 0 ? (
-            <datalist id={`project-tags-edit-${task.id}`}>
-              {projectTagOptions.map((tag) => (
-                <option key={tag} value={tag} />
-              ))}
-            </datalist>
-          ) : null}
-        </div>
-
-        <div className="space-y-1">
-          <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-500">
-            Depends on
-          </p>
-          {(draft.dependencies || []).length > 0 ? (
-            <div className="flex flex-wrap gap-1.5">
-              {(draft.dependencies || []).map((dependency) => (
-                <span
-                  key={dependency.id}
-                  className="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white px-2 py-0.5 text-[10px] font-semibold text-slate-600"
-                >
-                  {dependency.name}
-                  <button
-                    type="button"
-                    className="text-slate-400 hover:text-slate-600"
-                    onClick={() => handleRemoveDependency(dependency.id)}
-                    aria-label={`Remove ${dependency.name}`}
-                  >
-                    ✕
-                  </button>
-                </span>
-              ))}
-            </div>
-          ) : null}
-          <div className="flex items-center gap-2">
-            <select
-              className="flex-1 rounded-lg border border-slate-200 bg-slate-50 px-2 py-1.5 text-xs outline-none transition-all focus:border-blue-500 focus:bg-white"
-              value={selectedDependencyId}
-              onChange={(event) => setSelectedDependencyId(event.target.value)}
-              disabled={availableDependencies.length === 0}
-            >
-              <option value="">
-                {availableDependencies.length === 0 ? 'No tasks yet' : 'Select task'}
-              </option>
-              {availableDependencies.map((taskOption) => (
-                <option key={taskOption.id} value={taskOption.id}>
-                  {taskOption.name} · {taskOption.column}
-                </option>
-              ))}
-            </select>
-            <button
-              type="button"
-              className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-600 transition-colors hover:border-slate-300 hover:text-slate-900"
-              onClick={handleAddDependency}
-              disabled={!selectedDependencyId}
-            >
-              Add
-            </button>
-          </div>
-        </div>
-
-        <div className="flex gap-2 pt-2">
+        {/* Action Buttons */}
+        <div className="grid grid-cols-2 gap-2 pt-2">
           <button
-            className="flex-1 rounded-lg bg-blue-600 px-3 py-2 text-xs font-semibold text-white shadow-sm hover:bg-blue-700 transition-colors"
+            className="rounded-lg bg-indigo-600 px-3 py-2 text-xs font-bold text-white shadow-md shadow-indigo-200 transition-all hover:bg-indigo-700 hover:shadow-lg hover:-translate-y-0.5"
             type="button"
             onClick={handleSave}
           >
-            Save Changes
+            Save
           </button>
           <button
-            className="flex-1 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors"
+            className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-slate-700 transition-all hover:border-slate-300 hover:bg-slate-50"
             type="button"
             onClick={handleCancel}
           >
@@ -681,24 +450,12 @@ function TaskCard({
   const priorityIcon = getPriorityIcon(task.priority)
   const TypeIcon = typeContent.icon
   const PriorityIcon = priorityIcon?.icon
-  const surfaceClasses = isDone
-    ? {
-      base: 'bg-emerald-50/50 border-emerald-200/70',
-      expanded: 'bg-emerald-50 border-emerald-300/60 shadow-md',
-      hover: 'hover:bg-emerald-50',
-    }
-    : {
-      base: 'bg-white border-slate-200',
-      expanded: 'bg-white border-slate-300 shadow-md',
-      hover: 'hover:border-slate-300',
-    }
 
   return (
     <article
-      className={`group relative flex flex-col gap-3 rounded-2xl border p-4 pr-10 shadow-sm transition-all duration-200 cursor-pointer ${isExpanded
-        ? surfaceClasses.expanded
-        : `${surfaceClasses.base} ${surfaceClasses.hover} hover:-translate-y-0.5 hover:shadow-md`
-        }`}
+      className={`group relative flex flex-col gap-3 rounded-xl border bg-white p-4 pr-10 shadow-card transition-all duration-300 cursor-pointer 
+      ${isDone ? 'opacity-70 bg-slate-50/50' : 'hover:-translate-y-1 hover:shadow-card-hover hover:border-indigo-200/50'}
+      ${isExpanded ? 'ring-2 ring-indigo-500/20 shadow-md z-10' : 'border-slate-200'}`}
       draggable={canDrag}
       onClick={(e) => {
         if (e.defaultPrevented) return
@@ -716,8 +473,8 @@ function TaskCard({
             )
             event.dataTransfer.setData('text/plain', task.id)
             event.dataTransfer.effectAllowed = 'move'
-            const el = event.currentTarget
-            el.style.transform = 'rotate(3deg)'
+            // Add a tilt effect
+            event.currentTarget.classList.add('rotate-3', 'scale-105', 'opacity-90')
           }
           : undefined
       }
@@ -725,202 +482,114 @@ function TaskCard({
         canDrag
           ? (event) => {
             isDraggingRef.current = false
-            event.currentTarget.style.transform = ''
+            event.currentTarget.classList.remove('rotate-3', 'scale-105', 'opacity-90')
           }
           : undefined
       }
     >
-      <div className="flex flex-col gap-2.5">
-        {/* Title & Expand Icon */}
-        <div className="flex items-start gap-2">
-          <button
-            className={`mt-0.5 shrink-0 rounded-md p-1 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600 ${isExpanded ? 'rotate-180' : ''
-              }`}
-            type="button"
-            aria-label={isExpanded ? 'Collapse task' : 'Expand task'}
-            onClick={(event) => {
-              event.stopPropagation()
-              setIsExpanded(!isExpanded)
-            }}
-          >
-            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-            </svg>
-          </button>
-          <h3 className="break-words text-[15px] font-semibold tracking-tight text-slate-900 leading-snug flex-1 min-w-0">
+      <div className="flex flex-col gap-3">
+        {/* Header Row: Type & Title */}
+        <div className="flex items-start gap-3">
+          <div className="mt-0.5 shrink-0">
+            <span className={`flex items-center justify-center p-1 rounded-md border text-[10px] uppercase font-bold tracking-wider ${typeContent.className}`}>
+              {task.type || 'Task'}
+            </span>
+          </div>
+          <h3 className={`text-[15px] font-bold leading-snug text-slate-900 flex-1 break-words ${isDone ? 'line-through text-slate-500' : ''}`}>
             {task.name}
           </h3>
-          <div className="ml-auto flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
-            <button
-              className="rounded-md p-1 text-slate-400 hover:bg-blue-50 hover:text-blue-600 bg-white/80 backdrop-blur-sm shadow-sm ring-1 ring-slate-200"
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                setDraft(buildDraft(task));
-                setIsEditing(true);
-              }}
-              aria-label="Edit"
-            >
-              <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-              </svg>
-            </button>
-            <button
-              className="rounded-md p-1 text-slate-400 hover:bg-red-50 hover:text-red-600 bg-white/80 backdrop-blur-sm shadow-sm ring-1 ring-slate-200"
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                onDeleteTask(task.id, columnId);
-              }}
-              aria-label="Delete"
-            >
-              <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-              </svg>
-            </button>
-            {task.assignee ? (
-              <div
-                className={`flex h-7 w-7 items-center justify-center rounded-full text-[10px] font-bold shadow-sm ring-2 ring-white ${getAvatarColor(task.assignee)}`}
-                title={task.assignee}
-              >
-                {getInitials(task.assignee)}
-              </div>
-            ) : null}
-          </div>
         </div>
 
-        {/* Description */}
-        {task?.description && (
-          <div className={`break-words text-sm text-slate-600 leading-relaxed ${isExpanded ? '' : 'line-clamp-2'}`}>
+        {/* Expand Toggle */}
+        <button
+          className={`absolute top-4 right-4 p-1 rounded-full hover:bg-slate-100 text-slate-400 transition-all ${isExpanded ? 'rotate-180 bg-slate-100 text-indigo-600' : ''}`}
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation()
+            setIsExpanded(!isExpanded)
+          }}
+        >
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+
+        {/* Description Snippet */}
+        {(task.description || isExpanded) && (
+          <div className={`text-sm text-slate-600 leading-relaxed break-words ${isExpanded ? '' : 'line-clamp-2'}`}>
             {renderDescription(task.description)}
           </div>
         )}
 
-        {/* Badges Row */}
-        <div className="flex items-center gap-2 overflow-hidden">
-          <span className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-[11px] font-semibold leading-none whitespace-nowrap shadow-sm ${typeContent.style}`}>
-            {TypeIcon && <TypeIcon className="h-3.5 w-3.5" />}
-            <span>{task.type}</span>
-          </span>
-
-          {task.priority ? (
-            <span className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-[11px] font-semibold leading-none whitespace-nowrap shadow-sm ${priorityStyles[task.priority] || 'bg-slate-50 text-slate-600 border-slate-200'}`}>
-              {PriorityIcon && (
-                <PriorityIcon className={`h-3.5 w-3.5 ${priorityIcon.className}`} />
-              )}
-              <span>{task.priority}</span>
+        {/* Metadata Row: Sprint, Tags, Assignee */}
+        <div className="flex flex-wrap items-center gap-2 pt-1">
+          {task.sprint && (
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 text-[10px] font-bold border border-blue-100">
+              <ClockIcon className="w-3 h-3" />
+              {task.sprint}
             </span>
-          ) : null}
-        </div>
+          )}
+          {(task.projectTags || []).map(tag => (
+            <span key={tag} className="inline-flex items-center px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 text-[10px] font-bold border border-slate-200">
+              #{tag}
+            </span>
+          ))}
 
-        {(task.sprint || (task.projectTags || []).length > 0 || (task.dependencies || []).length > 0) ? (
-          <div className="flex flex-wrap items-center gap-2 text-[11px] text-slate-500">
-            {task.sprint ? (
-              <span className="rounded-full border border-slate-200 bg-white px-2.5 py-0.5 text-[10px] font-semibold text-slate-600">
-                Sprint {task.sprint}
-              </span>
-            ) : null}
-            {(task.projectTags || []).map((tag) => (
-              <span
-                key={tag}
-                className="rounded-full border border-slate-200 bg-white px-2.5 py-0.5 text-[10px] font-semibold text-slate-600"
-              >
-                #{tag}
-              </span>
-            ))}
-            {(task.dependencies || []).length > 0 ? (
-              <span className="rounded-full border border-slate-200 bg-white px-2.5 py-0.5 text-[10px] font-semibold text-slate-600">
-                {task.dependencies.length} deps
-              </span>
-            ) : null}
-          </div>
-        ) : null}
-      </div>
+          {/* Spacer */}
+          <div className="flex-1"></div>
 
-      {/* Expanded Details - Subtasks List */}
-      {isExpanded && task?.subtasks && task.subtasks.length > 0 && (
-        <div className="flex flex-col gap-2 border-t border-slate-100 pt-3 mt-1">
-          <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Subtasks</span>
-          <div className="space-y-1.5">
-            {task.subtasks.map((subtask) => (
-              <div
-                key={subtask.id}
-                className="flex items-center gap-2 group/subtask"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleToggleSubtask(subtask.id);
-                }}
-              >
-                <div className={`h-4 w-4 rounded border transition-colors flex items-center justify-center ${subtask.isCompleted ? 'bg-blue-500 border-blue-500' : 'bg-white border-slate-300 group-hover/subtask:border-blue-400'}`}>
-                  {subtask.isCompleted && (
-                    <CheckIcon className="h-3 w-3 text-white" />
-                  )}
-                </div>
-                <span className={`text-xs ${subtask.isCompleted ? 'text-slate-400 line-through' : 'text-slate-700'}`}>
-                  {subtask.title}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Progress Bar (Always show if subtasks exist) */}
-      {task?.subtasks && task.subtasks.length > 0 && (
-        <div className="mt-1 flex items-center gap-2">
-          <div className="h-1.5 flex-1 rounded-full bg-slate-100 overflow-hidden">
+          {/* Assignee Avatar */}
+          {task.assignee && (
             <div
-              className="h-full rounded-full bg-blue-500 transition-all duration-300"
-              style={{
-                width: `${(task.subtasks.filter((t) => t?.isCompleted).length /
-                  task.subtasks.length) *
-                  100
-                  }%`,
-              }}
-            />
-          </div>
-          <span className="text-[10px] font-medium text-slate-500">
-            {task.subtasks.filter((t) => t?.isCompleted).length}/{task.subtasks.length}
-          </span>
+              className={`flex items-center justify-center w-6 h-6 rounded-full text-[9px] font-bold shadow-sm ring-2 ring-white ${getAvatarColor(task.assignee)}`}
+              title={task.assignee}
+            >
+              {getInitials(task.assignee)}
+            </div>
+          )}
         </div>
-      )}
 
-      {/* Metadata Footer */}
-      <div className="mt-2 flex flex-wrap items-center justify-between gap-2 border-t border-slate-100 pt-2">
-        {dueDateStatus ? (
-          <span
-            className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-[11px] font-semibold leading-none ${getDueDateBadgeColor(dueDateStatus.status)
-              }`}
-            title={formatDate(task.dueDate)}
+        {/* Footer Row: Priority, Due Date, Subtasks */}
+        <div className="flex items-center gap-3 pt-2 border-t border-slate-100 mt-1">
+          {PriorityIcon && (
+            <div className="flex items-center gap-1 text-slate-500" title={`Priority: ${task.priority}`}>
+              <PriorityIcon className={`w-4 h-4 ${getPriorityIcon(task.priority)?.className || ''}`} />
+              {isExpanded && <span className="text-[10px] font-semibold">{task.priority}</span>}
+            </div>
+          )}
+
+          {task.dueDate && (
+            <div className={`flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[10px] font-bold border ${getDueDateBadgeColor(dueDateStatus)}`}>
+              <CalendarIcon className="w-3 h-3" />
+              {formatDate(task.dueDate)}
+            </div>
+          )}
+
+          {task.subtasks && task.subtasks.length > 0 && (
+            <div className="flex items-center gap-1 text-[10px] font-semibold text-slate-500 ml-auto bg-slate-50 px-2 py-0.5 rounded-full">
+              <CheckIcon className="w-3 h-3" />
+              {task.subtasks.filter(t => t.isCompleted).length}/{task.subtasks.length}
+            </div>
+          )}
+        </div>
+
+        {/* Edit Actions Hover */}
+        <div className="absolute top-2 right-12 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+          <button
+            className="p-1.5 rounded-lg bg-white shadow-sm border border-slate-200 text-slate-500 hover:text-indigo-600 hover:border-indigo-200 transition-colors"
+            onClick={(e) => {
+              e.stopPropagation()
+              setDraft(buildDraft(task))
+              setIsEditing(true)
+            }}
           >
-            <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            <node_identifier>PencilSquareIcon</node_identifier>
+            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
             </svg>
-            {dueDateStatus.text}
-          </span>
-        ) : (
-          <span />
-        )}
-
-        <div className="flex items-center gap-2 text-[11px] text-slate-500 ml-auto">
-          {task.difficulty && (
-            <span className="flex items-center gap-1 font-medium text-slate-500">
-              <BoltIcon className="h-3.5 w-3.5 text-slate-400" />
-              {task.difficulty}
-            </span>
-          )}
-
-          {task.estimatedTime && (
-            <span className="flex items-center gap-1" title="Estimated Time">
-              <svg className="h-3.5 w-3.5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              {task.estimatedTime}
-            </span>
-          )}
+          </button>
         </div>
       </div>
-
     </article>
   )
 }

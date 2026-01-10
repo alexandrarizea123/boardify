@@ -101,105 +101,113 @@ function App({ mode, preferredBoardId } = {}) {
   }
 
   return (
-    <div className="min-h-screen bg-white px-6 py-6 text-slate-900">
-      <div className="mx-auto w-full max-w-[1480px]">
-        <div className="flex flex-col gap-6 xl:flex-row xl:items-start">
-          <div className="flex flex-1 flex-col gap-5 min-w-0">
-            <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-              <div className="flex min-w-[260px] max-w-md flex-1 flex-col gap-3">
-                <div className="flex items-center gap-3">
-                  <img
-                    src="/assets/favicon.ico"
-                    alt="Boardify logo"
-                    className="h-11 w-11 rounded-2xl shadow-sm"
-                  />
-                  <div>
-                    <h1 className="text-xl font-semibold text-slate-900">
-                      {activeBoard.name}
-                    </h1>
-                    <p className="text-xs text-slate-500">
-                      {activeBoard.description || 'Task Management'}
-                    </p>
-                  </div>
-                </div>
+    <div className="min-h-screen text-slate-900 pb-20">
+      {/* Top Navigation Bar */}
+      <div className="sticky top-0 z-40 border-b border-white/50 bg-white/80 px-6 py-3 backdrop-blur-xl transition-all duration-200">
+        <div className="mx-auto flex w-full max-w-[1600px] items-center gap-4">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 shadow-lg shadow-indigo-500/30 ring-1 ring-white/20">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              className="h-6 w-6 text-white"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 10.5V6.75a4.5 4.5 0 119 0v3.75M3.75 21.75h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H3.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+            </svg>
+          </div>
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-3">
+              <h1 className="font-display truncate text-lg font-bold tracking-tight text-slate-900">
+                {activeBoard.name}
+              </h1>
+              <span className="hidden h-1 w-1 rounded-full bg-slate-300 md:block" />
+              <p className="hidden truncate text-xs font-medium text-slate-500 md:block">
+                {activeBoard.description || 'Task Management'}
+              </p>
+            </div>
+          </div>
 
-                <BoardSwitcher
-                  boards={boards}
-                  activeBoardId={activeBoard.id}
-                  onSelect={handleSelectBoard}
-                  onAdd={mode === 'collab' ? null : startCreateBoard}
-                  canAdd={mode === 'collab' ? false : canAddBoard}
-                />
-              </div>
+          <div className="ml-auto flex items-center gap-2">
+            <BoardSwitcher
+              boards={boards}
+              activeBoardId={activeBoard.id}
+              onSelect={handleSelectBoard}
+              onAdd={mode === 'collab' ? null : startCreateBoard}
+              canAdd={mode === 'collab' ? false : canAddBoard}
+            />
+          </div>
+        </div>
+      </div>
 
-              <div className="flex-1 min-w-[340px] lg:max-w-3xl">
-                <BoardHeader
-                  name={activeBoard.name}
-                  description={activeBoard.description}
-                  taskTypes={taskTypes}
-                  filterType={filterType}
-                  onFilterChange={setFilterType}
-                  searchQuery={filterQuery}
-                  onSearchChange={setFilterQuery}
-                  assigneeOptions={assigneeOptions}
-                  assigneeFilter={filterAssignee}
-                  onAssigneeFilterChange={setFilterAssignee}
-                  priorityOptions={priorityOptions}
-                  priorityFilter={filterPriority}
-                  onPriorityFilterChange={setFilterPriority}
-                  difficultyOptions={difficultyOptions}
-                  difficultyFilter={filterDifficulty}
-                  onDifficultyFilterChange={setFilterDifficulty}
-                  sprintOptions={sprintOptions}
-                  sprintFilter={filterSprint}
-                  onSprintFilterChange={setFilterSprint}
-                  projectTagOptions={projectTagOptions}
-                  projectTagFilter={filterProjectTag}
-                  onProjectTagFilterChange={setFilterProjectTag}
-                  subtaskFilter={filterHasSubtasks}
-                  onSubtaskFilterChange={setFilterHasSubtasks}
-                  onUpdate={handleUpdateBoardDetails}
-                  onDelete={() => handleDeleteBoard(activeBoard.id)}
-                />
-              </div>
+      <div className="mx-auto mt-8 w-full max-w-[1600px] px-6">
+        <div className="flex flex-col gap-8 xl:flex-row xl:items-start">
+          <div className="flex flex-1 flex-col gap-6 min-w-0">
+            {/* Headers & Actions */}
+            <div className="rounded-2xl border border-white/60 bg-white/40 p-2 shadow-glass backdrop-blur-md">
+              <BoardHeader
+                name={activeBoard.name}
+                description={activeBoard.description}
+                taskTypes={taskTypes}
+                filterType={filterType}
+                onFilterChange={setFilterType}
+                searchQuery={filterQuery}
+                onSearchChange={setFilterQuery}
+                assigneeOptions={assigneeOptions}
+                assigneeFilter={filterAssignee}
+                onAssigneeFilterChange={setFilterAssignee}
+                priorityOptions={priorityOptions}
+                priorityFilter={filterPriority}
+                onPriorityFilterChange={setFilterPriority}
+                difficultyOptions={difficultyOptions}
+                difficultyFilter={filterDifficulty}
+                onDifficultyFilterChange={setFilterDifficulty}
+                sprintOptions={sprintOptions}
+                sprintFilter={filterSprint}
+                onSprintFilterChange={setFilterSprint}
+                projectTagOptions={projectTagOptions}
+                projectTagFilter={filterProjectTag}
+                onProjectTagFilterChange={setFilterProjectTag}
+                subtaskFilter={filterHasSubtasks}
+                onSubtaskFilterChange={setFilterHasSubtasks}
+                onUpdate={handleUpdateBoardDetails}
+                onDelete={() => handleDeleteBoard(activeBoard.id)}
+              />
             </div>
 
             {isTaskFormOpen && todoColumn?.id && (
               <div className="fixed inset-0 z-50 flex items-center justify-center px-4 py-6">
                 <div
-                  className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"
+                  className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity"
                   onClick={() => setIsTaskFormOpen(false)}
                 />
                 <section
-                  className="relative w-full max-w-4xl overflow-hidden rounded-2xl bg-white shadow-2xl"
+                  className="relative w-full max-w-4xl overflow-hidden rounded-2xl bg-white shadow-2xl ring-1 ring-slate-900/5"
                   role="dialog"
                   aria-modal="true"
                   aria-label="Create new task"
                 >
-                  <div className="flex items-start justify-between gap-4 border-b border-slate-100 px-5 py-3">
+                  <div className="flex items-center justify-between border-b border-slate-100 bg-slate-50/50 px-6 py-4">
                     <div>
-                      <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-400">
-                        New task
-                      </p>
-                      <p className="text-sm font-semibold text-slate-900">
-                        Add the details for your next item.
+                      <h2 className="text-lg font-bold text-slate-900">
+                        Create New Task
+                      </h2>
+                      <p className="text-xs font-medium text-slate-500">
+                        Add details for your next item in <span className="text-indigo-600">{todoColumnLabel}</span>
                       </p>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-[10px] font-semibold text-slate-600">
-                        {todoColumnLabel}
-                      </span>
-                      <button
-                        className="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white px-3 py-1 text-[10px] font-semibold text-slate-600 transition hover:border-slate-300 hover:text-slate-900"
-                        type="button"
-                        onClick={() => setIsTaskFormOpen(false)}
-                      >
-                        <span className="text-xs leading-none">×</span>
-                        Cancel
-                      </button>
-                    </div>
+                    <button
+                      className="rounded-full p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors"
+                      type="button"
+                      onClick={() => setIsTaskFormOpen(false)}
+                    >
+                      <span className="sr-only">Close</span>
+                      <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
                   </div>
-                  <div className="max-h-[70vh] overflow-y-auto px-5 py-3">
+                  <div className="max-h-[75vh] overflow-y-auto px-6 py-6">
                     <TaskForm
                       columnId={todoColumn.id}
                       draft={taskDrafts?.[todoColumn.id] || emptyTaskDraft()}
@@ -241,36 +249,35 @@ function App({ mode, preferredBoardId } = {}) {
             />
           </div>
 
-          <div className="w-full shrink-0 space-y-6 lg:w-80">
-            <div className="sticky top-6 space-y-4">
-              <div className="rounded-2xl border border-slate-200/70 bg-white p-5 shadow-sm">
-                <div className="mb-4 flex items-center gap-2 text-sm font-semibold text-slate-900">
-                  <svg
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.8"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M4 19V5" />
-                    <path d="M8 19V9" />
-                    <path d="M12 19V12" />
-                    <path d="M16 19V7" />
-                    <path d="M20 19V11" />
-                  </svg>
-                  Analytics
+          <div className="w-full shrink-0 space-y-6 xl:w-[360px]">
+            <div className="sticky top-28 space-y-6">
+              <div className="rounded-2xl border border-white/60 bg-white/40 p-6 shadow-glass backdrop-blur-md">
+                <div className="mb-6 flex items-center gap-3 text-sm font-bold text-slate-900">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600 shadow-sm ring-1 ring-indigo-100">
+                    <svg
+                      width="18"
+                      height="18"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M3 3v18h18" />
+                      <path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3" />
+                    </svg>
+                  </div>
+                  Project Analytics
                 </div>
-                <div className="space-y-4">
-                  <div className="rounded-xl bg-slate-50 p-4">
+                <div className="space-y-6">
+                  <div className="rounded-xl border border-white/50 bg-white/50 p-1 shadow-sm">
                     <TaskSummary typeStats={typeStats} />
                   </div>
-                  <div className="rounded-xl bg-slate-50 p-4">
+                  <div className="rounded-xl border border-white/50 bg-white/50 p-4 shadow-sm">
                     <DeveloperHoursChart developerStats={developerStats} />
                   </div>
-                  <div className="rounded-xl bg-slate-50 p-4">
+                  <div className="rounded-xl border border-white/50 bg-white/50 p-4 shadow-sm">
                     <OverdueTrendChart tasks={allTasks} />
                   </div>
                 </div>

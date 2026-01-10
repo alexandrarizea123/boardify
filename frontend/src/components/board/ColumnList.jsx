@@ -14,12 +14,12 @@ function ColumnList({
   onOpenTaskForm,
   onUpdateTask,
 }) {
-  const minColumnWidth = 280
+  const minColumnWidth = 340 // Increased for wider, more premium columns
 
   return (
-    <div className="w-full overflow-x-auto pb-4">
+    <div className="w-full overflow-x-auto pb-6 scrollbar-thin">
       <main
-        className="grid gap-4"
+        className="grid gap-6 px-1"
         style={{
           gridTemplateColumns: `repeat(${columns.length}, minmax(0, 1fr))`,
           minWidth: `${columns.length * minColumnWidth}px`,

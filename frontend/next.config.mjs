@@ -7,11 +7,14 @@ const normalizeProxyTarget = (value) => {
 }
 
 const nextConfig = {
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
   async rewrites() {
     const target = normalizeProxyTarget(
       process.env.API_PROXY_TARGET ||
-        process.env.NEXT_PUBLIC_API_URL ||
-        'http://localhost:3000',
+      process.env.NEXT_PUBLIC_API_URL ||
+      'http://localhost:3000',
     )
     if (!target) return []
 

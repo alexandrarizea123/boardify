@@ -35,89 +35,81 @@ function Column({
   const columnKey = column.name.toLowerCase()
   const columnStyles = {
     'to do': {
-      dot: 'bg-slate-500',
-      header: 'bg-slate-100/80 border-slate-200/70',
-      title: 'text-slate-800',
-      empty: {
-        title: 'Create your first task',
-        description: 'Add a task to start planning your work.',
-        iconBg: 'bg-slate-100',
-        iconColor: 'text-slate-400',
-        border: 'border-slate-200/70',
-      },
+      border: 'border-t-indigo-500',
+      headerText: 'text-indigo-900',
+      countBg: 'bg-indigo-100 text-indigo-700',
     },
     'in progress': {
-      dot: 'bg-blue-500',
-      header: 'bg-blue-50/80 border-blue-200/70',
-      title: 'text-blue-700',
-      empty: {
-        title: 'Drag a task here to start work',
-        description: 'Move items from To Do when you begin.',
-        iconBg: 'bg-blue-50',
-        iconColor: 'text-blue-400',
-        border: 'border-blue-200/60',
-      },
+      border: 'border-t-blue-500',
+      headerText: 'text-blue-900',
+      countBg: 'bg-blue-100 text-blue-700',
     },
     done: {
-      dot: 'bg-emerald-500',
-      header: 'bg-emerald-50/80 border-emerald-200/70',
-      title: 'text-emerald-700',
-      empty: {
-        title: 'No completed tasks yet',
-        description: 'Move finished items here to wrap them up.',
-        iconBg: 'bg-emerald-50',
-        iconColor: 'text-emerald-400',
-        border: 'border-emerald-200/60',
-      },
+      border: 'border-t-emerald-500',
+      headerText: 'text-emerald-900',
+      countBg: 'bg-emerald-100 text-emerald-700',
     },
   }
 
-  const columnStyle = columnStyles[columnKey] || columnStyles['to do']
+  const style = columnStyles[columnKey] || columnStyles['to do']
   const showTaskCta = typeof onOpenTaskForm === 'function'
   const canQuickAdd = columnKey === 'to do' && showTaskCta
 
   return (
     <section
-      className="flex flex-col gap-3 min-w-0"
+      className="flex flex-col gap-4 min-w-[320px] rounded-2xl bg-slate-50/50 p-2 ring-1 ring-slate-200/50"
       onDragOver={(event) => {
         event.preventDefault()
-        event.currentTarget.classList.add('bg-blue-50/80')
+        event.currentTarget.classList.add('bg-indigo-50/50', 'ring-indigo-300')
       }}
       onDragLeave={(event) => {
-        event.currentTarget.classList.remove('bg-blue-50/80')
+        event.currentTarget.classList.remove('bg-indigo-50/50', 'ring-indigo-300')
       }}
       onDrop={(event) => {
-        event.currentTarget.classList.remove('bg-blue-50/80')
+        event.currentTarget.classList.remove('bg-indigo-50/50', 'ring-indigo-300')
         handleDrop(event)
       }}
     >
-      <div className="flex items-center justify-between rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-sm">
-        <div className="flex items-center gap-2">
-          <h2 className="text-sm font-semibold text-slate-900">
+      <div className={`glass-card flex items-center justify-between rounded-xl px-4 py-3 border-t-4 ${style.border}`}>
+        <div className="flex items-center gap-3">
+          <h2 className={`text-sm font-bold tracking-tight ${style.headerText}`}>
             {column.name}
           </h2>
-          <span className="text-xs font-semibold text-slate-400">
+          <span className={`inline-flex items-center justify-center rounded-full px-2 py-0.5 text-[10px] font-bold ${style.countBg}`}>
             {column.tasks.length}
           </span>
         </div>
         {canQuickAdd ? (
           <button
-            className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-slate-200 text-sm font-semibold text-slate-600 transition hover:border-slate-300 hover:text-slate-900"
+            className="flex h-6 w-6 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600 hover:bg-indigo-100 hover:text-indigo-700 transition-colors"
             type="button"
             onClick={onOpenTaskForm}
             aria-label={`Add task to ${column.name}`}
           >
-            +
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+            </svg>
           </button>
-        ) : (
-          <span className="h-7 w-7 shrink-0" aria-hidden />
-        )}
+        ) : null}
       </div>
 
-      <div className="flex flex-1 flex-col gap-3">
+      <div className="flex flex-1 flex-col gap-3 min-h-[150px]">
         {column.tasks.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-slate-200 bg-white px-4 py-10 text-center text-xs text-slate-400">
-            {columnStyle.empty.title}
+          <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-slate-200 bg-slate-50/30 px-4 py-12 text-center transition-colors hover:bg-slate-50 hover:border-slate-300">
+            <div className="mb-2 rounded-full bg-white p-3 shadow-sm ring-1 ring-slate-100">
+              <svg className="h-5 w-5 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+              </svg>
+            </div>
+            <p className="text-xs font-semibold text-slate-500">No tasks yet</p>
+            {canQuickAdd && (
+              <button
+                onClick={onOpenTaskForm}
+                className="mt-2 text-[11px] font-bold text-indigo-600 hover:underline"
+              >
+                Create one now
+              </button>
+            )}
           </div>
         ) : (
           column.tasks.map((task) => (
