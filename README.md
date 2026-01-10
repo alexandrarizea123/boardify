@@ -1,4 +1,4 @@
-# Boardify: A Lightweight, Feature-Rich Kanban Board
+# Boardify: Kanban Board
 
 Boardify is a minimal-footprint, yet powerful task-management board built with **Next.js (React)** and styled with **Tailwind CSS**. It supports multiple boards, custom columns, and a rich set of features for seamless task tracking. An optional backend service using **Node.js, Express, and PostgreSQL** provides persistent storage and user authentication.
 
