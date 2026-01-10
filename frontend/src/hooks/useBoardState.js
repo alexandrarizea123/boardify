@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { parseEstimatedTime } from '../utils/date'
 import {
-  boardUsers,
   buildDefaultColumns,
   buildDrafts,
   createId,
@@ -231,9 +230,63 @@ export const useBoardState = ({ mode = 'personal', preferredBoardId } = {}) => {
     return stats
   }, [activeBoard])
 
+
+
+  const [collabMembers, setCollabMembers] = useState([])
+
+  useEffect(() => {
+    let isMounted = true
+    const loadMembers = async () => {
+      if (!isCollaborative || !activeBoardId) {
+        setCollabMembers([])
+        return
+      }
+
+      try {
+        const members = await requestJson(
+          `/api/collab-boards/${activeBoardId}/members`,
+        )
+        if (!isMounted) return
+        setCollabMembers(
+          Array.isArray(members)
+            ? members.map((m) => ({ email: m.email, name: m.name || m.email })).filter(m => m.email)
+            : [],
+        )
+      } catch (err) {
+        console.error('Failed to load board members:', err)
+      }
+    }
+
+    loadMembers()
+
+    return () => {
+      isMounted = false
+    }
+  }, [isCollaborative, activeBoardId])
+
   const assigneeOptions = useMemo(() => {
-    if (!activeBoard) return ['All', ...boardUsers]
-    const assignees = new Set(boardUsers)
+    if (!activeBoard) return ['All', 'Me']
+
+    // If collaborative, use the fetched member names
+    if (isCollaborative) {
+      // Return objects { label: name, value: email } for easier mapping, but 
+      // current filteredColumns logic expects strings if we don't refactor everything.
+      // However, user wants to SEE the name. 
+
+      // Prudent approach: Return objects? 
+      // Existing filters: `assigneeOptions` map to <option value={assignee}>{assignee}</option> in BoardHeader.
+      // We can return a list of Names, but then we store Names.
+      // The user said "semi-fine", so we can assume they are okay with storing Names if that's what they "see".
+      // Or we try to be smart.
+
+      // Let's return Names for now as that fulfills "see only the name".
+      // Storing Name in DB is acceptable for MVP.
+      // Note: Uniqueness collision risk.
+      return ['All', ...collabMembers.map(m => m.name), 'Unassigned']
+    }
+
+    // Personal board fallback
+    const assignees = new Set(['Me'])
     for (const column of activeBoard.columns) {
       for (const task of column.tasks) {
         if (task.assignee) {
@@ -242,7 +295,7 @@ export const useBoardState = ({ mode = 'personal', preferredBoardId } = {}) => {
       }
     }
     return ['All', ...Array.from(assignees), 'Unassigned']
-  }, [activeBoard])
+  }, [activeBoard, isCollaborative, collabMembers])
 
   const priorityOptions = useMemo(() => ['All', ...priorities], [])
   const difficultyOptions = useMemo(() => ['All', ...difficulties], [])
@@ -732,3 +785,4 @@ export const useBoardState = ({ mode = 'personal', preferredBoardId } = {}) => {
     handleUpdateTask,
   }
 }
+

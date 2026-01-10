@@ -307,3 +307,29 @@ export const acceptCollabInvite = async (req, res) => {
         requestError(res, 500, err.message)
     }
 }
+
+export const getCollabBoardMembers = async (req, res) => {
+    try {
+        const user = await requireAuthenticatedUser(req, res)
+        if (!user) return
+
+        const { id } = req.params
+        const membership = await requireCollaborativeBoardMembership(id, user.id)
+        if (!membership) return requestError(res, 403, 'Forbidden')
+
+        const { rows } = await pool.query(
+            `
+        SELECT u.email, u.name, m.role
+        FROM collaborative_board_members m
+        JOIN users u ON u.id = m.user_id
+        WHERE m.board_id = $1
+        ORDER BY u.email ASC
+      `,
+            [id],
+        )
+
+        res.json(rows)
+    } catch (err) {
+        requestError(res, 500, err.message)
+    }
+}

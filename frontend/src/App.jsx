@@ -205,6 +205,9 @@ function App({ mode, preferredBoardId } = {}) {
                       draft={taskDrafts?.[todoColumn.id] || emptyTaskDraft()}
                       taskTypes={taskTypes}
                       sprints={sprints}
+                      assignees={assigneeOptions.filter(
+                        (opt) => opt !== 'All' && opt !== 'Unassigned',
+                      )}
                       onAddSprint={handleAddSprint}
                       projectTagOptions={projectTagOptions}
                       dependencyOptions={dependencyOptions}
@@ -225,7 +228,7 @@ function App({ mode, preferredBoardId } = {}) {
               dependencyOptions={dependencyOptions}
               onAddType={handleAddTaskType}
               onAddSprint={handleAddSprint}
-              onDeleteColumn={() => {}} // No-op since columns are fixed
+              onDeleteColumn={() => { }} // No-op since columns are fixed
               onDeleteTask={handleDeleteTask}
               onMoveTask={handleMoveTask}
               onOpenTaskForm={() => setIsTaskFormOpen(true)}
@@ -237,7 +240,7 @@ function App({ mode, preferredBoardId } = {}) {
               percent={progress.percent}
             />
           </div>
-          
+
           <div className="w-full shrink-0 space-y-6 lg:w-80">
             <div className="sticky top-6 space-y-4">
               <div className="rounded-2xl border border-slate-200/70 bg-white p-5 shadow-sm">

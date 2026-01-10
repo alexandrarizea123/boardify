@@ -7,6 +7,7 @@ function TaskForm({
   draft,
   taskTypes,
   sprints = [],
+  assignees = [],
   projectTagOptions = [],
   dependencyOptions = [],
   onAddType,
@@ -24,6 +25,10 @@ function TaskForm({
   const availableDependencies = dependencyOptions.filter(
     (option) => !(draft.dependencies || []).some((dep) => dep.id === option.id),
   )
+
+  // Use passed assignees or fallback to default imported users if empty
+  const taskAssignees = assignees.length > 0 ? assignees : boardUsers
+
 
   const handleTypeChange = (event) => {
     const value = event.target.value
@@ -233,7 +238,7 @@ function TaskForm({
             <option value="">
               Unassigned
             </option>
-            {boardUsers.map((user) => (
+            {taskAssignees.map((user) => (
               <option key={user} value={user}>
                 {user}
               </option>
