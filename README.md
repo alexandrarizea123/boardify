@@ -128,10 +128,6 @@ The backend exposes the following RESTful endpoints.
 | `POST`  | `/api/auth/login` | Logs a user in and starts a session.                  |
 | `POST`  | `/api/auth/logout` | Logs out (clears the session).                       |
 
-## Next steps
-
-- Add real-time WebSocket updates for collaborative boards
-
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
