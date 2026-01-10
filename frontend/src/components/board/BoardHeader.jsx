@@ -4,7 +4,7 @@ import { MagnifyingGlassIcon, AdjustmentsHorizontalIcon, PencilSquareIcon, Trash
 const FilterSelect = ({ value, onChange, options, prefix = '', defaultLabel = 'All' }) => (
   <div className="relative">
     <select
-      className="appearance-none rounded-lg border border-slate-200 bg-white pl-3 pr-8 py-1.5 text-xs font-semibold text-slate-700 shadow-sm outline-none transition-all hover:border-slate-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10 cursor-pointer"
+      className="appearance-none rounded-xl border border-slate-200 bg-white pl-3 pr-8 py-2.5 text-xs font-bold text-slate-700 shadow-sm outline-none transition-all hover:border-slate-300 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 cursor-pointer"
       value={value}
       onChange={(e) => onChange(e.target.value)}
     >
@@ -80,31 +80,6 @@ function BoardHeader({
     })
     setIsEditing(false)
   }
-
-  const FilterSelect = ({ value, onChange, options, prefix = '', defaultLabel = 'All' }) => (
-    <div className="relative">
-      <select
-        className="appearance-none rounded-lg border border-slate-200 bg-white pl-3 pr-8 py-1.5 text-xs font-semibold text-slate-700 shadow-sm outline-none transition-all hover:border-slate-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10 cursor-pointer"
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-      >
-        <option value="All">{defaultLabel}</option>
-        {options.map((opt) => {
-          const val = typeof opt === 'object' ? opt.value : opt
-          const label = typeof opt === 'object' ? opt.label : opt
-          // Handle special sprint cases
-          if (val === 'All') return null
-          if (val === 'None') return <option key={val} value={val}>No Sprint</option>
-          return <option key={val} value={val}>{prefix}{label}</option>
-        })}
-      </select>
-      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-400">
-        <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-        </svg>
-      </div>
-    </div>
-  )
 
   return (
     <div className="flex flex-col gap-4">

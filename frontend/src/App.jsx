@@ -103,9 +103,9 @@ function App({ mode, preferredBoardId } = {}) {
   return (
     <div className="min-h-screen text-slate-900 pb-20">
       {/* Top Navigation Bar */}
-      <div className="sticky top-0 z-40 border-b border-white/50 bg-white/80 px-6 py-3 backdrop-blur-xl transition-all duration-200">
+      <div className="sticky top-0 z-40 border-b border-white/50 bg-white/70 px-6 py-3 backdrop-blur-xl transition-all duration-200">
         <div className="mx-auto flex w-full max-w-[1600px] items-center gap-4">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 shadow-lg shadow-indigo-500/30 ring-1 ring-white/20">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 ring-1 ring-white/20">
             <svg
               viewBox="0 0 24 24"
               fill="none"
@@ -144,7 +144,7 @@ function App({ mode, preferredBoardId } = {}) {
         <div className="flex flex-col gap-8 xl:flex-row xl:items-start">
           <div className="flex flex-1 flex-col gap-6 min-w-0">
             {/* Headers & Actions */}
-            <div className="rounded-2xl border border-white/60 bg-white/40 p-2 shadow-glass backdrop-blur-md">
+            <div className="rounded-2xl border border-white/60 bg-white/40 p-2 backdrop-blur-md">
               <BoardHeader
                 name={activeBoard.name}
                 description={activeBoard.description}

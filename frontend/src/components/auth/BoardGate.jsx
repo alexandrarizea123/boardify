@@ -37,7 +37,7 @@ export default function BoardGate() {
 
   return (
     <div className="min-h-screen bg-white text-slate-900">
-      <header className="border-b border-slate-100 bg-white px-6 py-3">
+      <header className="sticky top-0 z-50 border-b border-white/50 bg-white/70 px-6 py-3 backdrop-blur-xl transition-all duration-200">
         <div className="mx-auto flex w-full max-w-[1480px] items-center justify-between gap-3">
           <div className="flex items-center gap-2">
             <button
